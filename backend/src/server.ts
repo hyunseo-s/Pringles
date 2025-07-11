@@ -2,10 +2,10 @@ import express, { json, Request, Response } from 'express';
 import config from './config.json';
 import cors from 'cors';
 import process from 'process';
-import { readData, writeData } from './funcs/dataStore'
-import { login, register } from './funcs/auth';
+// import { login, register } from './funcs/auth';
 import morgan from 'morgan';
-
+import { initDB } from './initDb';
+import { login, register } from './funcs/auth';
 
 // Set up web app
 const app = express();
@@ -23,6 +23,10 @@ const HOST: string = process.env.IP || '127.0.0.1';
 //  ================= WORK IS DONE BELOW THIS LINE ===================
 // ====================================================================
 
+app.get('/echo', async (req: Request, res: Response) => {
+  return res.status(200).json({ message: 'echo' })
+})
+
 // ====================================================================
 //  =============================== AUTH ==============================
 // ====================================================================
@@ -30,12 +34,12 @@ const HOST: string = process.env.IP || '127.0.0.1';
 app.post('/auth/register', async (req: Request, res: Response) => {
   try {
     const args = req.body;
+		console.log(args)
     const newToken = await register(args);
     res.status(201).json(newToken);
   } catch (error) {
+		console.log(error)
     return res.status(400).json({ error: error.message })
-  } finally {
-    writeData();
   }
 })
 
@@ -43,12 +47,10 @@ app.post('/auth/login', async (req: Request, res: Response) => {
   try {
     // Check if the token is still valid:
     const { email, password } = req.body;
-    await login(email, password);
-    res.status(200).json(login);
+    const newToken = await login(email, password);
+    res.status(200).json(newToken);
   } catch (error) {
     res.status(400).json({ error: error.message })
-  } finally {
-    writeData();
   }
 })
 
@@ -57,8 +59,6 @@ app.post('/auth/logout', async (req: Request, res: Response) => {
     // TO DO
   } catch (error) {
     res.status(400).json({ error: error.message });
-  } finally {
-    writeData()
   }
 })
 
@@ -83,9 +83,9 @@ app.use((req: Request, res: Response) => {
 
 // start server
 const server = app.listen(PORT, HOST, () => {
-  readData();
-
   console.log(`⚡️ Server started on port ${PORT} at ${HOST}`);
+
+	initDB()
 });
 
 // For coverage, handle Ctrl+C gracefully
@@ -95,3 +95,4 @@ process.on('SIGINT', () => {
     process.exit();
   });
 });
+
