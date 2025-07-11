@@ -1,13 +1,12 @@
-import { getData } from './dataStore';
+import { getDbConnection } from "../db";
 
-export function getUser(userId: string) {
-    const database = getData();
-    const users = database.users;
-
-    const user = users.find(user => user.id === userId);
-    if (!user) {
+export const getUser = async (userId: string) => {
+    const db = await getDbConnection();
+		const users = await db.all(`SELECT * FROM users WHERE id = ${userId}`);
+	
+    if (users.length == 0) {
         throw new Error(`User with ID ${userId} not found`);
     }
 
-    return user;
+    return users[0];
 }

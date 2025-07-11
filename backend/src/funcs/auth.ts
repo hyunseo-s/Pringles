@@ -1,54 +1,37 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
-import { User, Database, RegisterObj } from "../interface";
-import { v4 } from 'uuid';
-import { getData } from "./dataStore";
+import { RegisterObj } from "../interface";
+import { getDbConnection } from '../db';
 
 const JWT_SECRET = "TOPSECRET";
 
 // Register a new user
-export const register = async ({ email, username, password } : RegisterObj) => {
-	const db: Database = getData();
+export const register = async ({ username, email, password } : RegisterObj) => {
+	const db = await getDbConnection();
 
-	if (db.users.some((user) => user.email === email)) {
-		throw new Error("User already exists");
-	}
+	const res = await db.run(
+		`INSERT INTO users (username, email, password) VALUES (?, ?, ?)`,
+		[username, email, password]
+	);
 
-	if (db.users.some((user) => user.username === username)) {
-		throw new Error("Username already taken");
-	}
+	const token = jwt.sign(
+		{ user: res.lastID, email }, JWT_SECRET, { expiresIn: '1h' }
+	);
 
-	const id = v4()
-	const newUser: User = {
-		id,
-		username,
-		email,
-		password,
-	};
-
-	db.users.push(newUser);
-	const user = db.users.find((u) => u.email === email);
-
-	const token = jwt.sign({ user: user.id, email: user.email }, JWT_SECRET, { expiresIn: "1h" });
-
-	return ({ message: "Registration success", token });
+	return { message: 'Registration success', token };
 }
 
 // User login function
 export const login = async (email: string, password: string) => {
-	const db = getData();
+	const db = await getDbConnection();
 
-	const user = db.users.find((u: User) => u.email === email);
-	if (!user) {
-			throw new Error("Invalid credentials");
-	}
-	const isMatch = password === user.password;
+	const users = await db.all(`SELECT * FROM users WHERE email = '${email}' AND password = '${password}'`);
 
-	if (!isMatch) {
+	if (users.length == 0) {
 			throw new Error("Invalid credentials");
 	}
 
-	const token = jwt.sign({ user: user.id, email: user.email }, JWT_SECRET, { expiresIn: "1h" });
+	const token = jwt.sign({ user: users[0].id, email: users[0].email }, JWT_SECRET, { expiresIn: "1h" });
 
 	return { message: "Login success", token };
 };
@@ -71,8 +54,9 @@ export const authenticateToken = (req: Request, res: Response, next: NextFunctio
     });
 };
 
-export const getAllUsers = () => {
-	const data = getData();
+export const getAllUsers = async () => {
+	const db = await getDbConnection();
+	const users = await db.all(`SELECT * FROM users`);
 
-	return { users: data.users }
+	return { users }
 }
