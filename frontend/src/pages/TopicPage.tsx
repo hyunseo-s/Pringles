@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router';
-import { useUser } from '../contexts/UserContext';
+import { useUser } from '../context/UserContext';
 import { useEffect } from 'react';
 import { TeacherTopicView } from '../components/topic/TeacherTopicView';
 import { StudentTopicView } from '../components/topic/StudentTopicView';

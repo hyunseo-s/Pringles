@@ -1,8 +1,10 @@
 import { useNavigate } from 'react-router';
 import { useUser } from '../context/UserContext';
+import { TeacherDashboardView } from '../components/dashboard/TeacherDashboardView';
+import { StudentDashboardView } from '../components/dashboard/StudentDashboardView';
 import { useEffect } from 'react';
 
-const QuizPage = () => {
+const DashboardPage = () => {
 	const navigate = useNavigate();
 	const { user } = useUser();
 
@@ -16,9 +18,9 @@ const QuizPage = () => {
 
   return (
 		<>
-		Quiz
+			Dashboard
 		</>
   );
 }
 
-export default QuizPage;
+export default DashboardPage;

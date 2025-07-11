@@ -1,26 +1,20 @@
 import { useNavigate } from 'react-router';
-import { useUser } from '../contexts/UserContext';
-import { TeacherDashboardView } from '../components/dashboard/TeacherDashboardView';
-import { StudentDashboardView } from '../components/dashboard/StudentDashboardView';
+import { useUser } from '../context/UserContext';
 import { useEffect } from 'react';
 
-const HomePage = () => {
-	const navigate = useNavigate();
-	const { user } = useUser();
+export const HomePage = () => {
+  const { user } = useUser();
+  const navigate = useNavigate();
 
   useEffect(() => {
-    if (!user) {
-      navigate("/login"); // or whatever your login path is
+    if (user) {
+      navigate("/dashboard");
+    } else {
+      navigate("/login");
     }
   }, [user, navigate]);
 
-  if (!user) return null; // optional: show a loading spinner here
-
-  return (
-		<>
-			{user.role === "teacher" ? <TeacherDashboardView /> : <StudentDashboardView />}
-		</>
-  );
+  return null; // optional: show loading spinner
 }
 
 export default HomePage;
