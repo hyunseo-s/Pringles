@@ -1,17 +1,12 @@
-import { useForm } from '@mantine/form';
 import {
   Anchor,
   Button,
-  Checkbox,
-  Container,
   Flex,
   Paper,
   PasswordInput,
   Text,
   TextInput,
-  Title,
 } from '@mantine/core';
-import { useState } from 'react';
 
 const RegisterPage = () => {
 	const RegisterForm = () => {
