@@ -37,6 +37,7 @@ export const initDB = async () => {
     CREATE TABLE IF NOT EXISTS questions (
       questionid INTEGER PRIMARY KEY AUTOINCREMENT,
       topicid INTEGER NOT NULL,
+      question TEXT NOT NULL,
       level INTEGER NOT NULL,
 			numRight INTEGER NOT NULL,
       numWrong INTEGER NOT NULL,
@@ -64,15 +65,6 @@ export const initDB = async () => {
       FOREIGN KEY(topicid) REFERENCES topics(topicid),
 			FOREIGN KEY(classid) REFERENCES classes(classid),
       FOREIGN KEY(studentid) REFERENCES users(userid)
-    )
-  `);
-
-  await db.exec(`
-    CREATE TABLE IF NOT EXISTS topics (
-      topicid INTEGER PRIMARY KEY AUTOINCREMENT,
-      classid INTEGER NOT NULL,
-      topicname TEXT NOT NULL,
-			FOREIGN KEY(classid) REFERENCES classes(classid)
     )
   `);
 
