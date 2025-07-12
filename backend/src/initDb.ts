@@ -8,6 +8,7 @@ export const initDB = async () => {
     DROP TABLE IF EXISTS class_student;
 		DROP TABLE IF EXISTS class_teacher;
 		DROP TABLE IF EXISTS classes;
+    DROP TABLE IF EXISTS question_answerq;
 		DROP TABLE IF EXISTS question_student;
     DROP TABLE IF EXISTS questions;
     DROP TABLE IF EXISTS topics;
@@ -42,6 +43,7 @@ export const initDB = async () => {
       topicid INTEGER NOT NULL,
       question TEXT NOT NULL,
       level INTEGER NOT NULL,
+      type STRING NOT NULL,
 			numRight INTEGER NOT NULL,
       numWrong INTEGER NOT NULL,
       FOREIGN KEY(topicid) REFERENCES topics(topicid)
@@ -109,6 +111,15 @@ export const initDB = async () => {
       FOREIGN KEY(studentid) REFERENCES users(userid),
 			FOREIGN KEY(topicid) REFERENCES topics(topicid),
       PRIMARY KEY(studentid, topicid)
+    )
+  `);
+
+  await db.exec(`
+    CREATE TABLE IF NOT EXISTS question_answerq (
+      questionid INTEGER NOT NULL,
+      answer STRING NOT NULL,
+      correct BOOLEAN NOT NULL,
+      PRIMARY KEY(questionid, correct)
     )
   `);
 
