@@ -1,7 +1,7 @@
 export interface Topic {
 	topic: number,
 	topicName: string,
-	data: {
+	studentData?: {
 		easyCorrect: number
 		easyQsTotal: number
 		hardCorrect: number
@@ -9,6 +9,18 @@ export interface Topic {
 		level: number
 		medCorrect: number
 		medQsTotal: number
+	}
+	teacherData: {
+		questionData?: {
+			answerid: number
+			questionid: number
+			sessionid: number
+			studentid: number 
+			answer: string 
+			question: string
+			correct: boolean
+			level: number
+		}[]
 	}
 
 }

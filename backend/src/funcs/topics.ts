@@ -35,6 +35,11 @@ export const getTopics = async (classId: number) => {
 	return topics.map((topic) => ({ topicName: topic.topicname, topic: topic.topicid }));
 }
 
+export const getTopicName = async (topicId: number) => {
+	const db = await getDbConnection();
+	return await db.get(`SELECT topicname FROM topics WHERE topicid = '${topicId}'`);
+}
+
 export const addQuestion = async (topicId: number, level: number, question: string) => {
 	const db = await getDbConnection();
 
@@ -89,9 +94,14 @@ export const getTeacherTopicData = async (teacherId: number, topicId: number) =>
 
 	// get all questions 
 	// select all questions with given topic id
-	const questions = await db.all(`SELECT * FROM questions WHERE topicid = '${topicId}'`);
+	const answers = await db.all(`
+		SELECT a.answerid, a.questionid, a.sessionid, a.studentid, a.answer, q.question, a.correct, q.level
+		FROM answers a
+		JOIN questions q ON q.questionid = a.questionid
+		WHERE q.topicid = ${topicId};
+		`);
 
-	return { questionData: questions };
+	return { responses: answers };
 }
 
 export const getStudentsLevels = async (teacherId: number, classId: number) => {
