@@ -14,11 +14,12 @@ export function ScoreCard({ data } : { data: number[] }) {
         Well Done!
       </Text>
       <Text c="dimmed" ta="center" fz="sm">
-        {42} Questions Completed
+        {data[0]} Questions Completed
       </Text>
 
       <Flex direction={'column'} justify={"flex-start"} w="100%">
-        {categories.map((c, i) => 
+        {categories.map((c, i) => (
+					i > 0 &&
           <div className='mt-2'>
             <Flex gap={8} mt="xs" justify={"space-between"}>
               <Text size="sm" c="dimmed" tt="uppercase" fw={c === "Overall" ? 700 : 400}>
@@ -30,6 +31,7 @@ export function ScoreCard({ data } : { data: number[] }) {
             </Flex>
             <Progress value={data[i]} mt={5} />
           </div>
+				)
         )}
         
       </Flex>

@@ -9,6 +9,7 @@ import Explanation from '../components/quiz/Explanation';
 import Question from '../components/quiz/Question';
 import { ScoreCard } from '../components/quiz/ScoreCard';
 import { get, post, put } from '../utils/apiClient';
+import { handleError } from '../utils/handlers';
 
 const questions: Prompt[] = [
   {
@@ -72,6 +73,8 @@ const QuizPage = () => {
 
   // Modal
   const [opened, { open, close }] = useDisclosure(false);
+
+	const [scoreData, setScoreData] = useState<[number, number, number, number, number]>([0,0,0,0,0])
 
   useEffect(() => {
     if (!user) {
@@ -171,8 +174,21 @@ const QuizPage = () => {
 		}
 
 
-  const handleFinish = () => {
-    navigate(`/topic/${topicId}`)
+  const handleFinish = async() => {
+		console.log('HELO')
+		const res = await post(`/session/${topicId}/${sessionId}/end`, undefined);
+		if (res.error) {
+			handleError(res.error);
+			return;
+		}
+		setScoreData([
+			res.numRight + res.numWrong,
+			res.numRight / Math.max(res.numRight + res.numWrong, 1), 
+			res.easyCorrect / Math.max(res.easyQsTotal, 1),
+			res.medCorrect / Math.max(res.medQsTotal, 1),
+			res.hardCorrect / Math.max(res.hardQsTotal, 1),
+		])
+		open()
   }
 
   return (
@@ -210,9 +226,7 @@ const QuizPage = () => {
         }
 
         {/* Finish Button */}
-        <Button variant="light" color="gray" onClick={() => {
-					open()
-				}}>FINISH</Button>
+        <Button variant="light" color="gray" onClick={handleFinish}>FINISH</Button>
       </Flex>
 
       {/* Confirmation Modal */}
@@ -229,9 +243,9 @@ const QuizPage = () => {
       {/* Session Score Modal */}
       <Modal opened={opened} onClose={close} centered>
         <Flex direction={'column'} gap={20} w={"100%"}>
-          <ScoreCard data={[62, 32, 2, 5]}/>
+          <ScoreCard data={scoreData}/>
           <Flex justify={'center'}>
-            <Button color="blue" variant='light' onClick={handleFinish}>RETURN</Button>
+            <Button color="blue" variant='light' onClick={() => navigate(`/topic/${topicId}`)}>RETURN</Button>
           </Flex>
         </Flex>
       </Modal>

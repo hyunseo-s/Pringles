@@ -46,7 +46,7 @@ const DashboardPage = () => {
 			}
 			if (classes.length == 0) return;
 			getTopics();
-		}, [classIndex, user, classes]);
+		}, [classIndex, user, classes, openedTopicModal]);
 
 	const navigate = useNavigate();
 
@@ -57,6 +57,7 @@ const DashboardPage = () => {
   }, [user, navigate]);
 
 	useEffect(() => {
+		
 		const getClasses = async () => {
 			const res = await get("/classes", undefined);
 			if (res.error) {
