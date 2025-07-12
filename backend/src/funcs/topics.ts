@@ -39,7 +39,7 @@ export const addQuestion = async (topicId: number, level: number, question: stri
 	const db = await getDbConnection();
 
 	const res = await db.run(
-		`INSERT INTO questions (topicId, question, level, type, numWrong, numRight) VALUES (?, ?, ?, ?. ?, ?)`,
+		`INSERT INTO questions (topicId, question, level, type, numWrong, numRight) VALUES (?, ?, ?, ?, ?, ?)`,
 		[topicId, question, level, "written", 0, 0]
 	);
 
