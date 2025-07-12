@@ -7,7 +7,7 @@ import { initDB } from './initDb';
 import { login, register } from './funcs/auth';
 import { decodeJWT } from './utils';
 import { addStudents, createClass, getClass, getClasses } from './funcs/classes';
-import { generateQuestion, getLevel, getQuestion, startSession, answerQuestion } from './funcs/session';
+import { generateQuestion, getLevel, startSession, answerQuestion, getQuestions, saveMultipleChoice, saveWrittenResponse } from './funcs/session';
 import { addQuestion, createTopics, getStudentsLevels, getStudentTopicData, getTeacherTopicData, getTopics } from './funcs/topics';
 import { getUser } from './funcs/user';
 
@@ -242,45 +242,56 @@ app.get('/session/:topicId/:sessionId/question', async (req: Request, res: Respo
     const level = await getLevel(studentId, topicId)
 
     // get random question that is of the matching topic
-    const question = await getQuestion(topicId)
+    const question = await getQuestions(topicId)
 
     const studentLevel = level.level
 
     const easyQuestion = question.easy.question
-    const medQeustion = question.medium.question
+    const medQuestion = question.medium.question
     const hardQuestion = question.hard.question
 
     const easyQuestionLevel = easyQuestion.level
-    const medQuestionLevel = medQeustion.level
+    const medQuestionLevel = medQuestion.level
     const hardQuestionLevel = hardQuestion.level
 
     // with the question, generate one of that level (for now multiple choice)
-    const newQeustion = await generateQuestion(
-        studentLevel, 
-        topicId, 
-        easyQuestion,
-        medQeustion, 
-        hardQuestion, 
-        easyQuestionLevel, 
-        medQuestionLevel,
-        hardQuestionLevel
-      );
-    console.log(newQeustion)
+    const newQuestion = await generateQuestion(
+      studentLevel, 
+      topicId, 
+      easyQuestion,
+      medQuestion, 
+      hardQuestion, 
+      easyQuestionLevel, 
+      medQuestionLevel,
+      hardQuestionLevel
+    );
 
-    res.status(200).json(newQeustion);
+    if (newQuestion.mode == "multiple-choice") {
+
+      const match = newQuestion.question.match(/```json\s*([\s\S]*?)\s*```/);
+      const jsonString = match[1];
+      // const output = JSON.parse(jsonString);
+
+      console.log("This is multiple choice")
+      console.log(jsonString)
+      const res = await saveMultipleChoice(jsonString, topicId, studentLevel)
+      console.log(res)
+
+    } else if (newQuestion.mode == "written-response") {
+      console.log("This is written response")
+      console.log(newQuestion.question)
+
+      const res = await saveWrittenResponse(newQuestion.question, topicId, studentLevel)
+      console.log(res)
+    }
+
+    
+    res.status(200).json(newQuestion.question);
+
   } catch (error) {
     res.status(404).json({ error: error.message });
   }
 });
-// app.get('/session/:classId/:topicId/:sessionId/question', async (req: Request, res: Response) => {
-//   const { classId, topicId, sessionId } = req.params;
-//   try {
-//     const questions = getQuestions(classId, topicId, sessionId);
-//     res.status(200).json(questions);
-//   } catch (error) {
-//     res.status(404).json({ error: error.message });
-//   }
-// });
 
 app.put('/session/:topicId/:sessionId/:questionId/answer', async (req: Request, res: Response) => {
   const { topicId, sessionId, questionId } = req.params;

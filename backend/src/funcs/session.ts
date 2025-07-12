@@ -1,6 +1,7 @@
 import { getDbConnection } from '../db';
 import { askGemini } from '../gemini/client';
 import { answerQueObj } from '../interface';
+import { addStudents } from './classes';
 
 // Starts the session given the classId and topicId
 export async function startSession(classId: string, topicId: string, studentId: string) {
@@ -30,7 +31,7 @@ export async function getLevel(studentId: string, topicId: string) {
 }
 
 // gets a random question from the question db given the topicId
-export async function getQuestion(topicId: string) {
+export async function getQuestions(topicId: string) {
 
     const db = await getDbConnection();
 
@@ -57,16 +58,21 @@ export async function getQuestion(topicId: string) {
 }
 
 // Generate new question given topic and session id
-export async function generateQuestion(studentLevel: string, topicId: string, easyQuestion: string, medQuestion: string, hardQuestion: string, easyQuestionLevel: string, medQuestionLevel: string, hardQuestionLevel: string) {
+export async function generateQuestion(
+    studentLevel: string, 
+    topicId: string, 
+    easyQuestion: string, 
+    medQuestion: string, 
+    hardQuestion: string, 
+    easyQuestionLevel: string, 
+    medQuestionLevel: string, 
+    hardQuestionLevel: string){
 
-    const prompt = `
-        Generate a single multiple-choice question on the topic: "${topicId}". 
-        This is a level "${easyQuestionLevel}" difficulty question that you can base it off to generate (easy question): "${easyQuestion}".
-        This is a level "${medQuestionLevel}" difficulty question that you can base it off to generate (easy question): "${medQuestion}".
-        This is a level "${hardQuestionLevel}" difficulty question that you can base it off to generate (easy question): "${hardQuestion}".
-        The generated question should have the difficulty level "${studentLevel}".
-        
-        Format the response as JSON:
+    const state = Math.random() >= 0.5;
+    const selectedMode = state ? "written-response" : "multiple-choice";
+
+    const formatMultipleChoice = `
+    Format the response as JSON:
         {
             "question": "A circle with...",
             "options": [
@@ -76,29 +82,119 @@ export async function generateQuestion(studentLevel: string, topicId: string, ea
                     "rationale": "The distance..."
                 },
                 {
-                "text": "3",
-                "is_correct": false,
-                "rationale": "While..."
+                    "text": "3",
+                    "is_correct": false,
+                    "rationale": "While..."
                 },
                 {
-                "text": "100",
-                "is_correct": false,
-                "rationale": "This point..."
+                    "text": "100",
+                    "is_correct": false,
+                    "rationale": "This point..."
                 },
                 {
-                "text": "1",
-                "is_correct": false,
-                "rationale": "This point..."
+                    "text": "1",
+                    "is_correct": false,
+                    "rationale": "This point..."
                 }
             ]
         }
+    `
+
+    const formatWrittenResponse = `Format the response as a plain string that asks the question clearly.`;
+
+    const formatInstruction =
+        selectedMode === "multiple-choice"
+        ? formatMultipleChoice
+        : formatWrittenResponse;
+
+    const prompt = `
+    Generate a single "${selectedMode}" question on the topic: "${topicId}". 
+
+    Use the following questions as inspiration:
+    - Level "${easyQuestionLevel}" (easy): "${easyQuestion}"
+    - Level "${medQuestionLevel}" (medium): "${medQuestion}"
+    - Level "${hardQuestionLevel}" (hard): "${hardQuestion}"
+
+    The new question should be at difficulty level "${studentLevel}".
+
+    ${formatInstruction}
     `;
 
-    const result = await askGemini(prompt);
-    // const response = await result.response;
-    // const text = await response.text();
+    const response = await askGemini(prompt);
+    return { mode: selectedMode, question: response }
+}
 
-    return { result }
+// save the multiple choice question and the answers
+export async function saveMultipleChoice(jsonString: string, topicId: string, studentLevel: string) {
+
+    const db = await getDbConnection();
+
+    let parsed;
+    try {
+        parsed = JSON.parse(jsonString);
+    } catch (err) {
+        throw new Error("Invalid JSON string");
+    }
+
+    const { question, options } = parsed;
+
+    // 1. Insert the question into the `questions` table
+    const insertQuestionStmt = await db.run(
+        `
+        INSERT INTO questions (topicId, question, level, type, numWrong, numRight)
+        VALUES (?, ?, ?, ?, ?, ?)
+    `,
+        [topicId, question, studentLevel, "multi", 0, 0]
+    );
+
+    const questionId = insertQuestionStmt.lastID;
+
+    // 2. Insert all the answer options
+    for (const option of options) {
+        await db.run(
+        `
+        INSERT INTO question_answerq (questionid, answer, correct)
+        VALUES (?, ?, ?)
+        `,
+        [questionId, option.text, option.is_correct ? 1 : 0]
+        );
+    }
+
+    // 3. Return metadata
+    return {
+        questionId,
+        topicId,
+        question,
+        level: studentLevel,
+        type: "multi",
+        numWrong: 0,
+        numRight: 0,
+    };
+}
+
+// save the written response question
+export async function saveWrittenResponse(question: string, topicId: string, studentLevel: string) {
+
+    const db = await getDbConnection();
+
+    const res = await db.run(
+        `
+        INSERT INTO questions (topicId, question, level, type, numWrong, numRight)
+        VALUES (?, ?, ?, ?, ?, ?)
+    `,
+        [topicId, question, studentLevel, "written", 0, 0]
+    );
+  
+     // 3. Return metadata
+    return {
+        questionId: res.lastID,
+        topicId: topicId,
+        question: question,
+        level: studentLevel,
+        type: "written",
+        numWrong: 0,
+        numRight: 0,
+    };
 }
 
 export const answerQuestion = async ({ studentId, topicId, sessionId, questionId, answer }: answerQueObj) => {
