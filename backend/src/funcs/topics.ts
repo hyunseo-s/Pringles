@@ -44,7 +44,7 @@ export const addQuestion = async (topicId: number, level: number, question: stri
 	const db = await getDbConnection();
 
 	const res = await db.run(
-		`INSERT INTO questions (topicId, question, level, type, numWrong, numRight) VALUES (?, ?, ?, ?. ?, ?)`,
+		`INSERT INTO questions (topicId, question, level, type, numWrong, numRight) VALUES (?, ?, ?, ?, ?, ?)`,
 		[topicId, question, level, "written", 0, 0]
 	);
 
@@ -60,7 +60,6 @@ export const getStudentTopicData = async (studentId: number, topicId: number) =>
 
 	// get all questions 
 	const level = await db.get(`SELECT level FROM topic_student WHERE topicid = '${topicId}' and studentid = '${studentId}'`);
-	console.log(level)
 
 	const answers = await db.all(`
 		SELECT	q.level, a.correct 
@@ -83,7 +82,7 @@ export const getStudentTopicData = async (studentId: number, topicId: number) =>
 		medQsTotal: medQsTotal.length,
 		hardCorrect,
 		hardQsTotal: hardQsTotal.length,
-		level,
+		...level,
 	};
 }
 
@@ -95,9 +94,14 @@ export const getTeacherTopicData = async (teacherId: number, topicId: number) =>
 
 	// get all questions 
 	// select all questions with given topic id
-	const questions = await db.all(`SELECT * FROM questions WHERE topicid = '${topicId}'`);
+	const answers = await db.all(`
+		SELECT a.answerid, a.questionid, a.sessionid, a.studentid, a.answer, q.question, a.correct, q.level
+		FROM answers a
+		JOIN questions q ON q.questionid = a.questionid
+		WHERE q.topicid = ${topicId};
+		`);
 
-	return { questionData: questions };
+	return { responses: answers };
 }
 
 export const getStudentsLevels = async (teacherId: number, classId: number) => {
