@@ -38,7 +38,6 @@ app.get('/echo', async (req: Request, res: Response) => {
 app.post('/auth/register', async (req: Request, res: Response) => {
   try {
     const args = req.body;
-
     const newToken = await register(args);
     res.status(201).json(newToken);
   } catch (error) {
