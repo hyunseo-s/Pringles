@@ -7,7 +7,6 @@ export interface RegisterObj {
 	password: string;
 	nameFirst: string;
 	nameLast: string;
-	profileImg: string;
 	role: string;
 }
 
