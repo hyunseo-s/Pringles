@@ -1,6 +1,7 @@
 export interface Topic {
 	topic: number,
 	topicName: string,
+	classId: number,
 	studentData?: {
 		easyCorrect: number
 		easyQsTotal: number
