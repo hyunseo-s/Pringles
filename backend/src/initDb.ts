@@ -281,23 +281,23 @@ INSERT INTO questions (questionid, topicid, question, level, type, numRight, num
 
 -- Ecosystems (topicid: 19)
 INSERT INTO questions (questionid, topicid, question, level, type, numRight, numWrong) VALUES (31, 19, 'Define a food chain and give an example involving at least three organisms.', 2, 'written', 0, 0);
-INSERT INTO questions (questionid, topicid, question, level, type, numRight, numWrong) VALUES (32, 19, 'Explain the role of decomposers in an ecosystem.', 3, 'written', 0, 0);
-INSERT INTO questions (questionid, topicid, question, level, type, numRight, numWrong) VALUES (33, 19, 'Draw and label a basic carbon cycle including photosynthesis and respiration.', 4, 'written', 0, 0);
-INSERT INTO questions (questionid, topicid, question, level, type, numRight, numWrong) VALUES (34, 19, 'What is meant by the term "trophic level"? Give an example.', 2, 'written', 0, 0);
-INSERT INTO questions (questionid, topicid, question, level, type, numRight, numWrong) VALUES (35, 19, 'Explain how energy is transferred and lost between trophic levels using a pyramid of energy.', 5, 'written', 0, 0);
+INSERT INTO questions (questionid, topicid, question, level, type, numRight, numWrong) VALUES (32, 19, 'Explain the role of decomposers in an ecosystem.', 6, 'written', 0, 0);
+INSERT INTO questions (questionid, topicid, question, level, type, numRight, numWrong) VALUES (33, 19, 'Draw and label a basic carbon cycle including photosynthesis and respiration.', 1, 'written', 0, 0);
+INSERT INTO questions (questionid, topicid, question, level, type, numRight, numWrong) VALUES (34, 19, 'What is meant by the term "trophic level"? Give an example.', 8, 'written', 0, 0);
+INSERT INTO questions (questionid, topicid, question, level, type, numRight, numWrong) VALUES (35, 19, 'Explain how energy is transferred and lost between trophic levels using a pyramid of energy.', 3, 'written', 0, 0);
 
 -- Cells (topicid: 20)
 INSERT INTO questions (questionid, topicid, question, level, type, numRight, numWrong) VALUES (36, 20, 'Label the parts of a typical animal cell and describe their functions.', 2, 'written', 0, 0);
-INSERT INTO questions (questionid, topicid, question, level, type, numRight, numWrong) VALUES (37, 20, 'Compare and contrast plant and animal cells using at least three key differences.', 3, 'written', 0, 0);
-INSERT INTO questions (questionid, topicid, question, level, type, numRight, numWrong) VALUES (38, 20, 'Describe the function of mitochondria and relate it to cellular respiration: $\\text{C}_6\\text{H}_{12}\\text{O}_6 + 6\\text{O}_2 \\rightarrow 6\\text{CO}_2 + 6\\text{H}_2\\text{O} + \\text{energy}$.', 4, 'written', 0, 0);
-INSERT INTO questions (questionid, topicid, question, level, type, numRight, numWrong) VALUES (39, 20, 'What is the role of ribosomes in protein synthesis?', 3, 'written', 0, 0);
+INSERT INTO questions (questionid, topicid, question, level, type, numRight, numWrong) VALUES (37, 20, 'Compare and contrast plant and animal cells using at least three key differences.', 8, 'written', 0, 0);
+INSERT INTO questions (questionid, topicid, question, level, type, numRight, numWrong) VALUES (38, 20, 'Describe the function of mitochondria and relate it to cellular respiration: $\\text{C}_6\\text{H}_{12}\\text{O}_6 + 6\\text{O}_2 \\rightarrow 6\\text{CO}_2 + 6\\text{H}_2\\text{O} + \\text{energy}$.', 2, 'written', 0, 0);
+INSERT INTO questions (questionid, topicid, question, level, type, numRight, numWrong) VALUES (39, 20, 'What is the role of ribosomes in protein synthesis?', 8, 'written', 0, 0);
 INSERT INTO questions (questionid, topicid, question, level, type, numRight, numWrong) VALUES (40, 20, 'Explain why red blood cells lack nuclei and how this helps their function.', 4, 'written', 0, 0);
 
 -- Periodic Table (topicid: 21)
 INSERT INTO questions (questionid, topicid, question, level, type, numRight, numWrong) VALUES (41, 21, 'What do elements in the same group of the periodic table have in common?', 2, 'written', 0, 0);
-INSERT INTO questions (questionid, topicid, question, level, type, numRight, numWrong) VALUES (42, 21, 'Describe the trend in reactivity down Group 1 (alkali metals).', 3, 'written', 0, 0);
-INSERT INTO questions (questionid, topicid, question, level, type, numRight, numWrong) VALUES (43, 21, 'What is the atomic number and what does it represent in terms of protons and electrons?', 2, 'written', 0, 0);
-INSERT INTO questions (questionid, topicid, question, level, type, numRight, numWrong) VALUES (44, 21, 'Balance the chemical equation: $\\text{Na} + \\text{H}_2\\text{O} \\rightarrow \\text{NaOH} + \\text{H}_2$', 5, 'written', 0, 0);
+INSERT INTO questions (questionid, topicid, question, level, type, numRight, numWrong) VALUES (42, 21, 'Describe the trend in reactivity down Group 1 (alkali metals).', 5, 'written', 0, 0);
+INSERT INTO questions (questionid, topicid, question, level, type, numRight, numWrong) VALUES (43, 21, 'What is the atomic number and what does it represent in terms of protons and electrons?', 7, 'written', 0, 0);
+INSERT INTO questions (questionid, topicid, question, level, type, numRight, numWrong) VALUES (44, 21, 'Balance the chemical equation: $\\text{Na} + \\text{H}_2\\text{O} \\rightarrow \\text{NaOH} + \\text{H}_2$', 8, 'written', 0, 0);
 INSERT INTO questions (questionid, topicid, question, level, type, numRight, numWrong) VALUES (45, 21, 'Explain why noble gases in Group 18 are chemically unreactive.', 4, 'written', 0, 0);
 	`);
 
