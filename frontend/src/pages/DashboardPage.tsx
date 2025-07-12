@@ -8,6 +8,8 @@ import { TopicsCarousel } from '../components/dashboard/TopicsCarousel';
 import { useDisclosure } from '@mantine/hooks';
 import { AddTopicModal } from '../components/dashboard/AddTopicModal';
 import { CreateClassModal } from '../components/dashboard/CreateClassModal';
+import { handleError, handleSuccess } from '../utils/handlers';
+import { get, post } from '../utils/apiClient';
 
 const DashboardPage = () => {
 	const [openedTopicModal, { open: openTopicModal, close: closeTopicModal }] = useDisclosure(false);
@@ -21,6 +23,20 @@ const DashboardPage = () => {
       navigate("/login"); // or whatever your login path is
     }
   }, [user, navigate]);
+
+	useEffect(() => {
+		const getClasses = async () => {
+			const res = await get("/classes", { userId: user?.userid});
+			if (res.error) {
+				handleError(res.error);
+				return;
+			}
+
+			console.log(res);
+		}
+		getClasses();
+
+  }, [navigate, user]);
 
 	const [classIndex, setClassIndex] = useState(0);
 

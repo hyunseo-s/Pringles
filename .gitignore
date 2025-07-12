@@ -175,4 +175,4 @@ Thumbs.db
 dist/**/*
 
 # the database
-database.json
+backend/chinook.db
