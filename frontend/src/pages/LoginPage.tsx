@@ -55,7 +55,7 @@ const LoginPage = () => {
 		<Flex>
 			<Paper className='w-1/2'>
 			</Paper>
-			<Paper className='w-1/2 px-32 py-32'>
+			<Paper className='w-1/2 px-32'>
 				<Text className='text-center' mb="lg" size="xl">
 					Welcome back
 				</Text>

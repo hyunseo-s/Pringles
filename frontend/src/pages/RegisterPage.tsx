@@ -61,7 +61,7 @@ const RegisterPage = () => {
 		<Flex>
 			<Paper className='w-1/2'>
 			</Paper>
-			<Paper className='w-1/2 px-32 py-8'>
+			<Paper className='w-1/2 px-32'>
 				<Text className='text-center' mb="lg" size="xl">
 					Register now
 				</Text>

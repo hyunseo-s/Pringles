@@ -8,12 +8,6 @@ html
   font-weight: 300;
 }
 
-.mantine-Button-label , .mantine-Badge-label {
-	font-family: 'Neue Montreal Mono';
-	font-weight: 500;
-	letter-spacing: 0.05em;
-}
-
 .classButton {
 	font-family: 'Neue Montreal';
 	font-weight: 400;
