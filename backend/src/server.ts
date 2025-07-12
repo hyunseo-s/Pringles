@@ -2,7 +2,6 @@ import express, { json, Request, Response } from 'express';
 import config from './config.json';
 import cors from 'cors';
 import process from 'process';
-// import { login, register } from './funcs/auth';
 import morgan from 'morgan';
 import { initDB } from './initDb';
 import { login, register } from './funcs/auth';
@@ -38,6 +37,10 @@ app.get('/echo', async (req: Request, res: Response) => {
 app.post('/auth/register', async (req: Request, res: Response) => {
   try {
     const args = req.body;
+<<<<<<< HEAD
+=======
+
+>>>>>>> main
     const newToken = await register(args);
     res.status(201).json(newToken);
   } catch (error) {
@@ -265,15 +268,13 @@ app.use((req: Request, res: Response) => {
 });
 
 // start server
-const server = app.listen(PORT, HOST, () => {
-  console.log(`⚡️ Server started on port ${PORT} at ${HOST}`);
-
-  // initDB()
+const server = app.listen(PORT, HOST, async () => {
+	console.log(`⚡️ Server started on port ${PORT} at ${HOST}`);
+	await initDB();
 });
 
 // For coverage, handle Ctrl+C gracefully
 process.on('SIGINT', async () => {
-  await initDB()
   server.close(() => {
     console.log('Shutting down server gracefully.');
     // initDB()
