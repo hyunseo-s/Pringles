@@ -45,7 +45,7 @@ export const TeacherTopicView = ({ topic }: TopicProps) => {
 
 
 		const fetchLevels = async () => {
-			const res = await get(`/topic/1/students/level`, undefined);
+			const res = await get(`/topic/${topic.classId}/students/level`, undefined);
 			
 			if (res.error) {
 				handleError(res.error);
@@ -57,7 +57,7 @@ export const TeacherTopicView = ({ topic }: TopicProps) => {
 			setAvgLevel( Math.floor((t.easy * 2.5 + t.med * 3.5 + t.hard * 5) / (t.easy + t.med + t.hard)) )
 		}
 		
-		// fetchLevels();
+		fetchLevels();
 	}, [topic]);
 
 	return (
