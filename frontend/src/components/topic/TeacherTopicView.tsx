@@ -4,6 +4,7 @@ import type { Topic } from "../../types/Topic"
 import { TeacherStatsGrid } from "./TeacherStatsGrid"
 import { useNavigate } from "react-router"
 import { QuestionList } from "./QuestionList"
+import { Scene } from "../lusion/Lusion"
 
 export interface TopicProps {
 	topic: Topic,
@@ -24,7 +25,7 @@ export const TeacherTopicView = ({ topic }: TopicProps) => {
 				<IconArrowLeft />
 			</ActionIcon>
 			<div className="h-64 w-full bg-black mt-4">
-				Banner
+				<Scene topicId={topic.topic} topicName={topic.topicName} />
 			</div>
 			<p className="text-3xl my-6">
 				{topic.topicName}

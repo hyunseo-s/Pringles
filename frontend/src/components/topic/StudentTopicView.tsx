@@ -5,6 +5,7 @@ import type { TopicProps } from "./TeacherTopicView";
 import StudentStats, { type StudentStatsType } from "./StudentStats.tsx";
 import { useRef } from "react";
 import { post } from "../../utils/apiClient.ts";
+import { Scene } from "../lusion/Lusion.tsx";
 
 const studentSnapshot : StudentStatsType[] = [
 	{ title: 'Best Session Score', icon: 'star', value: '90', diff: 18 },
@@ -45,9 +46,8 @@ export const StudentTopicView = ({ topic }: TopicProps) => {
 				<IconArrowLeft />
 			</ActionIcon>
 			<div className="h-64 w-full bg-black mt-4">
-				Banner
+				<Scene topicId={topic.topic} topicName={topic.topicName} />
 			</div>
-
 			{/* Progress Report */}
 			<Flex align="center" justify='space-between' className="my-18">
 				<Flex direction="column" gap={"3.5rem"}>
