@@ -70,7 +70,7 @@ app.post('/auth/logout', async (req: Request, res: Response) => {
 // //  ============================ CLASSES =============================
 // // ====================================================================
 
-app.get('/classes/', (req: Request, res: Response) => {
+app.get('/classes', (req: Request, res: Response) => {
   const { studentId } = req.params;
   try {
     const classes = getStudentsClasses(studentId);

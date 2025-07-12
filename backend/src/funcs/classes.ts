@@ -1,4 +1,5 @@
 import { getDbConnection } from '../db';
+import { getAllUsers } from './auth';
 
 // Function to get the list of classes given a student Id
 export async function getStudentsClasses(studentId: string) {
@@ -24,14 +25,18 @@ export async function addStudents(classId: string, students: string[]) {
     const db = await getDbConnection();
 
     // Go through all students email first
+    console.log(students)
+
+    const res = await getAllUsers()
+    console.log(res)
+    
     for (const email of students) {
 
         // Get their user info
         const user = await db.get(
-            `SELECT userid FROM users WHERE email = ?`,
-            [email]
+            `SELECT userid FROM users WHERE email = '${email}'`
         );
-
+        console.log(user)
         // if (!user) {
         //     throw new Error(`User with email ${email} not found`);
         // }
