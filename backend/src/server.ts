@@ -6,9 +6,9 @@ import morgan from 'morgan';
 import { initDB } from './initDb';
 import { login, register } from './funcs/auth';
 import { decodeJWT } from './utils';
+import { addQuestion, createTopics, getStudentsLevels, getStudentTopicData, getTeacherTopicData, getTopics } from './funcs/topics';
 import { addStudents, createClass, getClass, getStudentsClasses } from './funcs/classes';
-import { startSession } from './funcs/session';
-// import { addQuestion, createTopics, getStudentTopicData, getTeacherTopicData, getTopics } from './funcs/topics';
+import { endSession, getQuestions, startSession } from './funcs/session';
 
 // Set up web app
 const app = express();
@@ -37,11 +37,13 @@ app.get('/echo', async (req: Request, res: Response) => {
 app.post('/auth/register', async (req: Request, res: Response) => {
   try {
     const args = req.body;
+<<<<<<< HEAD
+=======
 
+>>>>>>> main
     const newToken = await register(args);
     res.status(201).json(newToken);
   } catch (error) {
-		console.log(error)
     res.status(400).json({ error: error.message })
   }
 });
@@ -69,10 +71,11 @@ app.post('/auth/logout', async (req: Request, res: Response) => {
 //  ============================ CLASSES =============================
 // ====================================================================
 
-app.get('/classes', (req: Request, res: Response) => {
-  const { studentId } = req.params;
+app.get('/classes', async (req: Request, res: Response) => {
   try {
-    const classes = getStudentsClasses(studentId);
+    const token = req.header('Authorization').split(" ")[1];
+    const studentId = decodeJWT(token);
+    const classes = await getStudentsClasses(studentId);
     res.status(200).json(classes);
   } catch (error) {
     res.status(404).json({ error: error.message });
@@ -81,11 +84,10 @@ app.get('/classes', (req: Request, res: Response) => {
 
 app.post('/classes/:classId/add', async (req: Request, res: Response) => {
   try {
-    console.log(req.params)
+
     const { classId } = req.params;
     const { students } = req.body;
 
-    console.log(classId)
     const addedStudents = await addStudents(classId, students);
     res.status(200).json(addedStudents);
   } catch (error) {
@@ -98,7 +100,6 @@ app.post('/classes/create', async (req: Request, res: Response) => {
     const { name, students, classImg } = req.body;
     const token = req.header('Authorization').split(" ")[1];
     const teacherId = decodeJWT(token);
-    console.log(teacherId)
     const classId = await createClass(name, students, classImg, teacherId);
     res.status(200).json(classId);
   } catch (error) {
@@ -106,72 +107,15 @@ app.post('/classes/create', async (req: Request, res: Response) => {
   }
 });
 
-app.get('/classes/:classId', (req: Request, res: Response) => {
+app.get('/classes/:classId', async (req: Request, res: Response) => {
   const { classId } = req.params;
   try {
-    const classInfo = getClass(classId);
+    const classInfo = await getClass(classId);
     res.status(200).json(classInfo);
   } catch (error) {
     res.status(404).json({ error: error.message });
   }
 });
-
-
-// ====================================================================
-//  ============================= TOPICS =============================
-// ====================================================================
-
-
-// app.post('/topics/create', async (req: Request, res: Response) => {
-//   try {
-//     const { topics } = req.body;
-//     const topicId = await createTopics(topics);
-//     res.status(200).json(topicId);
-//   } catch (error) {
-//     res.status(400).json({ error: error.message })
-//   }
-// })
-
-// app.get('/topics/:classId', (req: Request, res: Response) => {
-//   const classId = parseInt(req.params.classId);
-//   try {
-//     const classes = getTopics(classId);
-//     res.status(200).json(classes);
-//   } catch (error) {
-//     res.status(404).json({ error: error.message });
-//   }
-// });
-
-// app.post('/topics/:topicId/question', async (req: Request, res: Response) => {
-//   const topicId = parseInt(req.params.topicId);
-//   const { question, level } = req.body;
-//   try {
-//     const questionId = await addQuestion(topicId, level, question);
-//     res.status(200).json(questionId);
-//   } catch (error) {
-//     res.status(400).json({ error: error.message });
-//   }
-// });
-
-// app.get('/topic/:topicId/teacher/data', (req: Request, res: Response) => {
-//   const topicId = parseInt(req.params.topicId);
-//   try {
-//     const topicData = getTeacherTopicData(topicId);
-//     res.status(200).json(topicData);
-//   } catch (error) {
-//     res.status(404).json({ error: error.message });
-//   }
-// });
-
-// app.get('/topic/:topicId/student/data', (req: Request, res: Response) => {
-//   const topicId = parseInt(req.params.topicId);
-//   try {
-//     const topicData = getStudentTopicData(topicId);
-//     res.status(200).json(topicData);
-//   } catch (error) {
-//     res.status(404).json({ error: error.message });
-//   }
-// });
 
 // app.get('/classes/:classId/data', (req: Request, res: Response) => {
 //   const classId = req.params.classId;
@@ -182,6 +126,80 @@ app.get('/classes/:classId', (req: Request, res: Response) => {
 //     res.status(404).json({ error: error.message });
 //   }
 // });
+
+// ====================================================================
+//  ============================= TOPICS =============================
+// ====================================================================
+
+
+app.post('/topics/:classId/create', async (req: Request, res: Response) => {
+  try {
+    const classId = req.params.classId;
+    const { topics } = req.body;
+    const topicId = await createTopics(classId, topics);
+    res.status(200).json(topicId);
+  } catch (error) {
+    res.status(400).json({ error: error.message })
+  }
+})
+
+app.get('/topics/:classId', async (req: Request, res: Response) => {
+  const classId = parseInt(req.params.classId);
+  try {
+    const classes = await getTopics(classId);
+    res.status(200).json(classes);
+  } catch (error) {
+    res.status(404).json({ error: error.message });
+  }
+});
+
+app.post('/topics/:topicId/question', async (req: Request, res: Response) => {
+  const topicId = parseInt(req.params.topicId);
+  const { question, level } = req.body;
+  try {
+    const questionId = await addQuestion(topicId, level, question);
+    res.status(200).json(questionId);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
+app.get('/topic/:topicId/teacher/data', (req: Request, res: Response) => {
+  const topicId = parseInt(req.params.topicId);
+  const token = req.header('Authorization').split(" ")[1];
+  const teacherId = parseInt(decodeJWT(token));
+
+  try {
+    const topicData = getTeacherTopicData(teacherId, topicId);
+    res.status(200).json(topicData);
+  } catch (error) {
+    res.status(404).json({ error: error.message });
+  }
+});
+
+app.get('/topic/:topicId/student/data', (req: Request, res: Response) => {
+  const topicId = parseInt(req.params.topicId);
+  const token = req.header('Authorization').split(" ")[1];
+  const studentId = parseInt(decodeJWT(token));
+  try {
+    const topicData = getStudentTopicData(studentId, topicId);
+    res.status(200).json(topicData);
+  } catch (error) {
+    res.status(404).json({ error: error.message });
+  }
+});
+
+app.get('/topic/:classId/students/level', (req: Request, res: Response) => {
+  const classId = parseInt(req.params.classId);
+  const token = req.header('Authorization').split(" ")[1];
+  const teacherId = parseInt(decodeJWT(token));
+  try {
+    const topicData = getStudentsLevels(teacherId, classId);
+    res.status(200).json(topicData);
+  } catch (error) {
+    res.status(404).json({ error: error.message });
+  }
+});
 
 // ====================================================================
 //  =========================== SESSIONS =============================
@@ -199,15 +217,15 @@ app.post('/session/:classId/:topicId/start', async (req: Request, res: Response)
   }
 });
 
-// app.get('/session/:classId/:topicId/:sessionId/question', (req: Request, res: Response) => {
-//   const { classId, topicId, sessionId } = req.params;
-//   try {
-//     const questions = getQuestions(classId, topicId, sessionId);
-//     res.status(200).json(questions);
-//   } catch (error) {
-//     res.status(404).json({ error: error.message });
-//   }
-// });
+app.get('/session/:classId/:topicId/:sessionId/question', async (req: Request, res: Response) => {
+  const { classId, topicId, sessionId } = req.params;
+  try {
+    const questions = await getQuestions(classId, topicId, sessionId);
+    res.status(200).json(questions);
+  } catch (error) {
+    res.status(404).json({ error: error.message });
+  }
+});
 
 // app.put('/session/:classId/:topicId/:sessionId/:questionId/answer', (req: Request, res: Response) => {
 //   const { classId, topicId, sessionId, questionId } = req.params;
@@ -220,15 +238,15 @@ app.post('/session/:classId/:topicId/start', async (req: Request, res: Response)
 //   }
 // });
 
-// app.post('/session/:classId/:topicId/:sessionId/end', async (req: Request, res: Response) => {
-//   try {
-//     const { classId, topicId, sessionId } = req.body;
-//     const results = await endSession(classId, topicId, sessionId);
-//     res.status(200).json(results);
-//   } catch (error) {
-//     res.status(400).json({ error: error.message })
-//   }
-// })
+app.post('/session/:classId/:topicId/:sessionId/end', async (req: Request, res: Response) => {
+  try {
+    const { classId, topicId, sessionId } = req.body;
+    const results = await endSession(classId, topicId, sessionId);
+    res.status(200).json(results);
+  } catch (error) {
+    res.status(400).json({ error: error.message })
+  }
+})
 
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================
@@ -256,9 +274,10 @@ const server = app.listen(PORT, HOST, async () => {
 });
 
 // For coverage, handle Ctrl+C gracefully
-process.on('SIGINT', () => {
+process.on('SIGINT', async () => {
   server.close(() => {
     console.log('Shutting down server gracefully.');
+    // initDB()
     process.exit();
   });
 });
