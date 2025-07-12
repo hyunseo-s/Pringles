@@ -8,7 +8,7 @@ import { login, register } from './funcs/auth';
 import { decodeJWT } from './utils';
 import { addStudents, createClass, getClass, getClasses } from './funcs/classes';
 import { generateQuestion, getLevel, getQuestion, startSession, answerQuestion } from './funcs/session';
-import { addQuestion, createTopics, getStudentsLevels, getStudentTopicData, getTeacherTopicData, getTopics } from './funcs/topics';
+import { addQuestion, createTopics, getStudentsLevels, getStudentTopicData, getTeacherTopicData, getTopicName, getTopics } from './funcs/topics';
 import { getUser } from './funcs/user';
 
 // Set up web app
@@ -166,6 +166,16 @@ app.get('/topics/:classId', async (req: Request, res: Response) => {
   }
 });
 
+app.get('/topics/:topicId/name', async (req: Request, res: Response) => {
+  const topicId = parseInt(req.params.topicId);
+  try {
+    const topicName = await getTopicName(topicId);
+    res.status(200).json(topicName);
+  } catch (error) {
+    res.status(404).json({ error: error.message });
+  }
+});
+
 app.post('/topics/:topicId/question', async (req: Request, res: Response) => {
   const topicId = parseInt(req.params.topicId);
   const { question, level } = req.body;
@@ -231,7 +241,7 @@ app.post('/session/:classId/:topicId/start', async (req: Request, res: Response)
 
 app.get('/session/:topicId/:sessionId/question', async (req: Request, res: Response) => {
   try {
-    const {topicId, sessionId } = req.params;
+    const {topicId } = req.params;
 
     const token = req.header('Authorization').split(" ")[1];
     const studentId = decodeJWT(token);
