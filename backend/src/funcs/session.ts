@@ -86,5 +86,10 @@ export const answerQuestion = async ({ studentId, topicId, sessionId, questionId
 		[currVal, questionId]
 	);
 
+	await db.run(
+		`INSERT INTO answers (questionid, studentid, answer, correct) VALUES (?, ?, ?, ?)`,
+		[questionId, studentId, answer, mark.correct]
+	);
+
 	return res;
 }
