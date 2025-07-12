@@ -7,7 +7,7 @@ import { initDB } from './initDb';
 import { login, register } from './funcs/auth';
 import { decodeJWT } from './utils';
 import { addStudents, createClass, getClass, getStudentsClasses } from './funcs/classes';
-import { startSession } from './funcs/session';
+import { generateQuestion, getLevel, getQuestion, startSession } from './funcs/session';
 // import { addQuestion, createTopics, getStudentTopicData, getTeacherTopicData, getTopics } from './funcs/topics';
 
 // Set up web app
@@ -198,15 +198,31 @@ app.post('/session/:classId/:topicId/start', async (req: Request, res: Response)
   }
 });
 
-// app.get('/session/:classId/:topicId/:sessionId/question', (req: Request, res: Response) => {
-//   const { classId, topicId, sessionId } = req.params;
-//   try {
-//     const questions = getQuestions(classId, topicId, sessionId);
-//     res.status(200).json(questions);
-//   } catch (error) {
-//     res.status(404).json({ error: error.message });
-//   }
-// });
+app.get('/session/:classId/:topicId/:sessionId/question', async (req: Request, res: Response) => {
+  try {
+    const { classId, topicId, sessionId } = req.params;
+
+    const token = req.header('Authorization').split(" ")[1];
+    const studentId = decodeJWT(token);
+
+    // Given the topicId and studentId, find the level of that student
+    const level = await getLevel(studentId, topicId)
+
+    // get random question that is of the matching topic
+    const question = await getQuestion(level.level, topicId)
+
+    const studentLevel = level.level
+    const questionLevel = question.question.level
+
+    // with the question, generate one of that level (for now multiple choice)
+    const newQeustion = await generateQuestion(studentLevel, questionLevel, topicId, sessionId, question.question);
+    console.log(newQeustion)
+
+    res.status(200).json(newQeustion);
+  } catch (error) {
+    res.status(404).json({ error: error.message });
+  }
+});
 
 // app.put('/session/:classId/:topicId/:sessionId/:questionId/answer', (req: Request, res: Response) => {
 //   const { classId, topicId, sessionId, questionId } = req.params;
