@@ -8,6 +8,7 @@ import { useEffect, useState } from "react"
 import { get } from "../../utils/apiClient"
 import { handleError } from "../../utils/handlers"
 import type { QuestionData } from "../../types/QuestionData"
+import { Scene } from "../lusion/Lusion"
 
 export interface TopicProps {
 	topic: Topic,
@@ -72,7 +73,7 @@ export const TeacherTopicView = ({ topic }: TopicProps) => {
 				<IconArrowLeft />
 			</ActionIcon>
 			<div className="h-64 w-full bg-black mt-4">
-				Banner
+				<Scene topicId={topic.topic} topicName={topic.topicName} />
 			</div>
 			<p className="text-3xl my-6">
 				{topic.topicName}

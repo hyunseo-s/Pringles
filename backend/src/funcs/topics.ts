@@ -34,6 +34,10 @@ export const getTopics = async (classId: number) => {
 
 	return topics.map((topic) => ({ topicName: topic.topicname, topic: topic.topicid }));
 }
+export const getTopic = async (topicId: number) => {
+	const db = await getDbConnection();
+	return await db.get(`SELECT * FROM topics WHERE topicid = '${topicId}'`);
+}
 
 export const getTopicName = async (topicId: number) => {
 	const db = await getDbConnection();
