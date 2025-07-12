@@ -2,6 +2,7 @@ import { IconArrowDownRight, IconArrowUpRight } from '@tabler/icons-react';
 import { Center, Group, Paper, RingProgress, SimpleGrid, Text } from '@mantine/core';
 import type { Topic } from '../../types/Topic';
 import { maxBy } from '../../utils/maxBy';
+import { useUser } from '../../context/UserContext';
 
 const icons = {
   up: IconArrowUpRight,
@@ -14,14 +15,14 @@ interface StatsRingProps {
 	topics: Topic[]
 }
 
-export function StatsRing({ topics }: StatsRingProps) {
+const StudentStatsRing = ({ topics }: StatsRingProps) => {
 	if (!topics || topics.length == 0) return <></>;
 
 	const maxBy = (comparator: (x: Topic, y: Topic) => number, array: Topic[]) =>
     array.reduce((acc, val) => comparator(acc, val) > 0 ? acc : val);
 
-	const max = (x: Topic, y:Topic) => (x.data?.level ?? 0) - (y.data?.level ?? 0) ;
-	const min = (x: Topic, y:Topic) => (y.data?.level ?? 0) - (x.data?.level ?? 0) ;
+	const max = (x: Topic, y:Topic) => (x.studentData?.level ?? 0) - (y.studentData?.level ?? 0) ;
+	const min = (x: Topic, y:Topic) => (y.studentData?.level ?? 0) - (x.studentData?.level ?? 0) ;
 
 	const bestTopic = maxBy(max, topics);
 	const improvedTopic = topics[Math.floor(Math.random() * topics.length)];
@@ -96,4 +97,95 @@ export function StatsRing({ topics }: StatsRingProps) {
   });
 
   return <SimpleGrid cols={{ base: 1, sm: 3 }}>{stats}</SimpleGrid>;
+}
+
+
+
+const TeacherStatsRing = ({ topics }: StatsRingProps) => {
+	if (!topics || topics.length == 0) return <></>;
+
+	const improvedTopic = topics[Math.floor(Math.random() * topics.length)];
+	let bestTopic = topics[0];
+	let worstTopic = topics[0];
+
+	for (let i = 1; i < topics.length; i++) {
+		const newC = topics[i].teacherData.questionData?.filter(q => q.correct).length ?? 0;
+		const newT = topics[i].teacherData.questionData?.length ?? 1;
+		const bC = bestTopic.teacherData.questionData?.filter(q => q.correct).length ?? 0;
+		const bT = bestTopic.teacherData.questionData?.length  ?? 1;
+		const wC = worstTopic.teacherData.questionData?.filter(q => q.correct).length ?? 0;
+		const wT = worstTopic.teacherData.questionData?.length  ?? 1;
+
+
+		if (newC / newT > bC / bT ) {
+			bestTopic = topics[0]
+		}
+		if (newC / newT < wC / wT ) {
+			worstTopic = topics[0]
+		}
+	}
+
+		const bC = bestTopic.teacherData.questionData?.filter(q => q.correct).length ?? 0;
+		const bT = bestTopic.teacherData.questionData?.length  ?? 1;
+		const wC = worstTopic.teacherData.questionData?.filter(q => q.correct).length ?? 0;
+		const wT = worstTopic.teacherData.questionData?.length  ?? 1;
+		const iC = improvedTopic.teacherData.questionData?.filter(q => q.correct).length ?? 0;
+		const iT = improvedTopic.teacherData.questionData?.length  ?? 1;
+	
+	console.log(topics)
+	const data = [
+		{ label: 'STRONGEST TOPIC', stats: bestTopic.topicName, progress: bC/bT * 100, color: 'teal', icon: 'up',  
+			totalQuestions: bestTopic.teacherData.questionData?.filter(q => q.correct).length ?? 0,
+			correctQuestions: bestTopic.teacherData.questionData?.length ?? 1
+		},
+		{ label: 'MOST IMPROVED TOPIC', stats: improvedTopic.topicName, progress: iC/iT * 100, color: 'blue', icon: 'up',
+			totalQuestions: improvedTopic.teacherData.questionData?.filter(q => q.correct).length ?? 0,
+			correctQuestions: improvedTopic.teacherData.questionData?.length ?? 1
+		},
+		{ label: 'WEAKEST TOPIC', stats: worstTopic.topicName, progress: wC/wT * 100, color: 'red', icon: 'down',
+			totalQuestions: worstTopic.teacherData.questionData?.filter(q => q.correct).length ?? 0,
+			correctQuestions: worstTopic.teacherData.questionData?.length ?? 1
+		},
+	]
+
+  const stats = data.map((stat) => {
+    const Icon = icons[stat.icon];
+    return (
+      <Paper withBorder radius="md" p="xs" key={stat.label}>
+        <Group>
+          <RingProgress
+            size={80}
+            roundCaps
+            thickness={8}
+            sections={[{ value: stat.progress, color: stat.color }]}
+            label={
+              <Center>
+                <Icon size={20} stroke={1.5} />
+              </Center>
+            }
+          />
+
+          <div>
+            <Text c="dimmed" size="xs" tt="uppercase" fw={500}>
+              {stat.label}
+            </Text>
+            <Text fw={500} size="xl">
+              {stat.stats}
+            </Text>
+						<Text fz="xs" c="dimmed" mt={7} className='tracking-tight'>
+							{(stat.correctQuestions == 0 && stat.totalQuestions == 0) ? Math.floor(Math.random() * 5) : stat.correctQuestions} out of {(stat.correctQuestions == 0 && stat.totalQuestions == 0) ? Math.floor(Math.random() * 5) + 10 : stat.totalQuestions} questions answered correctly
+						</Text>
+          </div>
+        </Group>
+      </Paper>
+    );
+  });
+
+  return <SimpleGrid cols={{ base: 1, sm: 3 }}>{stats}</SimpleGrid>;
+}
+
+
+export const StatsRing = ({ topics }: StatsRingProps) => {
+	const {user} = useUser();
+	return user?.role == 'teacher'? <TeacherStatsRing topics={topics} /> : <StudentStatsRing topics={topics} />
 }

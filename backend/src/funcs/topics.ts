@@ -96,7 +96,7 @@ export const getTeacherTopicData = async (teacherId: number, topicId: number) =>
 		WHERE q.topicid = ${topicId};
 		`);
 
-	return { responses: answers };
+	return { questionData: answers };
 }
 
 export const getStudentsLevels = async (teacherId: number, classId: number) => {
