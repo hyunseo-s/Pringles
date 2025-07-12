@@ -166,6 +166,17 @@ app.get('/topics/:classId', async (req: Request, res: Response) => {
   }
 });
 
+app.get('/topics/:topicId/name', async (req: Request, res: Response) => {
+  const classId = parseInt(req.params.classId);
+  try {
+    const topics = await getTopics(classId);
+    res.status(200).json(topics);
+  } catch (error) {
+    res.status(404).json({ error: error.message });
+  }
+});
+
+
 app.post('/topics/:topicId/question', async (req: Request, res: Response) => {
   const topicId = parseInt(req.params.topicId);
   const { question, level } = req.body;
