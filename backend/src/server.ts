@@ -7,7 +7,7 @@ import { initDB } from './initDb';
 import { login, register } from './funcs/auth';
 import { decodeJWT } from './utils';
 import { addStudents, createClass, getClass, getClasses } from './funcs/classes';
-import { generateQuestion, getLevel, getQuestions, startSession, answerQuestion, saveMultipleChoice, saveWrittenResponse, multiAnswerQuestion } from './funcs/session';
+import { generateQuestion, getLevel, getQuestions, startSession, answerQuestion, saveMultipleChoice, saveWrittenResponse, multiAnswerQuestion, endSession } from './funcs/session';
 import { addQuestion, createTopics, getStudentsLevels, getStudentTopicData, getTeacherTopicData, getTopicName, getTopics } from './funcs/topics';
 import { getUser } from './funcs/user';
 
@@ -227,7 +227,7 @@ app.get('/topic/:classId/students/level', async (req: Request, res: Response) =>
 //  =========================== SESSIONS =============================
 // ====================================================================
 
-app.post('/session/start', async (req: Request, res: Response) => {
+app.post('/session/:classId/:topicId/start', async (req: Request, res: Response) => {
   try {
     const { classId, topicId } = req.params;
     const token = req.header('Authorization').split(" ")[1];
@@ -239,7 +239,7 @@ app.post('/session/start', async (req: Request, res: Response) => {
   }
 });
 
-app.get('/session/question', async (req: Request, res: Response) => {
+app.get('/session/:topicId/:sessionId/question', async (req: Request, res: Response) => {
   try {
     const { topicId } = req.body;
 

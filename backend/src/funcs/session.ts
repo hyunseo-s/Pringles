@@ -289,8 +289,6 @@ export const answerQuestion = async ({ studentId, topicId, sessionId, questionId
     const resultingString = match[1];
 
 	const mark = JSON.parse(resultingString);
-	if (mark.correct) {
-		increment = "numRight";
 
 	if (mark.correct) {
 		// Student has answered question correctly
@@ -360,8 +358,8 @@ export const endSession = async (topicId: number, sessionId: number) => {
 		numRight: res.numRight,
 		easyCorrect,
 		easyQsTotal: easyQsTotal.length,
-  	medCorrect,
-  	medQsTotal: medQsTotal.length,
+  	    medCorrect,
+  	    medQsTotal: medQsTotal.length,
 		hardCorrect,
 		hardQsTotal: hardQsTotal.length,
 	}
