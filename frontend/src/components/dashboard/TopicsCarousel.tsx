@@ -1,11 +1,7 @@
 import { Carousel } from '@mantine/carousel';
 import { Badge } from '@mantine/core';
-import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
-import { get } from '../../utils/apiClient';
-import { handleError } from '../../utils/handlers';
 import type { Topic } from '../../types/Topic';
-import { useUser } from '../../context/UserContext';
 
 interface LevelBadgeProps {
 	level: number

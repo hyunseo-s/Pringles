@@ -226,7 +226,8 @@ export const initDB = async () => {
 		INSERT INTO topics (topicid, classid, topicname) VALUES (27, 9, 'Periodic Table');
 	`);
 
-	// Insert questions into Year 9 Maths
+	
+	// Insert topic student levels into Year 9 Maths
 	for (let i = 3; i <= 50; i++ ) {
 		await db.exec(`
 			INSERT INTO topic_student (topicid, studentid, level) VALUES (1, ${i}, ${Math.random() * 10});
@@ -234,6 +235,74 @@ export const initDB = async () => {
 			INSERT INTO topic_student (topicid, studentid, level) VALUES (3, ${i}, ${Math.random() * 10});
 		`);
 	}
+
+	// Insert questions
+	await db.exec(`
+		-- Basic Trigonometry (topicid: 1)
+INSERT INTO questions (questionid, topicid, question, level, type, numRight, numWrong) VALUES (1, 1, 'What is $\\sin(30^\\circ)$?', 1, 'written', 0, 0);
+INSERT INTO questions (questionid, topicid, question, level, type, numRight, numWrong) VALUES (2, 1, 'Given a right triangle with opposite side 3 and hypotenuse 5, find $\\sin(\\theta)$.', 3, 'written', 0, 0);
+INSERT INTO questions (questionid, topicid, question, level, type, numRight, numWrong) VALUES (3, 1, 'Convert $45^\\circ$ to radians.', 2, 'written', 0, 0);
+INSERT INTO questions (questionid, topicid, question, level, type, numRight, numWrong) VALUES (4, 1, 'Solve for $\\theta$: $\\tan(\\theta) = 1$, where $0^\\circ \\leq \\theta < 360^\\circ$.', 4, 'written', 0, 0);
+INSERT INTO questions (questionid, topicid, question, level, type, numRight, numWrong) VALUES (5, 1, 'If $\\cos(\\theta) = 0.5$ and $\\theta$ is in the first quadrant, find $\\theta$ in degrees.', 5, 'written', 0, 0);
+
+-- Quadratic Equations (topicid: 2)
+INSERT INTO questions (questionid, topicid, question, level, type, numRight, numWrong) VALUES (6, 2, 'Solve: $x^2 - 5x + 6 = 0$.', 2, 'written', 0, 0);
+INSERT INTO questions (questionid, topicid, question, level, type, numRight, numWrong) VALUES (7, 2, 'Find the discriminant of $x^2 + 4x + 4$.', 3, 'written', 0, 0);
+INSERT INTO questions (questionid, topicid, question, level, type, numRight, numWrong) VALUES (8, 2, 'Sketch the graph of $y = x^2 - 2x - 3$ and label the intercepts.', 6, 'written', 0, 0);
+INSERT INTO questions (questionid, topicid, question, level, type, numRight, numWrong) VALUES (9, 2, 'Find the roots of $2x^2 + 3x - 5 = 0$.', 4, 'written', 0, 0);
+INSERT INTO questions (questionid, topicid, question, level, type, numRight, numWrong) VALUES (10, 2, 'Given the roots of a quadratic are 2 and -3, write the equation in standard form.', 5, 'written', 0, 0);
+
+-- Coordinate Geometry (topicid: 3)
+INSERT INTO questions (questionid, topicid, question, level, type, numRight, numWrong) VALUES (11, 3, 'Find the gradient of the line through $(2, 3)$ and $(5, 7)$.', 2, 'written', 0, 0);
+INSERT INTO questions (questionid, topicid, question, level, type, numRight, numWrong) VALUES (12, 3, 'Find the equation of the line with gradient 2 passing through $(1, 4)$.', 3, 'written', 0, 0);
+INSERT INTO questions (questionid, topicid, question, level, type, numRight, numWrong) VALUES (13, 3, 'Are the lines $y = 2x + 1$ and $y = 2x - 3$ parallel?', 1, 'written', 0, 0);
+INSERT INTO questions (questionid, topicid, question, level, type, numRight, numWrong) VALUES (14, 3, 'Find the midpoint of the segment joining $(4, -1)$ and $(-2, 3)$.', 2, 'written', 0, 0);
+INSERT INTO questions (questionid, topicid, question, level, type, numRight, numWrong) VALUES (15, 3, 'Show that the triangle formed by $(0,0)$, $(4,0)$, and $(2,3)$ is isosceles.', 5, 'written', 0, 0);
+
+-- Circle Geometry (topicid: 4)
+INSERT INTO questions (questionid, topicid, question, level, type, numRight, numWrong) VALUES (16, 4, 'What angle does a diameter subtend at the circumference of a circle?', 1, 'written', 0, 0);
+INSERT INTO questions (questionid, topicid, question, level, type, numRight, numWrong) VALUES (17, 4, 'Find the area of a circle with radius $7\\text{ cm}$.', 2, 'written', 0, 0);
+INSERT INTO questions (questionid, topicid, question, level, type, numRight, numWrong) VALUES (18, 4, 'Prove that opposite angles of a cyclic quadrilateral sum to $180^\\circ$.', 6, 'written', 0, 0);
+INSERT INTO questions (questionid, topicid, question, level, type, numRight, numWrong) VALUES (19, 4, 'Find the arc length of a sector with radius $10\\text{ cm}$ and angle $60^\\circ$.', 4, 'written', 0, 0);
+INSERT INTO questions (questionid, topicid, question, level, type, numRight, numWrong) VALUES (20, 4, 'A tangent is drawn from a point $5\\text{ cm}$ from a circles center. If the radius is $3\\text{ cm}$, find the tangent length.', 7, 'written', 0, 0);
+
+-- Further Trigonometry (topicid: 5)
+INSERT INTO questions (questionid, topicid, question, level, type, numRight, numWrong) VALUES (21, 5, 'Given $\\sin(\\theta) = 0.6$, use $\\sin^2(\\theta) + \\cos^2(\\theta) = 1$ to find $\\cos(\\theta)$.', 3, 'written', 0, 0);
+INSERT INTO questions (questionid, topicid, question, level, type, numRight, numWrong) VALUES (22, 5, 'Solve: $2\\sin(\\theta) = \\sqrt{3}$ for $0^\\circ \\leq \\theta < 360^\\circ$.', 6, 'written', 0, 0);
+INSERT INTO questions (questionid, topicid, question, level, type, numRight, numWrong) VALUES (23, 5, 'Find all $\\theta$ such that $\\cos(2\\theta) = 0.5$ within $0^\\circ \\leq \\theta < 360^\\circ$.', 8, 'written', 0, 0);
+INSERT INTO questions (questionid, topicid, question, level, type, numRight, numWrong) VALUES (24, 5, 'Derive the double angle identity for $\\sin(2\\theta)$.', 7, 'written', 0, 0);
+INSERT INTO questions (questionid, topicid, question, level, type, numRight, numWrong) VALUES (25, 5, 'Prove the identity: $1 + \\tan^2(\\theta) = \\sec^2(\\theta)$.', 5, 'written', 0, 0);
+
+-- Non Linear Geometry (topicid: 6)
+INSERT INTO questions (questionid, topicid, question, level, type, numRight, numWrong) VALUES (26, 6, 'Find the distance between $(3, 4)$ and $(-1, -2)$.', 3, 'written', 0, 0);
+INSERT INTO questions (questionid, topicid, question, level, type, numRight, numWrong) VALUES (27, 6, 'Find the gradient of $y = x^2$ at $x = 2$.', 5, 'written', 0, 0);
+INSERT INTO questions (questionid, topicid, question, level, type, numRight, numWrong) VALUES (28, 6, 'Find the point(s) of intersection between $y = x^2$ and $y = 2x + 3$.', 6, 'written', 0, 0);
+INSERT INTO questions (questionid, topicid, question, level, type, numRight, numWrong) VALUES (29, 6, 'Sketch the graph of $y = \\sqrt{x}$ and state its domain.', 4, 'written', 0, 0);
+INSERT INTO questions (questionid, topicid, question, level, type, numRight, numWrong) VALUES (30, 6, 'Describe the symmetry and asymptotes of the curve $y = \\frac{1}{x}$.', 7, 'written', 0, 0);
+
+-- Ecosystems (topicid: 19)
+INSERT INTO questions (questionid, topicid, question, level, type, numRight, numWrong) VALUES (31, 19, 'Define a food chain and give an example involving at least three organisms.', 2, 'written', 0, 0);
+INSERT INTO questions (questionid, topicid, question, level, type, numRight, numWrong) VALUES (32, 19, 'Explain the role of decomposers in an ecosystem.', 3, 'written', 0, 0);
+INSERT INTO questions (questionid, topicid, question, level, type, numRight, numWrong) VALUES (33, 19, 'Draw and label a basic carbon cycle including photosynthesis and respiration.', 4, 'written', 0, 0);
+INSERT INTO questions (questionid, topicid, question, level, type, numRight, numWrong) VALUES (34, 19, 'What is meant by the term "trophic level"? Give an example.', 2, 'written', 0, 0);
+INSERT INTO questions (questionid, topicid, question, level, type, numRight, numWrong) VALUES (35, 19, 'Explain how energy is transferred and lost between trophic levels using a pyramid of energy.', 5, 'written', 0, 0);
+
+-- Cells (topicid: 20)
+INSERT INTO questions (questionid, topicid, question, level, type, numRight, numWrong) VALUES (36, 20, 'Label the parts of a typical animal cell and describe their functions.', 2, 'written', 0, 0);
+INSERT INTO questions (questionid, topicid, question, level, type, numRight, numWrong) VALUES (37, 20, 'Compare and contrast plant and animal cells using at least three key differences.', 3, 'written', 0, 0);
+INSERT INTO questions (questionid, topicid, question, level, type, numRight, numWrong) VALUES (38, 20, 'Describe the function of mitochondria and relate it to cellular respiration: $\\text{C}_6\\text{H}_{12}\\text{O}_6 + 6\\text{O}_2 \\rightarrow 6\\text{CO}_2 + 6\\text{H}_2\\text{O} + \\text{energy}$.', 4, 'written', 0, 0);
+INSERT INTO questions (questionid, topicid, question, level, type, numRight, numWrong) VALUES (39, 20, 'What is the role of ribosomes in protein synthesis?', 3, 'written', 0, 0);
+INSERT INTO questions (questionid, topicid, question, level, type, numRight, numWrong) VALUES (40, 20, 'Explain why red blood cells lack nuclei and how this helps their function.', 4, 'written', 0, 0);
+
+-- Periodic Table (topicid: 21)
+INSERT INTO questions (questionid, topicid, question, level, type, numRight, numWrong) VALUES (41, 21, 'What do elements in the same group of the periodic table have in common?', 2, 'written', 0, 0);
+INSERT INTO questions (questionid, topicid, question, level, type, numRight, numWrong) VALUES (42, 21, 'Describe the trend in reactivity down Group 1 (alkali metals).', 3, 'written', 0, 0);
+INSERT INTO questions (questionid, topicid, question, level, type, numRight, numWrong) VALUES (43, 21, 'What is the atomic number and what does it represent in terms of protons and electrons?', 2, 'written', 0, 0);
+INSERT INTO questions (questionid, topicid, question, level, type, numRight, numWrong) VALUES (44, 21, 'Balance the chemical equation: $\\text{Na} + \\text{H}_2\\text{O} \\rightarrow \\text{NaOH} + \\text{H}_2$', 5, 'written', 0, 0);
+INSERT INTO questions (questionid, topicid, question, level, type, numRight, numWrong) VALUES (45, 21, 'Explain why noble gases in Group 18 are chemically unreactive.', 4, 'written', 0, 0);
+	`);
+
+	
 
   return db;
 }

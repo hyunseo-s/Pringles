@@ -37,6 +37,7 @@ const DashboardPage = () => {
 					const topicData = await get(`/topic/${res[i].topic}/${user?.role}/data`, undefined);
 					newTopics.push({...res[i], data: topicData})
 				}
+				console.log(newTopics)
 	
 				setTopics(newTopics);
 			}
@@ -73,10 +74,16 @@ const DashboardPage = () => {
 			<div className='mb-4'>
 				<Flex justify='space-between' mb='lg'>
 					<Text size='2rem'>My Classes</Text>
-					<Button variant="light" onClick={openClassModal}>
-						Create
-					</Button>
-					<CreateClassModal opened={openedClassModal} close={closeClassModal} />
+					{
+					user.role == 'teacher' && (
+						<>
+							<Button variant="light" onClick={openClassModal}>
+								Create
+							</Button>
+							<CreateClassModal opened={openedClassModal} close={closeClassModal} />
+						</>
+					)
+				}
 				</Flex>
 				<Flex columnGap={24} rowGap={12} wrap='wrap'>
 					{
@@ -96,10 +103,16 @@ const DashboardPage = () => {
 			</Flex>
 			<Flex justify='space-between' mb='2rem'>
 				<Text size='1.5rem'>Class Topics</Text>
-				<Button variant="light" onClick={openTopicModal}>
-					Add New
-				</Button>
-				<AddTopicModal opened={openedTopicModal} close={closeTopicModal} />
+				{
+					user.role == 'teacher' && (
+						<>
+							<Button variant="light" onClick={openTopicModal}>
+								Add New
+							</Button>
+							<AddTopicModal opened={openedTopicModal} close={closeTopicModal} />
+						</>
+					)
+				}
 			</Flex>
 			{ classes.length != 0 && topics.length != 0  && <TopicsCarousel topics={topics} />}
 			

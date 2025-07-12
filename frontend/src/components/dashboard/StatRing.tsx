@@ -42,8 +42,6 @@ export function StatsRing({ topics }: StatsRingProps) {
 		},
 	]
 
-
-
   const stats = data.map((stat) => {
     const Icon = icons[stat.icon];
     return (
@@ -69,7 +67,7 @@ export function StatsRing({ topics }: StatsRingProps) {
               {stat.stats}
             </Text>
 						<Text fz="xs" c="dimmed" mt={7} className='tracking-tight'>
-							Level {Math.floor(stat.progress)}% • {stat.correctQuestions} out of {stat.totalQuestions} questions answered correctly
+							Level {Math.floor(stat.progress / 10)} • {stat.correctQuestions} out of {stat.totalQuestions} questions answered correctly
 						</Text>
           </div>
         </Group>

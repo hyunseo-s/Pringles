@@ -177,12 +177,12 @@ app.post('/topics/:topicId/question', async (req: Request, res: Response) => {
   }
 });
 
-app.get('/topic/:topicId/teacher/data', (req: Request, res: Response) => {
+app.get('/topic/:topicId/teacher/data', async (req: Request, res: Response) => {
   const topicId = parseInt(req.params.topicId);
   try {
     const token = req.header('Authorization').split(" ")[1];
     const teacherId = parseInt(decodeJWT(token));
-    const topicData = getTeacherTopicData(teacherId, topicId);
+    const topicData = await getTeacherTopicData(teacherId, topicId);
     res.status(200).json(topicData);
   } catch (error) {
     res.status(404).json({ error: error.message });
