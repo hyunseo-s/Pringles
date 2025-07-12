@@ -1,12 +1,30 @@
 import { Carousel } from '@mantine/carousel';
 import { Badge } from '@mantine/core';
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router';
+import { get } from '../../utils/apiClient';
 
 interface LevelBadgeProps {
 	level: number
 }
 
-export const TopicsCarousel = () => {
+interface TopicsCarouselProps {
+	classId: number
+}
+
+export const TopicsCarousel = ({ classId }: TopicsCarouselProps) => {
+
+	useEffect(() => {
+		const getTopics = async () => {
+			const res = await get("/topics", undefined);
+			// if (res.error) {
+			// 	handleError(res.error);
+			// 	return;
+			// }
+			// setClasses(res.classes);
+		}
+		getTopics();
+	}, [])
 	const topics = [
 		{name: 'Linear independence', level: 1, id: 1},
 		{name: 'Change of Basis', level: 4, id: 2},

@@ -76,7 +76,8 @@ const DashboardPage = () => {
 				</Button>
 				<AddTopicModal opened={openedTopicModal} close={closeTopicModal} />
 			</Flex>
-			<TopicsCarousel />
+			{ classes.length != 0  && <TopicsCarousel classId={classes[classIndex].classid} />}
+			
 		</Paper>
   );
 }
