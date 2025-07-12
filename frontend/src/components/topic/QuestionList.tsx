@@ -1,19 +1,15 @@
 import { DragDropContext, Draggable, Droppable } from '@hello-pangea/dnd';
 import cx from 'clsx';
-import { ActionIcon, Anchor, InputLabel, NumberInput, Text } from '@mantine/core';
+import { ActionIcon, Anchor, NumberInput, Text } from '@mantine/core';
 import { useListState } from '@mantine/hooks';
 import classes from './QuestionList.module.css';
 import { useState } from 'react';
 import { IconX } from '@tabler/icons-react';
 
-const data = [
-  { position: 6, difficulty: 10, dateCreated: new Date(), symbol: '1', question: 'What is the powerhouse of the cell?' },
-  { position: 7, difficulty: 8, dateCreated: new Date(), symbol: '2', question: 'What are the key differences between prokaryotic and eukaryotic cells?' },
-  { position: 39, difficulty: 3, dateCreated: new Date(), symbol: '3', question: 'Describe the process of protein synthesis, starting from transcription to translation.' },
-];
-
-export function QuestionList() {
-  const [state, handlers] = useListState(data);
+export function QuestionList({ questions } : { questions: {id: number, answered: number, question: string, difficulty: number}[]}) {
+  const [state, handlers] = useListState(questions.map((q, i) => {
+	return { position: i, difficulty: q.difficulty, dateCreated: new Date(), symbol: i.toString(), question: q.question, answered: q.answered }
+  }));
   const items = state.map((item, index) => (
     <QuestionItem item={item} index={index} state={state} handlers={handlers}/>
   ));
@@ -54,7 +50,7 @@ const QuestionItem = ({ item, index, state, handlers }) => {
 							<Text size='sm'>{item.question}</Text>
 							<div className='flex gap-2'>
 								<Anchor c="dimmed" size="sm" my='auto' className="hover:underline cursor-pointer">
-									Answered {1 + Math.floor(Math.random() * 99)} times*
+									Answered {item.answered} times*
 								</Anchor>
 								<Text c="dimmed" size="sm" my='auto'> • </Text>
 								<div className='my-auto flex'>
