@@ -108,12 +108,12 @@ const DashboardPage = () => {
 			<Flex justify='space-between' mb='2rem'>
 				<Text size='1.5rem'>Class Topics</Text>
 				{
-					user.role == 'teacher' && (
+					user.role == 'teacher' && classes && classes.length > 0 && (
 						<>
 							<Button variant="light" onClick={openTopicModal}>
 								Add New
 							</Button>
-							<AddTopicModal opened={openedTopicModal} close={closeTopicModal} />
+							<AddTopicModal opened={openedTopicModal} close={closeTopicModal} classId={classes[classIndex].classid} />
 						</>
 					)
 				}
