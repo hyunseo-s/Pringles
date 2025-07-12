@@ -8,6 +8,7 @@ import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
 import { UserProvider } from './context/UserContext'
 import { Notifications } from '@mantine/notifications'
+import NavBar from './components/NavBar'
 
 function App() {
 	
@@ -17,6 +18,7 @@ function App() {
 				<UserProvider>
 					<Notifications />
 					<BrowserRouter>
+						<NavBar />
 						<Routes>
 							<Route path="/" element={<HomePage />} />
 							<Route path="/login" element={<LoginPage />} />
