@@ -6,20 +6,23 @@ import { getDbConnection } from '../db';
 const JWT_SECRET = "TOPSECRET";
 
 // Register a new user
-export const register = async ({ nameFirst, nameLast, email, password, role, profileImg } : RegisterObj) => {
+export const register = async ({ email, password, nameFirst, nameLast, profileImg, role } : RegisterObj) => {
 	const db = await getDbConnection();
 
-	const res = await db.run(
-		`INSERT INTO users (nameFirst, nameLast, email, password, role, profileImg)
-		VALUES (?, ?, ?, ?, ?, ?)`,
-		[nameFirst, nameLast, email, password, role, profileImg]
-	);
+	try {
+		const res = await db.run(
+			`INSERT INTO users (email, password, nameFirst, nameLast, profileImg, role) VALUES (?, ?, ?, ?, ?, ?)`,
+			[email, password, nameFirst, nameLast, profileImg, role]
+		);
+		
+		const token = jwt.sign(
+			{ user: res.lastID, email }, JWT_SECRET, { expiresIn: '1h' }
+		);
 
-	const token = jwt.sign(
-		{ user: res.lastID, email }, JWT_SECRET, { expiresIn: '1h' }
-	);
-
-	return { message: 'Registration success', token };
+		return { message: 'Registration success', token };
+	} catch (err) {
+		console.log(err)
+	}
 }
 
 // User login function

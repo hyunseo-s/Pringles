@@ -3,13 +3,12 @@ export interface Database {
 }
 
 export interface RegisterObj {
+	email: string;
+	password: string;
 	nameFirst: string;
 	nameLast: string;
-	email: string;
-	username: string;
-	password: string;
-	role: 'student' | 'teacher';
 	profileImg: string;
+	role: string;
 }
 
 export interface User {

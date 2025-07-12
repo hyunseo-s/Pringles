@@ -7,8 +7,7 @@ import morgan from 'morgan';
 import { initDB } from './initDb';
 import { login, register } from './funcs/auth';
 import { decodeJWT } from './utils';
-import { addStudents, getClass, createClass, getStudentsClasses } from './funcs/classes';
-import { getQuestions, startSession } from './funcs/session';
+// import { addQuestion, createTopics, getStudentTopicData, getTeacherTopicData, getTopics } from './funcs/topics';
 
 // Set up web app
 const app = express();
@@ -79,38 +78,38 @@ app.post('/auth/logout', async (req: Request, res: Response) => {
 //   }
 // });
 
-app.post('/classes/:classid/add', async (req: Request, res: Response) => {
-  try {
-    const { classId } = req.params;
-    const { students } = req.body;
-    const addedStudents = await addStudents(classId, students);
-    res.status(200).json(addedStudents);
-  } catch (error) {
-    res.status(400).json({ error: error.message });
-  }
-});
+// app.post('/classes/:classid/add', async (req: Request, res: Response) => {
+//   try {
+//     const { classId } = req.params;
+//     const { students } = req.body;
+//     const addedStudents = await addStudents(classId, students);
+//     res.status(200).json(addedStudents);
+//   } catch (error) {
+//     res.status(400).json({ error: error.message });
+//   }
+// });
 
-app.post('/classes/create', async (req: Request, res: Response) => {
-  try {
-    const { name, students, classImg } = req.body;
-    const token = req.header('Authorization').split(" ")[1];
-    const teacherId = decodeJWT(token);
-    const classId = await createClass(name, students, classImg, teacherId);
-    res.status(200).json(classId);
-  } catch (error) {
-    res.status(400).json({ error: error.message });
-  }
-});
+// app.post('/classes/create', async (req: Request, res: Response) => {
+//   try {
+//     const { name, students, classImg } = req.body;
+//     const token = req.header('Authorization').split(" ")[1];
+//     const teacherId = decodeJWT(token);
+//     const classId = await createClass(name, students, classImg, teacherId);
+//     res.status(200).json(classId);
+//   } catch (error) {
+//     res.status(400).json({ error: error.message });
+//   }
+// });
 
-app.get('/classes/:classId', (req: Request, res: Response) => {
-  const { classId } = req.params;
-  try {
-    const classInfo = getClass(classId);
-    res.status(200).json(classInfo);
-  } catch (error) {
-    res.status(404).json({ error: error.message });
-  }
-});
+// app.get('/classes/:classId', (req: Request, res: Response) => {
+//   const { classId } = req.params;
+//   try {
+//     const classInfo = getClass(classId);
+//     res.status(200).json(classInfo);
+//   } catch (error) {
+//     res.status(404).json({ error: error.message });
+//   }
+// });
 
 // app.post('/classes/:classid/add', async (req: Request, res: Response) => {
 //   try {
@@ -148,6 +147,7 @@ app.get('/classes/:classId', (req: Request, res: Response) => {
 // //  ============================= TOPICS =============================
 // // ====================================================================
 
+
 // app.post('/topics/create', async (req: Request, res: Response) => {
 //   try {
 //     const { topics } = req.body;
@@ -159,7 +159,7 @@ app.get('/classes/:classId', (req: Request, res: Response) => {
 // })
 
 // app.get('/topics/:classId', (req: Request, res: Response) => {
-//   const { classId } = req.params;
+//   const classId = parseInt(req.params.classId);
 //   try {
 //     const classes = getTopics(classId);
 //     res.status(200).json(classes);
@@ -168,29 +168,39 @@ app.get('/classes/:classId', (req: Request, res: Response) => {
 //   }
 // });
 
-// app.post('/topics/:classId/:topicId/question', async (req: Request, res: Response) => {
-//   const { classId, topicId } = req.params;
-//   const { question } = req.body;
+// app.post('/topics/:topicId/question', async (req: Request, res: Response) => {
+//   const topicId = parseInt(req.params.topicId);
+//   const { question, level } = req.body;
 //   try {
-//     const questionId = await addQuestion(classId, topicId, question);
+//     const questionId = await addQuestion(topicId, level, question);
 //     res.status(200).json(questionId);
 //   } catch (error) {
 //     res.status(400).json({ error: error.message });
 //   }
 // });
 
-// app.get('/topic/:classId/:topicId/data', (req: Request, res: Response) => {
-//   const { classId, topicId } = req.params;
+// app.get('/topic/:topicId/teacher/data', (req: Request, res: Response) => {
+//   const topicId = parseInt(req.params.topicId);
 //   try {
-//     const topicData = getTopicData(classId, topicId);
+//     const topicData = getTeacherTopicData(topicId);
 //     res.status(200).json(topicData);
 //   } catch (error) {
 //     res.status(404).json({ error: error.message });
 //   }
 // });
 
-// app.get('/topic/:classId/data', (req: Request, res: Response) => {
-//   const { classId } = req.params;
+// app.get('/topic/:topicId/student/data', (req: Request, res: Response) => {
+//   const topicId = parseInt(req.params.topicId);
+//   try {
+//     const topicData = getStudentTopicData(topicId);
+//     res.status(200).json(topicData);
+//   } catch (error) {
+//     res.status(404).json({ error: error.message });
+//   }
+// });
+
+// app.get('/classes/:classId/data', (req: Request, res: Response) => {
+//   const classId = req.params.classId;
 //   try {
 //     const topicsData = getTopicsData(classId);
 //     res.status(200).json(topicsData);
@@ -202,18 +212,6 @@ app.get('/classes/:classId', (req: Request, res: Response) => {
 // // ====================================================================
 // //  =========================== SESSIONS =============================
 // // ====================================================================
-app.post('/session/:classId/:topicId/start', async (req: Request, res: Response) => {
-  try {
-    const { classId, topicId } = req.body;
-    const token = req.header('Authorization').split(" ")[1];
-    const studentId = decodeJWT(token);
-
-    const sessionId = await startSession(classId, topicId, studentId);
-    res.status(200).json(sessionId);
-  } catch (error) {
-    res.status(400).json({ error: error.message })
-  }
-});
 
 // app.post('/session/:classId/:topicId/start', async (req: Request, res: Response) => {
 //   try {
@@ -256,37 +254,37 @@ app.post('/session/:classId/:topicId/start', async (req: Request, res: Response)
 //   }
 // })
 
-// // ====================================================================
-// //  ================= WORK IS DONE ABOVE THIS LINE ===================
-// // ====================================================================
+// ====================================================================
+//  ================= WORK IS DONE ABOVE THIS LINE ===================
+// ====================================================================
 
-// app.use((req: Request, res: Response) => {
-//   const error = `
-//     Route not found - This could be because:
-//       0. You have defined routes below (not above) this middleware in server.ts
-//       1. You have not implemented the route ${req.method} ${req.path}
-//       2. There is a typo in either your test or server, e.g. /posts/list in one
-//          and, incorrectly, /post/list in the other
-//       3. You are using ts-node (instead of ts-node-dev) to start your server and
-//          have forgotten to manually restart to load the new changes
-//       4. You've forgotten a leading slash (/), e.g. you have posts/list instead
-//          of /posts/list in your server.ts or test file
-//   `;
-//   res.status(404).json({ error });
-// });
+app.use((req: Request, res: Response) => {
+  const error = `
+    Route not found - This could be because:
+      0. You have defined routes below (not above) this middleware in server.ts
+      1. You have not implemented the route ${req.method} ${req.path}
+      2. There is a typo in either your test or server, e.g. /posts/list in one
+         and, incorrectly, /post/list in the other
+      3. You are using ts-node (instead of ts-node-dev) to start your server and
+         have forgotten to manually restart to load the new changes
+      4. You've forgotten a leading slash (/), e.g. you have posts/list instead
+         of /posts/list in your server.ts or test file
+  `;
+  res.status(404).json({ error });
+});
 
-// // start server
-// const server = app.listen(PORT, HOST, () => {
-//   console.log(`⚡️ Server started on port ${PORT} at ${HOST}`);
+// start server
+const server = app.listen(PORT, HOST, () => {
+  console.log(`⚡️ Server started on port ${PORT} at ${HOST}`);
 
-// 	initDB()
-// });
+	initDB()
+});
 
-// // For coverage, handle Ctrl+C gracefully
-// process.on('SIGINT', () => {
-//   server.close(() => {
-//     console.log('Shutting down server gracefully.');
-//     process.exit();
-//   });
-// });
+// For coverage, handle Ctrl+C gracefully
+process.on('SIGINT', () => {
+  server.close(() => {
+    console.log('Shutting down server gracefully.');
+    process.exit();
+  });
+});
 
