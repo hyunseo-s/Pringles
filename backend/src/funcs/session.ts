@@ -22,10 +22,9 @@ export async function getLevel(studentId: string, topicId: string) {
     const db = await getDbConnection();
 
     const res = await db.get(
-        `SELECT level FROM topic_student WHERE topicid = '${topicId}' AND studentid = '${studentId}'`
+        `SELECT level FROM topic_student WHERE topicid = ${topicId} AND studentid = ${studentId}`
     );
 
-    console.log(res)
     return { level: res.level };
 }
 
@@ -65,13 +64,20 @@ export async function generateQuestion(
     hardQuestion: string, 
     easyQuestionLevel: string, 
     medQuestionLevel: string, 
-    hardQuestionLevel: string){
+    hardQuestionLevel: string,
+    topicName: string){
 
     const state = Math.random() >= 0.5;
     const selectedMode = state ? "written-response" : "multiple-choice";
 
     const formatMultipleChoice = `
-    Format the response as JSON:
+        Generate a single multiple-choice question on the topic: "${topicName}". 
+        This is a level ${easyQuestionLevel} difficulty question that you can base it off to generate (easy question): "${easyQuestion}".
+        This is a level ${medQuestionLevel} difficulty question that you can base it off to generate (medium question): "${medQuestion}".
+        This is a level ${hardQuestionLevel} difficulty question that you can base it off to generate (hard question): "${hardQuestion}".
+        The generated question should have the difficulty level ${studentLevel} out of 10 with 10 being the most difficult.
+        
+        Format the response as JSON:
         {
             "question": "A circle with...",
             "options": [
@@ -81,19 +87,19 @@ export async function generateQuestion(
                     "rationale": "The distance..."
                 },
                 {
-                    "text": "3",
-                    "is_correct": false,
-                    "rationale": "While..."
+                "text": "3",
+                "is_correct": false,
+                "rationale": "While..."
                 },
                 {
-                    "text": "100",
-                    "is_correct": false,
-                    "rationale": "This point..."
+                "text": "100",
+                "is_correct": false,
+                "rationale": "This point..."
                 },
                 {
-                    "text": "1",
-                    "is_correct": false,
-                    "rationale": "This point..."
+                "text": "1",
+                "is_correct": false,
+                "rationale": "This point..."
                 }
             ]
         }
@@ -203,10 +209,32 @@ export async function saveWrittenResponse(question: string, topicId: string, stu
 
 export const multiAnswerQuestion = async ({ studentId, topicId, sessionId, questionId, answer, correct }: multiAnswerQueObj) => {
 	const db = await getDbConnection();
-	await db.run(
-		`INSERT INTO answers (questionid, sessionid, studentid, answer, correct) VALUES (?, ?, ?, ?, ?)`,
-		[questionId, sessionId, studentId, answer, correct]
-	);
+
+	const question = await db.get(`SELECT question FROM questions WHERE questionid = '${questionId}'`);
+
+
+	/** Example Prompt:
+	 * 
+	 * Given the question: "What are elements made of?", determine if the answer: "Elements are made up of tiny electrons, neutrons and protons and can be combined to form compounds. All elements can react with any other element" is correct without calculation errors and provide a maximum
+		150 word rationale as to why the answer is correct or incorrect and return the output
+		as JSON in the format:
+		{
+			"correct": boolean
+			"rationale": string
+		}
+	 */
+
+	const prompt = `
+		Given the question: "${question}", determine if the answer: "${answer}" is correct without calculation errors and provide a maximum
+		150 word rationale as to why the answer is correct or incorrect and return the output
+		as JSON in the format:
+		{
+			"correct": boolean
+			"rationale": string
+		}
+	
+	`
+	const res = await askGemini(prompt);
 
 	let increment;
 	let level = await db.get(`SELECT level FROM topic_student WHERE studentid = '${studentId}' and topicid = '${topicId}'`);

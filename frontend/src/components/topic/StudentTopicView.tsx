@@ -20,15 +20,12 @@ const studentLevels : StudentStatsType[] = [
 
 const previousQs = [{ type: "written answer", level: 1, question: "Explain the process of photosynthesis in plants."}, { type: "multiple", level: 2, question: "Which planet is known as the 'Red Planet'?"}];
 
-export const StudentTopicView = ({ topic, classId }: TopicProps) => {
+export const StudentTopicView = ({ topic }: TopicProps) => {
 	const navigate = useNavigate();
 	const targetRef = useRef<HTMLDivElement>(null);
 
-	console.log(topic);
-
 	const handleStart = async () => {
-		const classId = 7;
-		const res = await post(`/session/start`, { classId, topicId: topic.topic});
+		const res = await post(`/session/start`, { classId: topic.classId, topicId: topic.topic});
 		if (res.error) return;
 		navigate(`/quiz/${topic.topic}/${res.sessionId}`)
 	}

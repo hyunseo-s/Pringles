@@ -7,8 +7,8 @@ import { initDB } from './initDb';
 import { login, register } from './funcs/auth';
 import { decodeJWT } from './utils';
 import { addStudents, createClass, getClass, getClasses } from './funcs/classes';
-import { generateQuestion, getLevel, getQuestions, startSession, answerQuestion, saveMultipleChoice, saveWrittenResponse, multiAnswerQuestion, endSession } from './funcs/session';
-import { addQuestion, createTopics, getStudentsLevels, getStudentTopicData, getTeacherTopicData, getTopicName, getTopics } from './funcs/topics';
+import { getQuestions, saveMultipleChoice, saveWrittenResponse, multiAnswerQuestion, endSession, generateQuestion, getLevel, startSession, answerQuestion  } from './funcs/session';
+import { addQuestion, createTopics, getStudentsLevels, getStudentTopicData, getTeacherTopicData, getTopics, getTopicName } from './funcs/topics';
 import { getUser } from './funcs/user';
 
 // Set up web app
@@ -166,11 +166,11 @@ app.get('/topics/:classId', async (req: Request, res: Response) => {
   }
 });
 
-app.get('/topics/:topicId/name', async (req: Request, res: Response) => {
+app.get('/topic/:topicId', async (req: Request, res: Response) => {
   const topicId = parseInt(req.params.topicId);
   try {
-    const topicName = await getTopicName(topicId);
-    res.status(200).json(topicName);
+    const topic = await getTopic(topicId);
+    res.status(200).json(topic);
   } catch (error) {
     res.status(404).json({ error: error.message });
   }
@@ -241,7 +241,7 @@ app.post('/session/:classId/:topicId/start', async (req: Request, res: Response)
 
 app.get('/session/:topicId/:sessionId/question', async (req: Request, res: Response) => {
   try {
-    const { topicId } = req.body;
+    const { topicId } = req.params;
 
     const token = req.header('Authorization').split(" ")[1];
     const studentId = decodeJWT(token);
@@ -262,6 +262,7 @@ app.get('/session/:topicId/:sessionId/question', async (req: Request, res: Respo
     const medQuestionLevel = medQuestion.level
     const hardQuestionLevel = hardQuestion.level
 
+    const topicName = await getTopicName(parseInt(topicId));
     // with the question, generate one of that level (for now multiple choice)
     const newQuestion = await generateQuestion(
       studentLevel, 
@@ -271,7 +272,8 @@ app.get('/session/:topicId/:sessionId/question', async (req: Request, res: Respo
       hardQuestion, 
       easyQuestionLevel, 
       medQuestionLevel,
-      hardQuestionLevel
+      hardQuestionLevel,
+      topicName
     );
 
     if (newQuestion.mode == "multiple-choice") {
@@ -289,7 +291,7 @@ app.get('/session/:topicId/:sessionId/question', async (req: Request, res: Respo
     res.status(200).json(newQuestion.question);
 
   } catch (error) {
-    res.status(404).json({ error: error.message });
+    res.status(400).json({ error: error.message });
   }
 });
 
@@ -316,7 +318,7 @@ app.put('/session/:topicId/:sessionId/:questionId/multi/answer', async (req: Req
   }
 });
 
-app.put('/session/:topicId/:sessionId/:questionId/answer', async (req: Request, res: Response) => {
+app.put('/session/answer', async (req: Request, res: Response) => {
   const { topicId, sessionId, questionId } = req.params;
   const { answer } = req.body;
   const token = req.header('Authorization').split(" ")[1];
