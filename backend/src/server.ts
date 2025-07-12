@@ -229,7 +229,7 @@ app.get('/topic/:classId/students/level', async (req: Request, res: Response) =>
 
 app.post('/session/:classId/:topicId/start', async (req: Request, res: Response) => {
   try {
-    const { classId, topicId } = req.body;
+    const { classId, topicId } = req.params;
     const token = req.header('Authorization').split(" ")[1];
     const studentId = decodeJWT(token);
     const sessionId = await startSession(classId, topicId, studentId);
@@ -275,19 +275,11 @@ app.get('/session/:topicId/:sessionId/question', async (req: Request, res: Respo
     );
 
     if (newQuestion.mode == "multiple-choice") {
-
-      const match = newQuestion.question.match(/```json\s*([\s\S]*?)\s*```/);
-      const jsonString = match[1];
-      // const output = JSON.parse(jsonString);
-
-      console.log("This is multiple choice")
-      console.log(jsonString)
-      const res = await saveMultipleChoice(jsonString, topicId, studentLevel)
+      
+      const res = await saveMultipleChoice(newQuestion.question, topicId, studentLevel)
       console.log(res)
 
     } else if (newQuestion.mode == "written-response") {
-      console.log("This is written response")
-      console.log(newQuestion.question)
 
       const res = await saveWrittenResponse(newQuestion.question, topicId, studentLevel)
       console.log(res)
@@ -317,7 +309,7 @@ app.put('/session/:topicId/:sessionId/:questionId/answer', async (req: Request, 
 
   try {
     const result = await answerQuestion(resObj);
-    res.status(200).send(result);
+    res.status(200).json(result);
   } catch (error) {
     res.status(400).json({ error: error.message });
   }

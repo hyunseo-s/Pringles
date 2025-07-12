@@ -129,12 +129,17 @@ export async function saveMultipleChoice(jsonString: string, topicId: string, st
 
     const db = await getDbConnection();
 
+    const match = jsonString.match(/```json\s*([\s\S]*?)\s*```/);
+    const resultingString = match[1];
+
     let parsed;
     try {
-        parsed = JSON.parse(jsonString);
+        parsed = JSON.parse(resultingString);
     } catch (err) {
         throw new Error("Invalid JSON string");
     }
+
+    console.log(parsed)
 
     const { question, options } = parsed;
 
@@ -156,7 +161,7 @@ export async function saveMultipleChoice(jsonString: string, topicId: string, st
         INSERT INTO question_answerq (questionid, answer, correct)
         VALUES (?, ?, ?)
         `,
-        [questionId, option.text, option.is_correct ? 1 : 0]
+        [questionId, option.text, option.is_correct]
         );
     }
 
@@ -202,7 +207,7 @@ export const answerQuestion = async ({ studentId, topicId, sessionId, questionId
 	console.log(topicId, sessionId, questionId, answer)
 
 	const question = await db.get(`SELECT question FROM questions WHERE questionid = '${questionId}'`);
-
+    console.log(question)
 
 	/** Example Prompt:
 	 * 
@@ -216,7 +221,7 @@ export const answerQuestion = async ({ studentId, topicId, sessionId, questionId
 	 */
 
 	const prompt = `
-		Given the question: "${question}", determine if the answer: "${answer}" is correct without calculation errors and provide a maximum
+		Given the question: "${question.question}", determine if the answer: "${answer}" is correct without calculation errors and provide a maximum
 		150 word rationale as to why the answer is correct or incorrect and return the output
 		as JSON in the format:
 		{
@@ -229,7 +234,11 @@ export const answerQuestion = async ({ studentId, topicId, sessionId, questionId
 	console.log(res);
 
 	let increment;
-	const mark = JSON.parse(res);
+
+    const match = res.match(/```json\s*([\s\S]*?)\s*```/);
+    const resultingString = match[1];
+
+	const mark = JSON.parse(resultingString);
 	if (mark.correct) {
 		increment = "numRight";
 
@@ -243,7 +252,8 @@ export const answerQuestion = async ({ studentId, topicId, sessionId, questionId
 	
 	// Increment numWrong or numRight in session
 	const currValStr = await db.get(`SELECT ${increment} FROM questions WHERE topicid = '${topicId}'`);
-	let currVal = parseInt(currValStr)
+    console.log(currValStr)
+	let currVal = parseInt(currValStr.numWrong)
 
 	await db.run(
 		`UPDATE sessions SET ${increment} = ? WHERE sessionid = ?`,
@@ -256,11 +266,11 @@ export const answerQuestion = async ({ studentId, topicId, sessionId, questionId
 	);
 
 	await db.run(
-		`INSERT INTO answers (questionid, studentid, sessonid, answer, correct) VALUES (?, ?, ?, ?, ?)`,
+		`INSERT INTO answers (questionid, studentid, sessionid, answer, correct) VALUES (?, ?, ?, ?, ?)`,
 		[questionId, studentId, sessionId, answer, mark.correct]
 	);
 
-	return res;
+	return resultingString;
 }
 
 // export const endSession = async (topicId, sessionId) => {
