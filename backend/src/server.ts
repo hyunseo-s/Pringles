@@ -263,10 +263,10 @@ app.put('/session/:topicId/:sessionId/:questionId/answer', async (req: Request, 
   }
 });
 
-// app.post('/session/:classId/:topicId/:sessionId/end', async (req: Request, res: Response) => {
+// app.post('/session/:topicId/:sessionId/end', async (req: Request, res: Response) => {
 //   try {
-//     const { classId, topicId, sessionId } = req.body;
-//     const results = await endSession(classId, topicId, sessionId);
+//     const { topicId, sessionId } = req.params;
+//     const results = await endSession(parseInt(topicId), parseInt(sessionId));
 //     res.status(200).json(results);
 //   } catch (error) {
 //     res.status(400).json({ error: error.message })

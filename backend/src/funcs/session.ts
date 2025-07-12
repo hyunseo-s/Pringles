@@ -87,9 +87,16 @@ export const answerQuestion = async ({ studentId, topicId, sessionId, questionId
 	);
 
 	await db.run(
-		`INSERT INTO answers (questionid, studentid, answer, correct) VALUES (?, ?, ?, ?)`,
-		[questionId, studentId, answer, mark.correct]
+		`INSERT INTO answers (questionid, studentid, sessonid, answer, correct) VALUES (?, ?, ?, ?, ?)`,
+		[questionId, studentId, sessionId, answer, mark.correct]
 	);
 
 	return res;
 }
+
+// export const endSession = async (topicId, sessionId) => {
+// 	const db = await getDbConnection();
+// 	const { numWrong, numRight } = await db.all(`
+// 		SELECT numWrong, numRight FROM sessions WHERE sessionid = '${sessionId}'`
+// 	);	
+// }
