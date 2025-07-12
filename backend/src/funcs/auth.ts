@@ -6,13 +6,17 @@ import { getDbConnection } from '../db';
 const JWT_SECRET = "TOPSECRET";
 
 // Register a new user
-export const register = async ({ email, password, nameFirst, nameLast, profileImg, role } : RegisterObj) => {
+export const register = async ({ email, password, nameFirst, nameLast, role } : RegisterObj) => {
 	const db = await getDbConnection();
+
+	const users = await db.all(`SELECT * FROM users WHERE email = '${email}' and role = '${role}'`);
+
+	if (users.length > 0) throw new Error("Email already taken");
 
 	try {
 		const res = await db.run(
-			`INSERT INTO users (email, password, nameFirst, nameLast, profileImg, role) VALUES (?, ?, ?, ?, ?, ?)`,
-			[email, password, nameFirst, nameLast, profileImg, role]
+			`INSERT INTO users (email, password, nameFirst, nameLast, role) VALUES (?, ?, ?, ?, ?)`,
+			[email, password, nameFirst, nameLast, role]
 		);
 		
 		const token = jwt.sign(
@@ -32,7 +36,7 @@ export const login = async (email: string, password: string) => {
 	const users = await db.all(`SELECT * FROM users WHERE email = '${email}' AND password = '${password}'`);
 
 	if (users.length == 0) {
-			throw new Error("Invalid credentials");
+		throw new Error("Invalid credentials");
 	}
 
 	const token = jwt.sign({ user: users[0].id, email: users[0].email }, JWT_SECRET, { expiresIn: "1h" });
