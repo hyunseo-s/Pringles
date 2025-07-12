@@ -8,7 +8,7 @@ import { login, register } from './funcs/auth';
 import { decodeJWT } from './utils';
 import { addStudents, createClass, getClass, getClasses } from './funcs/classes';
 import { getQuestions, saveMultipleChoice, saveWrittenResponse, multiAnswerQuestion, endSession, generateQuestion, getLevel, startSession, answerQuestion  } from './funcs/session';
-import { addQuestion, createTopics, getStudentsLevels, getStudentTopicData, getTeacherTopicData, getTopics, getTopicName } from './funcs/topics';
+import { addQuestion, createTopics, getStudentsLevels, getStudentTopicData, getTeacherTopicData, getTopics, getTopicName, getTopic } from './funcs/topics';
 import { getUser } from './funcs/user';
 
 // Set up web app
@@ -176,6 +176,16 @@ app.get('/topic/:topicId', async (req: Request, res: Response) => {
   }
 });
 
+app.get('/topic/:topicId/name', async (req: Request, res: Response) => {
+  const topicId = parseInt(req.params.topicId);
+  try {
+    const topic = await getTopicName(topicId);
+    res.status(200).json(topic);
+  } catch (error) {
+    res.status(404).json({ error: error.message });
+  }
+});
+
 app.post('/topics/:topicId/question', async (req: Request, res: Response) => {
   const topicId = parseInt(req.params.topicId);
   const { question, level } = req.body;
@@ -318,7 +328,7 @@ app.put('/session/:topicId/:sessionId/:questionId/multi/answer', async (req: Req
   }
 });
 
-app.put('/session/answer', async (req: Request, res: Response) => {
+app.put('/session/:topicId/:sessionId/:questionId/answer', async (req: Request, res: Response) => {
   const { topicId, sessionId, questionId } = req.params;
   const { answer } = req.body;
   const token = req.header('Authorization').split(" ")[1];

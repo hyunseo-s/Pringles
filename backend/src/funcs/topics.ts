@@ -32,7 +32,11 @@ export const getTopics = async (classId: number) => {
 	const db = await getDbConnection();
 	const topics = await db.all(`SELECT * FROM topics WHERE classid = '${classId}'`);
 
-	return topics.map((topic) => ({ topicName: topic.topicname, topic: topic.topicid, classId }));
+	return topics.map((topic) => ({ topicName: topic.topicname, topic: topic.topicid }));
+}
+export const getTopic = async (topicId: number) => {
+	const db = await getDbConnection();
+	return await db.get(`SELECT * FROM topics WHERE topicid = '${topicId}'`);
 }
 
 export const getTopicName = async (topicId: number) => {
@@ -82,7 +86,7 @@ export const getStudentTopicData = async (studentId: number, topicId: number) =>
 		medQsTotal: medQsTotal.length,
 		hardCorrect,
 		hardQsTotal: hardQsTotal.length,
-		level: level.level,
+		...level,
 	};
 }
 
@@ -99,7 +103,7 @@ export const getTeacherTopicData = async (teacherId: number, topicId: number) =>
 		FROM answers a
 		JOIN questions q ON q.questionid = a.questionid
 		WHERE q.topicid = ${topicId};
-	`);
+		`);
 
 	return { questionData: answers };
 }
