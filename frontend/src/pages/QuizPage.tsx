@@ -6,10 +6,11 @@ import { Button, Flex, Modal, Text } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import ShortAnswer from '../components/quiz/ShortAnswer';
 import Explanation from '../components/quiz/Explanation';
+import Question from '../components/quiz/Question';
 
 const questions: Prompt[] = [
   {
-    question: "What is 2 + 2?",
+    question: `Let \\( x = 5 \\). Then \\( x^2 = 25 \\).`,
     type: "multiple",
     answer: [{
       answerOption: "1",
@@ -113,7 +114,7 @@ const QuizPage = () => {
 		<Flex mih="100vh" maw="100vw" direction={"column"} justify="center" align="center" gap={20}>
 
       {/* Question */}
-		  <div>{prompt?.question}</div>
+		  <div><Question question={prompt?.question}/></div>
 
       {/* User Answer Input */}
       {prompt?.type === "multiple" 
