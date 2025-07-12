@@ -7,7 +7,7 @@ import { initDB } from './initDb';
 import { login, register } from './funcs/auth';
 import { decodeJWT } from './utils';
 import { addStudents, createClass, getClass, getClasses } from './funcs/classes';
-import { startSession } from './funcs/session';
+import { answerQuestion, startSession } from './funcs/session';
 import { addQuestion, createTopics, getStudentsLevels, getStudentTopicData, getTeacherTopicData, getTopics } from './funcs/topics';
 import { getUser } from './funcs/user';
 
@@ -132,7 +132,7 @@ app.get('/classes/:classId', (req: Request, res: Response) => {
 });
 
 // app.get('/classes/:classId/data', (req: Request, res: Response) => {
-//   const classId = req.params.classId;
+//   const classId = parseInt(req.params.classId);
 //   try {
 //     const classData = getClassData(classId);
 //     res.status(200).json(classData);
@@ -179,7 +179,7 @@ app.post('/topics/:topicId/question', async (req: Request, res: Response) => {
   }
 });
 
-app.get('/topic/:topicId/teacher/data', (req: Request, res: Response) => {
+app.get('/topic/:topicId/teacher/data', async (req: Request, res: Response) => {
   const topicId = parseInt(req.params.topicId);
   try {
     const token = req.header('Authorization').split(" ")[1];
@@ -191,7 +191,7 @@ app.get('/topic/:topicId/teacher/data', (req: Request, res: Response) => {
   }
 });
 
-app.get('/topic/:topicId/student/data', (req: Request, res: Response) => {
+app.get('/topic/:topicId/student/data', async (req: Request, res: Response) => {
   const topicId = parseInt(req.params.topicId);
   try {
     const token = req.header('Authorization').split(" ")[1];
@@ -203,7 +203,7 @@ app.get('/topic/:topicId/student/data', (req: Request, res: Response) => {
   }
 });
 
-app.get('/topic/:classId/students/level', (req: Request, res: Response) => {
+app.get('/topic/:classId/students/level', async (req: Request, res: Response) => {
   const classId = parseInt(req.params.classId);
   try {
     const token = req.header('Authorization').split(" ")[1];
@@ -231,7 +231,7 @@ app.post('/session/:classId/:topicId/start', async (req: Request, res: Response)
   }
 });
 
-// app.get('/session/:classId/:topicId/:sessionId/question', (req: Request, res: Response) => {
+// app.get('/session/:classId/:topicId/:sessionId/question', async (req: Request, res: Response) => {
 //   const { classId, topicId, sessionId } = req.params;
 //   try {
 //     const questions = getQuestions(classId, topicId, sessionId);
@@ -241,16 +241,27 @@ app.post('/session/:classId/:topicId/start', async (req: Request, res: Response)
 //   }
 // });
 
-// app.put('/session/:classId/:topicId/:sessionId/:questionId/answer', (req: Request, res: Response) => {
-//   const { classId, topicId, sessionId, questionId } = req.params;
-//   const { Answer } = req.body;
-//   try {
-//     const result = answerQuestion(classId, topicId, sessionId, questionId, Answer);
-//     res.status(200).json(result);
-//   } catch (error) {
-//     res.status(400).json({ error: error.message });
-//   }
-// });
+app.put('/session/:topicId/:sessionId/:questionId/answer', async (req: Request, res: Response) => {
+  const { topicId, sessionId, questionId } = req.params;
+  const { answer } = req.body;
+  const token = req.header('Authorization').split(" ")[1];
+  const studentId = parseInt(decodeJWT(token));
+
+  const resObj = {
+    studentId,
+    topicId: parseInt(topicId), 
+    sessionId: parseInt(sessionId), 
+    questionId: parseInt(questionId), 
+    answer
+  }
+
+  try {
+    const result = await answerQuestion(resObj);
+    res.status(200).send(result);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
 
 // app.post('/session/:classId/:topicId/:sessionId/end', async (req: Request, res: Response) => {
 //   try {

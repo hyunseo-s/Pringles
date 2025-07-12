@@ -10,6 +10,14 @@ export interface RegisterObj {
 	role: string;
 }
 
+export interface answerQueObj {
+	studentId: number;
+	topicId: number;
+	sessionId: number;
+	questionId: number;
+	answer: string;
+}
+
 export interface User {
 	id: string;
 	email: string;
