@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import config from  "./config.json";
+// import config from  "./config.json";
 // import { getData } from "./funcs/dataStore";
 
 const SECRET = "TOPSECRET";
