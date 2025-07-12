@@ -68,9 +68,7 @@ const DashboardPage = () => {
 		}
 		getClasses();
 
-  }, []);
-
-	
+  }, [openedClassModal]);
 
   if (!user) return null; // optional: show a loading spinner here
   return (
