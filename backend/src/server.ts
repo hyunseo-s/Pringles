@@ -7,7 +7,7 @@ import { initDB } from './initDb';
 import { login, register } from './funcs/auth';
 import { decodeJWT } from './utils';
 import { addStudents, createClass, getClass, getClasses } from './funcs/classes';
-import { generateQuestion, getLevel, getQuestions, startSession, answerQuestion, saveMultipleChoice, saveWrittenResponse } from './funcs/session';
+import { generateQuestion, getLevel, getQuestions, startSession, answerQuestion, saveMultipleChoice, saveWrittenResponse, multiAnswerQuestion } from './funcs/session';
 import { addQuestion, createTopics, getStudentsLevels, getStudentTopicData, getTeacherTopicData, getTopicName, getTopics } from './funcs/topics';
 import { getUser } from './funcs/user';
 
@@ -293,6 +293,29 @@ app.get('/session/question', async (req: Request, res: Response) => {
   }
 });
 
+app.put('/session/:topicId/:sessionId/:questionId/multi/answer', async (req: Request, res: Response) => {
+  const { topicId, sessionId, questionId } = req.params;
+  const { answer, correct } = req.body;
+  const token = req.header('Authorization').split(" ")[1];
+  const studentId = parseInt(decodeJWT(token));
+
+  const resObj = {
+    studentId,
+    topicId: parseInt(topicId),
+    sessionId: parseInt(sessionId), 
+    questionId: parseInt(questionId), 
+    answer,
+    correct
+  }
+
+  try {
+    const result = await multiAnswerQuestion(resObj);
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
 app.put('/session/:topicId/:sessionId/:questionId/answer', async (req: Request, res: Response) => {
   const { topicId, sessionId, questionId } = req.params;
   const { answer } = req.body;
@@ -315,15 +338,15 @@ app.put('/session/:topicId/:sessionId/:questionId/answer', async (req: Request, 
   }
 });
 
-// app.post('/session/:topicId/:sessionId/end', async (req: Request, res: Response) => {
-//   try {
-//     const { topicId, sessionId } = req.params;
-//     const results = await endSession(parseInt(topicId), parseInt(sessionId));
-//     res.status(200).json(results);
-//   } catch (error) {
-//     res.status(400).json({ error: error.message })
-//   }
-// })
+app.post('/session/:topicId/:sessionId/end', async (req: Request, res: Response) => {
+  try {
+    const { topicId, sessionId } = req.params;
+    const results = await endSession(parseInt(topicId), parseInt(sessionId));
+    res.status(200).json(results);
+  } catch (error) {
+    res.status(400).json({ error: error.message })
+  }
+})
 
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================

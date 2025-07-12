@@ -82,7 +82,7 @@ export const getStudentTopicData = async (studentId: number, topicId: number) =>
 		medQsTotal: medQsTotal.length,
 		hardCorrect,
 		hardQsTotal: hardQsTotal.length,
-		...level,
+		level: level.level,
 	};
 }
 
@@ -99,7 +99,7 @@ export const getTeacherTopicData = async (teacherId: number, topicId: number) =>
 		FROM answers a
 		JOIN questions q ON q.questionid = a.questionid
 		WHERE q.topicid = ${topicId};
-		`);
+	`);
 
 	return { questionData: answers };
 }
