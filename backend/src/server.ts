@@ -242,13 +242,29 @@ app.get('/session/:topicId/:sessionId/question', async (req: Request, res: Respo
     const level = await getLevel(studentId, topicId)
 
     // get random question that is of the matching topic
-    const question = await getQuestion(level.level, topicId)
+    const question = await getQuestion(topicId)
 
     const studentLevel = level.level
-    const questionLevel = question.question.level
+
+    const easyQuestion = question.easy.question
+    const medQeustion = question.medium.question
+    const hardQuestion = question.hard.question
+
+    const easyQuestionLevel = easyQuestion.level
+    const medQuestionLevel = medQeustion.level
+    const hardQuestionLevel = hardQuestion.level
 
     // with the question, generate one of that level (for now multiple choice)
-    const newQeustion = await generateQuestion(studentLevel, questionLevel, topicId, question.question);
+    const newQeustion = await generateQuestion(
+        studentLevel, 
+        topicId, 
+        easyQuestion,
+        medQeustion, 
+        hardQuestion, 
+        easyQuestionLevel, 
+        medQuestionLevel,
+        hardQuestionLevel
+      );
     console.log(newQeustion)
 
     res.status(200).json(newQeustion);

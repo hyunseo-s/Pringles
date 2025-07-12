@@ -24,27 +24,45 @@ export async function getLevel(studentId: string, topicId: string) {
         `SELECT level FROM topic_student WHERE topicid = '${topicId}' AND studentid = '${studentId}'`
     );
 
+    console.log(res)
     return { level: res.level };
 }
 
-// gets a random question from the question db given the level and topicId
-export async function getQuestion(level: string, topicId: string) {
+// gets a random question from the question db given the topicId
+export async function getQuestion(topicId: string) {
 
     const db = await getDbConnection();
 
-    const question = await db.get(
-        `SELECT * FROM questions WHERE topicid = '${topicId}' AND level = '${level}'`
+    const easyQuestion = await db.get(
+      `SELECT * FROM questions WHERE topicid = ? AND level BETWEEN 1 AND 3 ORDER BY RANDOM() LIMIT 1`,
+      [topicId]
     );
-
-    return { question };
+  
+    const mediumQuestion = await db.get(
+      `SELECT * FROM questions WHERE topicid = ? AND level BETWEEN 4 AND 7 ORDER BY RANDOM() LIMIT 1`,
+      [topicId]
+    );
+  
+    const hardQuestion = await db.get(
+      `SELECT * FROM questions WHERE topicid = ? AND level BETWEEN 8 AND 10 ORDER BY RANDOM() LIMIT 1`,
+      [topicId]
+    );
+  
+    return {
+      easy: easyQuestion,
+      medium: mediumQuestion,
+      hard: hardQuestion
+    };
 }
 
 // Generate new question given topic and session id
-export async function generateQuestion(studentLevel: string, questionLevel: string, topicId: string, question: string) {
+export async function generateQuestion(studentLevel: string, topicId: string, easyQuestion: string, medQuestion: string, hardQuestion: string, easyQuestionLevel: string, medQuestionLevel: string, hardQuestionLevel: string) {
 
     const prompt = `
         Generate a single multiple-choice question on the topic: "${topicId}". 
-        This is a level "${questionLevel}" difficulty question that you can base it off to generate: "${question}".
+        This is a level "${easyQuestionLevel}" difficulty question that you can base it off to generate (easy question): "${easyQuestion}".
+        This is a level "${medQuestionLevel}" difficulty question that you can base it off to generate (easy question): "${medQuestion}".
+        This is a level "${hardQuestionLevel}" difficulty question that you can base it off to generate (easy question): "${hardQuestion}".
         The generated question should have the difficulty level "${studentLevel}".
         
         Format the response as JSON:
