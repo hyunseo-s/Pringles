@@ -7,11 +7,7 @@ import { initDB } from './initDb';
 import { login, register } from './funcs/auth';
 import { decodeJWT } from './utils';
 import { addStudents, createClass, getClass, getClasses } from './funcs/classes';
-<<<<<<< HEAD
-import { generateQuestion, getLevel, getQuestion, startSession } from './funcs/session';
-=======
-import { answerQuestion, startSession } from './funcs/session';
->>>>>>> b7be369bb52a9b4405a251670d08ad59dcb8ebb5
+import { generateQuestion, getLevel, getQuestion, startSession, answerQuestion } from './funcs/session';
 import { addQuestion, createTopics, getStudentsLevels, getStudentTopicData, getTeacherTopicData, getTopics } from './funcs/topics';
 import { getUser } from './funcs/user';
 
