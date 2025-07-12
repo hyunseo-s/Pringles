@@ -198,9 +198,9 @@ app.post('/session/:classId/:topicId/start', async (req: Request, res: Response)
   }
 });
 
-app.get('/session/:classId/:topicId/:sessionId/question', async (req: Request, res: Response) => {
+app.get('/session/:topicId/:sessionId/question', async (req: Request, res: Response) => {
   try {
-    const { classId, topicId, sessionId } = req.params;
+    const {topicId, sessionId } = req.params;
 
     const token = req.header('Authorization').split(" ")[1];
     const studentId = decodeJWT(token);
@@ -215,7 +215,7 @@ app.get('/session/:classId/:topicId/:sessionId/question', async (req: Request, r
     const questionLevel = question.question.level
 
     // with the question, generate one of that level (for now multiple choice)
-    const newQeustion = await generateQuestion(studentLevel, questionLevel, topicId, sessionId, question.question);
+    const newQeustion = await generateQuestion(studentLevel, questionLevel, topicId, question.question);
     console.log(newQeustion)
 
     res.status(200).json(newQeustion);

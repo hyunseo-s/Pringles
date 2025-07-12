@@ -40,7 +40,7 @@ export async function getQuestion(level: string, topicId: string) {
 }
 
 // Generate new question given topic and session id
-export async function generateQuestion(studentLevel: string, questionLevel: string, topicId: string, sessionId: string, question: string) {
+export async function generateQuestion(studentLevel: string, questionLevel: string, topicId: string, question: string) {
 
     const prompt = `
         Generate a single multiple-choice question on the topic: "${topicId}". 
