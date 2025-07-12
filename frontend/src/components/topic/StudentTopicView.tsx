@@ -3,18 +3,18 @@ import { IconArrowDown, IconArrowLeft } from "@tabler/icons-react";
 import { useNavigate } from "react-router";
 import type { TopicProps } from "./TeacherTopicView";
 import StudentStats, { type StudentStatsType } from "./StudentStats.tsx";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 
 const studentSnapshot : StudentStatsType[] = [
-	{ title: 'Best Session Score', icon: 'star', value: '90', diff: 18 },
-    { title: 'Current Level', icon: 'target', value: '80' },
-    { title: 'Questions Completed', icon: 'answer', value: '745', diff: 18 }
+    { title: 'Current Level', icon: 'target', value: '' },
+    { title: 'Questions Completed', icon: 'answer', value: ''},
+	{ title: 'Best Session Score', icon: 'star', value: '' },
 ]
 
 const studentLevels : StudentStatsType[] = [
-	{ title: 'Level 1-2 Questions', icon: 'level1', value: '90 / 100'},
-    { title: 'Level 3-4 Questions', icon: 'level2', value: '80 / 100'},
-    { title: 'Level 5 Questions', icon: 'level3', value: '7 / 100' }
+	{ title: 'Level 1-2 Questions', icon: 'level1', value: ''},
+    { title: 'Level 3-4 Questions', icon: 'level2', value: ''},
+    { title: 'Level 5 Questions', icon: 'level3', value: '' }
 ]
 
 const previousQs = [{ type: "written answer", level: 1, question: "Explain the process of photosynthesis in plants."}, { type: "multiple", level: 2, question: "Which planet is known as the 'Red Planet'?"}];
@@ -23,7 +23,27 @@ export const StudentTopicView = ({ topic }: TopicProps) => {
 	const navigate = useNavigate();
 	const targetRef = useRef<HTMLDivElement>(null);
 
-	console.log(topic);
+	useEffect(() => {
+		if (!topic.studentData) {
+			return;
+		}
+		
+		studentSnapshot[0].value = topic.studentData?.level.toString();
+		const totalQs = topic.studentData?.easyQsTotal + topic.studentData?.medQsTotal + topic.studentData?.hardQsTotal;
+		studentSnapshot[1].value = totalQs.toString();
+
+
+		studentLevels.forEach((l, i) => {
+			if (i === 0) {
+				l.value = `${topic.studentData?.easyCorrect} / ${topic.studentData?.easyQsTotal}`
+			} else if (i === 1) {
+				l.value = `${topic.studentData?.medCorrect} / ${topic.studentData?.medQsTotal}`
+			} else if (i === 2) {
+				l.value = `${topic.studentData?.hardCorrect} / ${topic.studentData?.hardQsTotal}`
+			}
+		})
+	
+	}, [topic])
 
 	const handleStart = async () => {
 		// calls /session/{classId}/{topicId}/start
