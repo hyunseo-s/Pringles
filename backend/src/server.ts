@@ -6,8 +6,9 @@ import morgan from 'morgan';
 import { initDB } from './initDb';
 import { login, register } from './funcs/auth';
 import { decodeJWT } from './utils';
-import { addStudents, createClass, getClass, getStudentsClasses } from './funcs/classes';
+import { addStudents, createClass, getClass, getClasses } from './funcs/classes';
 import { startSession } from './funcs/session';
+import { getUser } from './funcs/user';
 // import { addQuestion, createTopics, getStudentTopicData, getTeacherTopicData, getTopics } from './funcs/topics';
 
 // Set up web app
@@ -65,14 +66,29 @@ app.post('/auth/logout', async (req: Request, res: Response) => {
   }
 });
 
+app.get('/user', async (req: Request, res: Response) => {
+  try {
+    // Check if the token is still valid:
+    const token = req.header('Authorization').split(" ")[1];
+		console.log('received', token)
+    const userId = decodeJWT(token);
+		const json = await getUser(userId);
+		console.log(json)
+    res.status(200).json(json);
+  } catch (error) {
+    res.status(400).json({ error: error.message })
+  }
+});
+
 // ====================================================================
 //  ============================ CLASSES =============================
 // ====================================================================
 
 app.get('/classes', (req: Request, res: Response) => {
-  const { studentId } = req.params;
   try {
-    const classes = getStudentsClasses(studentId);
+		const token = req.header('Authorization').split(" ")[1];
+    const userId = decodeJWT(token);
+    const classes = getClasses(userId);
     res.status(200).json(classes);
   } catch (error) {
     res.status(404).json({ error: error.message });
