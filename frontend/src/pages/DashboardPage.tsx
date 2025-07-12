@@ -35,9 +35,12 @@ const DashboardPage = () => {
 	
 				for (let i = 0; i < res.length; i++) {
 					const topicData = await get(`/topic/${res[i].topic}/${user?.role}/data`, undefined);
-					newTopics.push({...res[i], data: topicData})
+					if (user?.role == 'teacher') {
+						newTopics.push({...res[i], teacherData: topicData})
+					} else {
+						newTopics.push({...res[i], studentData: topicData})
+					}
 				}
-				console.log(newTopics)
 	
 				setTopics(newTopics);
 			}

@@ -89,9 +89,14 @@ export const getTeacherTopicData = async (teacherId: number, topicId: number) =>
 
 	// get all questions 
 	// select all questions with given topic id
-	const questions = await db.all(`SELECT * FROM questions WHERE topicid = '${topicId}'`);
+	const answers = await db.all(`
+		SELECT a.answerid, a.questionid, a.sessionid, a.studentid, a.answer, q.question, a.correct, q.level
+		FROM answers a
+		JOIN questions q ON q.questionid = a.questionid
+		WHERE q.topicid = ${topicId};
+		`);
 
-	return { questionData: questions };
+	return { responses: answers };
 }
 
 export const getStudentsLevels = async (teacherId: number, classId: number) => {

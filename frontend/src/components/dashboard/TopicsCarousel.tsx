@@ -37,7 +37,7 @@ export const TopicsCarousel = ({ topics }: TopicsCarouselProps) => {
 							<div style={{background: 'rgba(0, 0, 0, .1)'}}
 								className='h-15 p-3 flex justify-between absolute bottom-0 w-[calc(100%-1rem)] rounded-b-xl'>
 								<p className='font-[400] text-xl'>{t.topicName}</p>
-								{ t.data && t.data.level && <LevelBadge level={t.data.level} />}
+								{ t.studentData && t.studentData.level && <LevelBadge level={t.studentData.level} />}
 							</div>
 						</div>
 					</Carousel.Slide>

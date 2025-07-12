@@ -170,8 +170,6 @@ export const initDB = async () => {
 		INSERT INTO class_teacher (classid, teacherid) VALUES (2, 1);
 		INSERT INTO class_teacher (classid, teacherid) VALUES (3, 1);
 		INSERT INTO class_teacher (classid, teacherid) VALUES (4, 1);
-		INSERT INTO class_teacher (classid, teacherid) VALUES (5, 2);
-		INSERT INTO class_teacher (classid, teacherid) VALUES (6, 2);
 		INSERT INTO class_teacher (classid, teacherid) VALUES (7, 2);
 		INSERT INTO class_teacher (classid, teacherid) VALUES (8, 2);
 		INSERT INTO class_teacher (classid, teacherid) VALUES (9, 2);
@@ -179,6 +177,7 @@ export const initDB = async () => {
 
 	// Insert student class relationship
 	for (let i = 1; i < 10; i++) {
+		if (![1, 5, 7].includes(i)) continue;
 		await db.exec(`
 			INSERT INTO class_student (classid, studentid) VALUES (${i}, 3);
 			INSERT INTO class_student (classid, studentid) VALUES (${i}, 4);

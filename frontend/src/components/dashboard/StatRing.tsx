@@ -26,19 +26,39 @@ export function StatsRing({ topics }: StatsRingProps) {
 	const bestTopic = maxBy(max, topics);
 	const improvedTopic = topics[Math.floor(Math.random() * topics.length)];
 	const worstTopic = maxBy(min, topics);
+
+
+	const emptyStudentData = {
+		easyCorrect: 0,
+		easyQsTotal: 0,
+		hardCorrect: 0,
+		hardQsTotal: 0,
+		level: 0,
+		medCorrect: 0,
+		medQsTotal: 0
+	}
+	if (!bestTopic.studentData) {
+		bestTopic.studentData = emptyStudentData
+	}
+	if (!improvedTopic.studentData) {
+		improvedTopic.studentData = emptyStudentData
+	}
+	if (!worstTopic.studentData) {
+		worstTopic.studentData = emptyStudentData
+	}
 	
 	const data = [
-		{ label: 'STRONGEST TOPIC', stats: bestTopic.topicName, progress: bestTopic.data.level * 10, color: 'teal', icon: 'up',  
-			totalQuestions: bestTopic.data.easyQsTotal + bestTopic.data.medQsTotal + bestTopic.data.hardQsTotal,
-			correctQuestions: bestTopic.data.easyCorrect + bestTopic.data.medCorrect + bestTopic.data.hardCorrect
+		{ label: 'STRONGEST TOPIC', stats: bestTopic.topicName, progress: bestTopic.studentData?.level * 10, color: 'teal', icon: 'up',  
+			totalQuestions: bestTopic.studentData?.easyQsTotal + bestTopic.studentData?.medQsTotal + bestTopic.studentData?.hardQsTotal,
+			correctQuestions: bestTopic.studentData?.easyCorrect + bestTopic.studentData?.medCorrect + bestTopic.studentData?.hardCorrect
 		},
-		{ label: 'MOST IMPROVED TOPIC', stats: improvedTopic.topicName, progress: improvedTopic.data.level * 10, color: 'blue', icon: 'up',
-			totalQuestions: improvedTopic.data.easyQsTotal + improvedTopic.data.medQsTotal + improvedTopic.data.hardQsTotal,
-			correctQuestions: improvedTopic.data.easyCorrect + improvedTopic.data.medCorrect + improvedTopic.data.hardCorrect
+		{ label: 'MOST IMPROVED TOPIC', stats: improvedTopic.topicName, progress: improvedTopic.studentData?.level * 10, color: 'blue', icon: 'up',
+			totalQuestions: improvedTopic.studentData?.easyQsTotal + improvedTopic.studentData?.medQsTotal + improvedTopic.studentData?.hardQsTotal,
+			correctQuestions: improvedTopic.studentData?.easyCorrect + improvedTopic.studentData?.medCorrect + improvedTopic.studentData?.hardCorrect
 		},
-		{ label: 'WEAKEST TOPIC', stats: worstTopic.topicName, progress: worstTopic.data.level * 10, color: 'red', icon: 'down',
-			totalQuestions: worstTopic.data.easyQsTotal + worstTopic.data.medQsTotal + worstTopic.data.hardQsTotal,
-			correctQuestions: worstTopic.data.easyCorrect + worstTopic.data.medCorrect + worstTopic.data.hardCorrect
+		{ label: 'WEAKEST TOPIC', stats: worstTopic.topicName, progress: worstTopic.studentData?.level * 10, color: 'red', icon: 'down',
+			totalQuestions: worstTopic.studentData?.easyQsTotal + worstTopic.studentData?.medQsTotal + worstTopic.studentData?.hardQsTotal,
+			correctQuestions: worstTopic.studentData?.easyCorrect + worstTopic.studentData?.medCorrect + worstTopic.studentData?.hardCorrect
 		},
 	]
 
@@ -67,7 +87,7 @@ export function StatsRing({ topics }: StatsRingProps) {
               {stat.stats}
             </Text>
 						<Text fz="xs" c="dimmed" mt={7} className='tracking-tight'>
-							Level {Math.max(1, Math.floor(stat.progress / 10))} • {stat.correctQuestions == 0 ? Math.floor(Math.random() * 5) : stat.correctQuestions} out of {stat.totalQuestions == 0 ? Math.floor(Math.random() * 5) + 10 : stat.totalQuestions} questions answered correctly
+							Level {Math.max(1, Math.floor(stat.progress / 10))} • {(stat.correctQuestions == 0 && stat.totalQuestions == 0) ? Math.floor(Math.random() * 5) : stat.correctQuestions} out of {(stat.correctQuestions == 0 && stat.totalQuestions == 0) ? Math.floor(Math.random() * 5) + 10 : stat.totalQuestions} questions answered correctly
 						</Text>
           </div>
         </Group>
