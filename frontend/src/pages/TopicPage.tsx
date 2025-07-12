@@ -23,7 +23,7 @@ const TopicPage = () => {
 
   return (
 		<>
-			{user.role === "teacher" ? <TeacherTopicView topic={topic} /> : <StudentTopicView />}
+			{user.role === "teacher" ? <TeacherTopicView topic={topic} /> : <StudentTopicView topic={topic} />}
 		</>
   );
 }
