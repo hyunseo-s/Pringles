@@ -1,17 +1,17 @@
 import { Textarea } from "@mantine/core";
 
 const ShortAnswer = ({
-  answer,
+  input,
   correct
 }: {
-  answer: React.Dispatch<React.SetStateAction<string | null>>, 
+  input: React.Dispatch<React.SetStateAction<string | null>>, 
   correct: boolean | null
 }) => {
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     if (e.currentTarget.value === '') {
-      answer(null);
+      input(null);
     } else {
-      answer(e.currentTarget.value);
+      input(e.currentTarget.value);
     }
   }
 

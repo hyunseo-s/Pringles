@@ -7,28 +7,61 @@ import { useDisclosure } from '@mantine/hooks';
 import ShortAnswer from '../components/quiz/ShortAnswer';
 import Explanation from '../components/quiz/Explanation';
 
-const options = [
-  { id: "first", label: "First" },
-  { id: "second", label: "Second" },
-  { id: "third", label: "Third" },
-  { id: "fourth", label: "Fourth" }
-];
+const questions: Prompt[] = [
+  {
+    question: "What is 2 + 2?",
+    type: "multiple",
+    answer: [{
+      answerOption: "1",
+      correct: false,
+      rationale: "this is just wrong 1"
+    },{
+      answerOption: "2",
+      correct: true,
+      rationale: ""
+    },{
+      answerOption: "3",
+      correct: false,
+      rationale: "this is just wrong 3"
+    },{
+      answerOption: "4",
+      correct: false,
+      rationale: "this is just wrong 4"
+    },
+    ]
+  }, {
+    question: "What is the longest river in the world, and through which countries does it flow?",
+    type: "written answer"
+  }
+]
 
-const options2 = [
-  { id: "fifth", label: "Fifth" },
-  { id: "sixth", label: "Sixth" },
-  { id: "seventh", label: "Seventh" },
-  { id: "eighth", label: "Eighth" }
-];
+type Prompt = {
+  question: string;
+  type: "multiple" | "written answer";
+  answer?: Options[]
+}
+
+export type Options = {
+  answerOption: string;
+  correct: boolean;
+  rationale: string;
+}
 
 const QuizPage = () => {
 	const navigate = useNavigate();
 	const { user } = useUser();
-  const [ answer, setAnswer ] = useState<string | null>(null);
+
+  // Fetched Data
+  const [ prompt, setPrompt] = useState<Prompt>(questions[0]);
   const [ correct, setCorrect ] = useState<boolean | null>(null);
-  const [opened, { open, close }] = useDisclosure(false);
+  const [ explanation, setExplanation] = useState<string>();
+  
+  // User Input
+  const [ input, setInput ] = useState<string | null>(null);
 
   const [option, setOption] = useState<boolean>(true); // TO REMOVE
+  // Modal
+  const [opened, { open, close }] = useDisclosure(false);
 
   useEffect(() => {
     if (!user) {
@@ -38,18 +71,30 @@ const QuizPage = () => {
 
   if (!user) return null; // optional: show a loading spinner here
 
+  const fetchQuestion = () => {
+    setPrompt(questions[1]);
+  }
+
   const handleSubmit = () => {
+    // Check if user input is correct
+    if (prompt.type === "multiple") {
+      setCorrect(input === prompt.answer?.find((o) => o.correct)?.answerOption);
+      setExplanation(prompt.answer?.find((o) => o.answerOption === input)?.rationale);
+      return;
+    }
+  
     const fetchCorrect = () => {
       return "first";
     }
 
-    setCorrect(fetchCorrect() === answer);
+    setCorrect(fetchCorrect() === input);
   }
 
   const handleNext = () => {
-    setAnswer(null);
+    setInput(null);
     setCorrect(null);
     setOption(!option);
+    fetchQuestion();
   }
 
   const handleFinish = () => {
@@ -60,14 +105,15 @@ const QuizPage = () => {
 		<Flex mih="100vh" maw="100vw" direction={"column"} justify="center" align="center" gap={20}>
 
       {/* Question */}
-		  <div>What is the longest river in the world, and through which countries does it flow?</div>
+		  <div>{prompt?.question}</div>
 
       {/* User Answer Input */}
-      <MultipleChoice answer={setAnswer} correct={correct} options={option ? options : options2}/>
-      <ShortAnswer answer={setAnswer} correct={correct} />
+      {prompt?.type === "multiple" 
+        ? <MultipleChoice input={setInput} correct={correct} options={prompt.answer}/>
+        : <ShortAnswer input={setInput} correct={correct} />}
 
       {/* Explanation */}
-      {correct !== null && <Explanation correct={correct} answer={"first"} explanation='It is supposed to be first'/>}
+      {correct !== null && <Explanation correct={correct} explanation={explanation}/>}
 
       {/* Control Buttons */}
       <Flex direction={'column'} gap={10}>
@@ -75,7 +121,7 @@ const QuizPage = () => {
         {correct === null
           ? 
           <Button 
-            disabled={answer === null} 
+            disabled={input === null} 
             onClick={() => handleSubmit()}
           >
             SUBMIT
