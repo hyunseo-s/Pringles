@@ -21,15 +21,12 @@ export async function getStudentsClasses(studentId: string) {
 
 // Function to add the student to a class given the classId and list of students
 export async function addStudents(classId: string, students: string[]) {
-
+    console.log(classId)
+    console.log("A")
     const db = await getDbConnection();
 
     // Go through all students email first
-    console.log(students)
 
-    const res = await getAllUsers()
-    console.log(res)
-    
     for (const email of students) {
 
         // Get their user info
@@ -64,6 +61,7 @@ export async function createClass(name: string, students: string[], classImg: st
         [name, classImg]
     );
 
+    console.log(res)
     // Once the table is created, we get the classId, and we put the teacher in
     const classId = res.lastID
     await db.run(

@@ -15,6 +15,7 @@ export function decodeJWT(token: string): string {
   try {
     // Verify and decode the JWT
     const decoded = jwt.verify(token, SECRET) as DecodedToken;
+    console.log(decoded)
     return decoded.user;
 
   } catch (error) {
