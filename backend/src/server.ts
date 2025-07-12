@@ -84,11 +84,11 @@ app.get('/user', async (req: Request, res: Response) => {
 //  ============================ CLASSES =============================
 // ====================================================================
 
-app.get('/classes', (req: Request, res: Response) => {
+app.get('/classes', async (req: Request, res: Response) => {
   try {
 		const token = req.header('Authorization').split(" ")[1];
     const userId = decodeJWT(token);
-    const classes = getClasses(userId);
+    const classes = await getClasses(userId);
     res.status(200).json(classes);
   } catch (error) {
     res.status(404).json({ error: error.message });
