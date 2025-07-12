@@ -38,7 +38,7 @@ export const getTopics = async (classId: number) => {
 export const addQuestion = async (topicId: number, level: number, question: string) => {
 	const db = await getDbConnection();
 
-	const res = await db.run(
+	await db.run(
 		`INSERT INTO questions (topicId, question, level, numWrong, numRight) VALUES (?, ?, ?, ?, ?)`,
 		[topicId, question, level, 0, 0]
 	);
