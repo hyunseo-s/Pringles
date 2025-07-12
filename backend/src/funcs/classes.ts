@@ -28,19 +28,22 @@ export async function getClasses(userId: string) {
 
 // Function to add the student to a class given the classId and list of students
 export async function addStudents(classId: string, students: string[]) {
-    console.log(classId)
-    console.log("A")
+    
     const db = await getDbConnection();
 
-    // Go through all students email first
 
+    // Get a list of all of the topics in a class
+    const topics = await db.get(
+        `SELECT * FROM topics WHERE classid = '${classId}'`
+    );
+
+    // Go through all students email first
     for (const email of students) {
 
         // Get their user info
         const user = await db.get(
             `SELECT userid FROM users WHERE email = '${email}'`
         );
-        console.log(user)
         // if (!user) {
         //     throw new Error(`User with email ${email} not found`);
         // }
@@ -49,8 +52,18 @@ export async function addStudents(classId: string, students: string[]) {
         await db.run(
             `INSERT INTO class_student (classId, studentId) 
             VALUES (?, ?)`,
-            [classId, user.userid]
+            [classId, user]
         );
+
+        // For each of the individual topics of the class
+        for (const individualTopics of topics) {
+            // Insert into topics student table using the user info
+            await db.run(
+                `INSERT INTO topic_student (topicId, studentId, level) 
+                VALUES (?, ?, ?)`,
+                [individualTopics.topicId, user, 5]
+            );
+        }
       }
 
     return { message: 'Students added' };
@@ -68,7 +81,6 @@ export async function createClass(name: string, students: string[], classImg: st
         [name, classImg]
     );
 
-    console.log(res)
     // Once the table is created, we get the classId, and we put the teacher in
     const classId = res.lastID
     await db.run(
