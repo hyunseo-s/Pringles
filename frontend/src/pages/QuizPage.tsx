@@ -47,6 +47,11 @@ export type Options = {
   rationale: string;
 }
 
+export type WrittenSolution = {
+  correct: boolean;
+  rationale: string;
+}
+
 const QuizPage = () => {
 	const navigate = useNavigate();
 	const { user } = useUser();
@@ -59,7 +64,6 @@ const QuizPage = () => {
   // User Input
   const [ input, setInput ] = useState<string | null>(null);
 
-  const [option, setOption] = useState<boolean>(true); // TO REMOVE
   // Modal
   const [opened, { open, close }] = useDisclosure(false);
 
@@ -72,28 +76,32 @@ const QuizPage = () => {
   if (!user) return null; // optional: show a loading spinner here
 
   const fetchQuestion = () => {
+    // calls /session/{classId}/{topicId}/{sessionId}/question
     setPrompt(questions[1]);
   }
 
   const handleSubmit = () => {
-    // Check if user input is correct
+    // Check if user input is correct for multiple choice answer
     if (prompt.type === "multiple") {
       setCorrect(input === prompt.answer?.find((o) => o.correct)?.answerOption);
       setExplanation(prompt.answer?.find((o) => o.answerOption === input)?.rationale);
       return;
     }
-  
+    
+    // Check if user input is correct for written answer
     const fetchCorrect = () => {
-      return "first";
+      // calls /session/{classId}/{topicId}/{sessionId}/{questionId}/answer
+      const res : WrittenSolution = {correct: true, rationale: "This is the reason"};
+      setCorrect(res.correct);
+      setExplanation(res.rationale);
     }
 
-    setCorrect(fetchCorrect() === input);
+    fetchCorrect();
   }
 
   const handleNext = () => {
     setInput(null);
     setCorrect(null);
-    setOption(!option);
     fetchQuestion();
   }
 
