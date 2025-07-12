@@ -1,13 +1,29 @@
-import { Carousel } from "@mantine/carousel"
-import { TopicsCarousel } from "../dashboard/TopicsCarousel"
+import { ActionIcon, Text } from "@mantine/core"
+import { IconArrowLeft } from "@tabler/icons-react"
+import type { Topic } from "../../types/Topic"
 
-export const TeacherTopicView = () => {
-	return <>
-		<Carousel maw={320} mx="auto" withIndicators height={200}>
-      <Carousel.Slide size={200}>1</Carousel.Slide>
-      <Carousel.Slide size={200}>2</Carousel.Slide>
-      <Carousel.Slide size={200}>3</Carousel.Slide>
-      {/* ...other slides */}
-    </Carousel>
-	</>
+interface TopicProps {
+	topic: Topic
+}
+
+export const TeacherTopicView = ({ topic }: TopicProps) => {
+	return (
+		<div>
+			<ActionIcon
+				variant="filled"
+				size="lg"
+				aria-label="Gradient action icon"
+				// variant="gradient"
+				// gradient={{ from: 'blue', to: 'cyan', deg: 90 }}
+			>
+				<IconArrowLeft />
+			</ActionIcon>
+			<div className="h-64 w-full bg-black mt-2">
+				Banner
+			</div>
+			<Text size="xl">
+				{topic.name}
+			</Text>
+		</div>
+	)
 }

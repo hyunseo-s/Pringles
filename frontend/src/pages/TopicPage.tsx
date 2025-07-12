@@ -3,6 +3,7 @@ import { useUser } from '../context/UserContext';
 import { useEffect } from 'react';
 import { TeacherTopicView } from '../components/topic/TeacherTopicView';
 import { StudentTopicView } from '../components/topic/StudentTopicView';
+import type { Topic } from '../types/Topic';
 
 const TopicPage = () => {
 	const navigate = useNavigate();
@@ -16,9 +17,13 @@ const TopicPage = () => {
 
   if (!user) return null; // optional: show a loading spinner here
 
+	const topic: Topic = {
+		name: 'Algebra'
+	}
+
   return (
 		<>
-			{user.role === "teacher" ? <TeacherTopicView /> : <StudentTopicView />}
+			{user.role === "teacher" ? <TeacherTopicView topic={topic} /> : <StudentTopicView />}
 		</>
   );
 }
