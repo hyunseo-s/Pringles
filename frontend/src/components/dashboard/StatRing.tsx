@@ -3,13 +3,22 @@ import { Center, Group, Paper, RingProgress, SimpleGrid, Text } from '@mantine/c
 import type { Topic } from '../../types/Topic';
 import { maxBy } from '../../utils/maxBy';
 import { useUser } from '../../context/UserContext';
+import { useEffect, useState } from 'react';
 
 const icons = {
   up: IconArrowUpRight,
   down: IconArrowDownRight,
 };
 
-
+interface DataProps {
+	label: string
+	stats: string
+	progress: number
+	color: string
+	icon: string 
+	totalQuestions: number,
+	correctQuestions: number
+}
 
 interface StatsRingProps {
 	topics: Topic[]
@@ -102,51 +111,60 @@ const StudentStatsRing = ({ topics }: StatsRingProps) => {
 
 
 const TeacherStatsRing = ({ topics }: StatsRingProps) => {
-	if (!topics || topics.length == 0) return <></>;
+	const { user} = useUser();
 
-	const improvedTopic = topics[Math.floor(Math.random() * topics.length)];
-	let bestTopic = topics[0];
-	let worstTopic = topics[0];
+	const [data, setData] = useState<DataProps[] | null>(null);
 
-	for (let i = 1; i < topics.length; i++) {
-		const newC = topics[i].teacherData.questionData?.filter(q => q.correct).length ?? 0;
-		const newT = topics[i].teacherData.questionData?.length ?? 1;
-		const bC = bestTopic.teacherData.questionData?.filter(q => q.correct).length ?? 0;
-		const bT = bestTopic.teacherData.questionData?.length  ?? 1;
-		const wC = worstTopic.teacherData.questionData?.filter(q => q.correct).length ?? 0;
-		const wT = worstTopic.teacherData.questionData?.length  ?? 1;
+	useEffect(() => {
+		if (user?.role == 'student' || !topics || topics.length == 0) return;
+		const improvedTopic = topics[Math.floor(Math.random() * topics.length)];
+		let bestTopic = topics[0];
+		let worstTopic = topics[0];
+		console.log(topics)
 
 
-		if (newC / newT > bC / bT ) {
-			bestTopic = topics[0]
+		for (let i = 1; i < topics.length; i++) {
+			const newC = topics[i].teacherData?.questionData?.filter(q => q.correct).length ?? 0;
+			const newT = topics[i].teacherData?.questionData?.length ?? 1;
+			const bC = bestTopic.teacherData?.questionData?.filter(q => q.correct).length ?? 0;
+			const bT = bestTopic.teacherData?.questionData?.length  ?? 1;
+			const wC = worstTopic.teacherData?.questionData?.filter(q => q.correct).length ?? 0;
+			const wT = worstTopic.teacherData?.questionData?.length  ?? 1;
+
+			if (newC / newT > bC / bT ) {
+				bestTopic = topics[i]
+			}
+			if (newC / newT < wC / wT ) {
+				worstTopic = topics[i]
+			}
 		}
-		if (newC / newT < wC / wT ) {
-			worstTopic = topics[0]
-		}
-	}
 
-		const bC = bestTopic.teacherData.questionData?.filter(q => q.correct).length ?? 0;
-		const bT = bestTopic.teacherData.questionData?.length  ?? 1;
-		const wC = worstTopic.teacherData.questionData?.filter(q => q.correct).length ?? 0;
-		const wT = worstTopic.teacherData.questionData?.length  ?? 1;
-		const iC = improvedTopic.teacherData.questionData?.filter(q => q.correct).length ?? 0;
-		const iT = improvedTopic.teacherData.questionData?.length  ?? 1;
-	
-	console.log(topics)
-	const data = [
-		{ label: 'STRONGEST TOPIC', stats: bestTopic.topicName, progress: bC/bT * 100, color: 'teal', icon: 'up',  
-			totalQuestions: bestTopic.teacherData.questionData?.filter(q => q.correct).length ?? 0,
-			correctQuestions: bestTopic.teacherData.questionData?.length ?? 1
-		},
-		{ label: 'MOST IMPROVED TOPIC', stats: improvedTopic.topicName, progress: iC/iT * 100, color: 'blue', icon: 'up',
-			totalQuestions: improvedTopic.teacherData.questionData?.filter(q => q.correct).length ?? 0,
-			correctQuestions: improvedTopic.teacherData.questionData?.length ?? 1
-		},
-		{ label: 'WEAKEST TOPIC', stats: worstTopic.topicName, progress: wC/wT * 100, color: 'red', icon: 'down',
-			totalQuestions: worstTopic.teacherData.questionData?.filter(q => q.correct).length ?? 0,
-			correctQuestions: worstTopic.teacherData.questionData?.length ?? 1
-		},
-	]
+		const bC = bestTopic.teacherData?.questionData?.filter(q => q.correct).length ?? 0;
+		const bT = bestTopic.teacherData?.questionData?.length  ?? 1;
+		const wC = worstTopic.teacherData?.questionData?.filter(q => q.correct).length ?? 0;
+		const wT = worstTopic.teacherData?.questionData?.length  ?? 1;
+		const iC = improvedTopic.teacherData?.questionData?.filter(q => q.correct).length ?? 0;
+		const iT = improvedTopic.teacherData?.questionData?.length  ?? 1;
+
+
+
+		setData([
+			{ label: 'STRONGEST TOPIC', stats: bestTopic.topicName, progress: bC/bT * 100, color: 'teal', icon: 'up',  
+				totalQuestions: bT,
+				correctQuestions: bC
+			},
+			{ label: 'MOST IMPROVED TOPIC', stats: improvedTopic.topicName, progress: iC/iT * 100, color: 'blue', icon: 'up',
+				totalQuestions: iT,
+				correctQuestions: iC
+			},
+			{ label: 'WEAKEST TOPIC', stats: worstTopic.topicName, progress: wC/wT * 100, color: 'red', icon: 'down',
+				totalQuestions: wT,
+				correctQuestions: wC
+			},
+		])
+	},[topics ,user])
+
+	if (!data) return <></>;
 
   const stats = data.map((stat) => {
     const Icon = icons[stat.icon];
@@ -187,5 +205,5 @@ const TeacherStatsRing = ({ topics }: StatsRingProps) => {
 
 export const StatsRing = ({ topics }: StatsRingProps) => {
 	const {user} = useUser();
-	return user?.role == 'teacher'? <TeacherStatsRing topics={topics} /> : <StudentStatsRing topics={topics} />
+	return user?.role == 'teacher' ? <TeacherStatsRing topics={topics} /> : <StudentStatsRing topics={topics} />
 }
