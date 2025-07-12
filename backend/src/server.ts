@@ -8,7 +8,7 @@ import { login, register } from './funcs/auth';
 import { decodeJWT } from './utils';
 import { addStudents, createClass, getClass, getClasses } from './funcs/classes';
 import { startSession } from './funcs/session';
-import { addQuestion, createTopics, getStudentsLevels, getStudentTopicData, getTeacherTopicData, getTopics } from './funcs/topics';
+import { addQuestion, createTopics, getStudentsLevels, getStudentTopicData, getTeacherTopicData, getTopicName, getTopics } from './funcs/topics';
 import { getUser } from './funcs/user';
 
 // Set up web app
@@ -163,6 +163,16 @@ app.get('/topics/:classId', (req: Request, res: Response) => {
   try {
     const classes = getTopics(classId);
     res.status(200).json(classes);
+  } catch (error) {
+    res.status(404).json({ error: error.message });
+  }
+});
+
+app.get('/topics/:topicId/name', async (req: Request, res: Response) => {
+  const topicId = parseInt(req.params.topicId);
+  try {
+    const topicName = await getTopicName(topicId);
+    res.status(200).json(topicName);
   } catch (error) {
     res.status(404).json({ error: error.message });
   }
