@@ -9,7 +9,6 @@ export const createTopics = async (classId: string , topics: string[]) => {
 	
 	if (classes.length === 0) throw new Error("No class found")
 
-	console.log(topics)
 	for (const topic of topics) {
 		const res = await db.run(
 			`INSERT INTO topics (classid, topicname) VALUES (?, ?)`,[classId, topic]
@@ -38,8 +37,9 @@ export const getTopics = async (classId: number) => {
 
 export const addQuestion = async (topicId: number, level: number, question: string) => {
 	const db = await getDbConnection();
-	await db.run(
-		`INSERT INTO topics (topicId, question, level, numWrong, numRight) VALUES (?, ?, ?, ?. ?)`,
+
+	const res = await db.run(
+		`INSERT INTO questions (topicId, question, level, numWrong, numRight) VALUES (?, ?, ?, ?, ?)`,
 		[topicId, question, level, 0, 0]
 	);
 
@@ -57,7 +57,7 @@ export const getStudentTopicData = async (studentId: number, topicId: number) =>
 	const level = await db.get(`SELECT level FROM topic_student WHERE topicid = '${topicId}' and studentid = '${studentId}'`);
 	console.log(level)
 
-	const answers = await db.get(`
+	const answers = await db.all(`
 		SELECT	q.level, a.correct 
 		FROM	answers AS a
 		JOIN	questions AS q ON a.questionid = q.questionid
@@ -74,8 +74,8 @@ export const getStudentTopicData = async (studentId: number, topicId: number) =>
 	return {
 		easyCorrect,
 		easyQsTotal,
-		medQsTotal,
 		medCorrect,
+		medQsTotal,
 		hardQsTotal,
 		hardCorrect,
 		level,

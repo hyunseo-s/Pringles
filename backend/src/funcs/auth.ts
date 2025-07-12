@@ -37,8 +37,8 @@ export const login = async (email: string, password: string) => {
 	if (users.length == 0) {
 		throw new Error("Invalid credentials");
 	}
-	console.log(users[0].id)
-	const token = jwt.sign({ user: users[0].id }, JWT_SECRET, { expiresIn: "1h" });
+
+	const token = jwt.sign({ user: users[0].userid }, JWT_SECRET, { expiresIn: "1h" });
 
 	return { message: "Login success", token };
 };

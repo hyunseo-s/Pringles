@@ -6,7 +6,6 @@ const SECRET = "TOPSECRET";
 
 interface DecodedToken {
   user: string;
-  email: string;
   iat: number;
   exp: number;
 }

@@ -140,10 +140,10 @@ app.post('/topics/:classId/create', async (req: Request, res: Response) => {
   }
 })
 
-app.get('/topics/:classId', (req: Request, res: Response) => {
+app.get('/topics/:classId', async (req: Request, res: Response) => {
   const classId = parseInt(req.params.classId);
   try {
-    const classes = getTopics(classId);
+    const classes = await getTopics(classId);
     res.status(200).json(classes);
   } catch (error) {
     res.status(404).json({ error: error.message });
