@@ -67,9 +67,9 @@ app.post('/auth/logout', async (req: Request, res: Response) => {
   }
 });
 
-// // ====================================================================
-// //  ============================ CLASSES =============================
-// // ====================================================================
+// ====================================================================
+//  ============================ CLASSES =============================
+// ====================================================================
 
 app.get('/classes', (req: Request, res: Response) => {
   const { studentId } = req.params;
@@ -81,10 +81,13 @@ app.get('/classes', (req: Request, res: Response) => {
   }
 });
 
-app.post('/classes/:classid/add', async (req: Request, res: Response) => {
+app.post('/classes/:classId/add', async (req: Request, res: Response) => {
   try {
+    console.log(req.params)
     const { classId } = req.params;
     const { students } = req.body;
+
+    console.log(classId)
     const addedStudents = await addStudents(classId, students);
     res.status(200).json(addedStudents);
   } catch (error) {
@@ -97,6 +100,7 @@ app.post('/classes/create', async (req: Request, res: Response) => {
     const { name, students, classImg } = req.body;
     const token = req.header('Authorization').split(" ")[1];
     const teacherId = decodeJWT(token);
+    console.log(teacherId)
     const classId = await createClass(name, students, classImg, teacherId);
     res.status(200).json(classId);
   } catch (error) {
@@ -114,31 +118,10 @@ app.get('/classes/:classId', (req: Request, res: Response) => {
   }
 });
 
-app.post('/classes/:classid/add', async (req: Request, res: Response) => {
-  try {
-    const { classid } = req.params;
-    const { students } = req.body;
-    const addedStudents = await addStudents(classid, students);
-    res.status(200).json(addedStudents);
-  } catch (error) {
-    res.status(400).json({ error: error.message });
-  }
-});
 
-app.get('/classes/:classId', (req: Request, res: Response) => {
-  const { classId } = req.params;
-  try {
-    const classInfo = getClass(classId);
-    res.status(200).json(classInfo);
-  } catch (error) {
-    res.status(404).json({ error: error.message });
-  }
-});
-
-
-// // ====================================================================
-// //  ============================= TOPICS =============================
-// // ====================================================================
+// ====================================================================
+//  ============================= TOPICS =============================
+// ====================================================================
 
 
 app.post('/topics/{classId}/create', async (req: Request, res: Response) => {
@@ -203,9 +186,9 @@ app.post('/topics/:topicId/question', async (req: Request, res: Response) => {
 //   }
 // });
 
-// // ====================================================================
-// //  =========================== SESSIONS =============================
-// // ====================================================================
+// ====================================================================
+//  =========================== SESSIONS =============================
+// ====================================================================
 
 app.post('/session/:classId/:topicId/start', async (req: Request, res: Response) => {
   try {
@@ -272,13 +255,12 @@ app.use((req: Request, res: Response) => {
 // start server
 const server = app.listen(PORT, HOST, () => {
   console.log(`⚡️ Server started on port ${PORT} at ${HOST}`);
-
-	initDB()
 });
 
 // For coverage, handle Ctrl+C gracefully
 process.on('SIGINT', () => {
   server.close(() => {
+    initDB()
     console.log('Shutting down server gracefully.');
     // initDB()
     process.exit();

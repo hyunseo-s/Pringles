@@ -21,7 +21,7 @@ function App() {
 							<Route path="/" element={<HomePage />} />
 							<Route path="/login" element={<LoginPage />} />
 							<Route path="/register" element={<RegisterPage />} />
-							<Route path="/topic" element={<TopicPage />} />
+							<Route path="/topic/:topicId" element={<TopicPage />} />
 							<Route path="/dashboard" element={<DashboardPage />} />
 							<Route path="/quiz" element={<QuizPage />} />
 						</Routes>
