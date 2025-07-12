@@ -2,7 +2,7 @@ import { useNavigate, useParams } from 'react-router';
 import { useUser } from '../context/UserContext';
 import { useEffect, useState } from 'react';
 import MultipleChoice from '../components/quiz/MultipleChoice';
-import { Button, Flex, Modal, Text } from '@mantine/core';
+import { Button, Flex, Modal } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import ShortAnswer from '../components/quiz/ShortAnswer';
 import Explanation from '../components/quiz/Explanation';
@@ -109,8 +109,7 @@ const QuizPage = () => {
   }
 
   const handleFinish = () => {
-    // navigate(`/topic/${topicId}`)
-    navigate("/topic/0");
+    navigate(`/topic/${topicId}`)
   }
 
   return (
