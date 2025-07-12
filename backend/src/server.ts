@@ -7,7 +7,7 @@ import morgan from 'morgan';
 import { initDB } from './initDb';
 import { login, register } from './funcs/auth';
 import { decodeJWT } from './utils';
-import { addQuestion, createTopics, getTopics } from './funcs/topics';
+import { addQuestion, createTopics, getStudentTopicData, getTeacherTopicData, getTopics } from './funcs/topics';
 import { addStudents, createClass, getClass, getStudentsClasses } from './funcs/classes';
 import { startSession } from './funcs/session';
 
@@ -118,6 +118,15 @@ app.get('/classes/:classId', (req: Request, res: Response) => {
   }
 });
 
+// app.get('/classes/:classId/data', (req: Request, res: Response) => {
+//   const classId = req.params.classId;
+//   try {
+//     const topicsData = getTopicsData(classId);
+//     res.status(200).json(topicsData);
+//   } catch (error) {
+//     res.status(404).json({ error: error.message });
+//   }
+// });
 
 // ====================================================================
 //  ============================= TOPICS =============================
@@ -156,35 +165,30 @@ app.post('/topics/:topicId/question', async (req: Request, res: Response) => {
   }
 });
 
-// app.get('/topic/:topicId/teacher/data', (req: Request, res: Response) => {
-//   const topicId = parseInt(req.params.topicId);
-//   try {
-//     const topicData = getTeacherTopicData(topicId);
-//     res.status(200).json(topicData);
-//   } catch (error) {
-//     res.status(404).json({ error: error.message });
-//   }
-// });
+app.get('/topic/:topicId/teacher/data', (req: Request, res: Response) => {
+  const topicId = parseInt(req.params.topicId);
+  const token = req.header('Authorization').split(" ")[1];
+  const teacherId = parseInt(decodeJWT(token));
 
-// app.get('/topic/:topicId/student/data', (req: Request, res: Response) => {
-//   const topicId = parseInt(req.params.topicId);
-//   try {
-//     const topicData = getStudentTopicData(topicId);
-//     res.status(200).json(topicData);
-//   } catch (error) {
-//     res.status(404).json({ error: error.message });
-//   }
-// });
+  try {
+    const topicData = getTeacherTopicData(teacherId, topicId);
+    res.status(200).json(topicData);
+  } catch (error) {
+    res.status(404).json({ error: error.message });
+  }
+});
 
-// app.get('/classes/:classId/data', (req: Request, res: Response) => {
-//   const classId = req.params.classId;
-//   try {
-//     const topicsData = getTopicsData(classId);
-//     res.status(200).json(topicsData);
-//   } catch (error) {
-//     res.status(404).json({ error: error.message });
-//   }
-// });
+app.get('/topic/:topicId/student/data', (req: Request, res: Response) => {
+  const topicId = parseInt(req.params.topicId);
+  const token = req.header('Authorization').split(" ")[1];
+  const studentId = parseInt(decodeJWT(token));
+  try {
+    const topicData = getStudentTopicData(studentId, topicId);
+    res.status(200).json(topicData);
+  } catch (error) {
+    res.status(404).json({ error: error.message });
+  }
+});
 
 // ====================================================================
 //  =========================== SESSIONS =============================
@@ -255,12 +259,13 @@ app.use((req: Request, res: Response) => {
 // start server
 const server = app.listen(PORT, HOST, () => {
   console.log(`⚡️ Server started on port ${PORT} at ${HOST}`);
+
+  initDB()
 });
 
 // For coverage, handle Ctrl+C gracefully
 process.on('SIGINT', () => {
   server.close(() => {
-    initDB()
     console.log('Shutting down server gracefully.');
     // initDB()
     process.exit();
