@@ -38,12 +38,12 @@ export const getTopics = async (classId: number) => {
 export const addQuestion = async (topicId: number, level: number, question: string) => {
 	const db = await getDbConnection();
 
-	await db.run(
-		`INSERT INTO questions (topicId, question, level, numWrong, numRight) VALUES (?, ?, ?, ?, ?)`,
-		[topicId, question, level, 0, 0]
+	const res = await db.run(
+		`INSERT INTO questions (topicId, question, level, type, numWrong, numRight) VALUES (?, ?, ?, ?. ?, ?)`,
+		[topicId, question, level, "written", 0, 0]
 	);
 
-	return {};
+	return { questionid: res.lastID };
 }
 
 export const getStudentTopicData = async (studentId: number, topicId: number) => {
