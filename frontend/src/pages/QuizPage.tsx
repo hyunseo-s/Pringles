@@ -78,7 +78,6 @@ const QuizPage = () => {
   }, [user, navigate]);
 
 	useEffect(() => {
-		console.log('topicid:', typeof topicId);
 		if (!topicId) return;
 		const fetchQuestion = async () => {
 			const res = await get(`/session/question/${topicId}`, undefined);
@@ -194,7 +193,9 @@ const QuizPage = () => {
         }
 
         {/* Finish Button */}
-        <Button variant="light" color="gray" onClick={open}>FINISH</Button>
+        <Button variant="light" color="gray" onClick={() => {
+					open()
+				}}>FINISH</Button>
       </Flex>
 
       {/* Confirmation Modal */}

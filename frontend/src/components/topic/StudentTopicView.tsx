@@ -25,7 +25,6 @@ export const StudentTopicView = ({ topic }: TopicProps) => {
 	const targetRef = useRef<HTMLDivElement>(null);
 
 	const handleStart = async () => {
-		console.log(topic)
 		const res = await post(`/session/start`, { classId: topic.classId, topicId: topic.topic});
 		if (res.error) return;
 		navigate(`/quiz/${topic.topic}/${res.sessionId}`)

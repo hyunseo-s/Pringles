@@ -93,8 +93,6 @@ export async function generateQuestion(studentLevel: string, topicName: string, 
         }
     `;
 
-		console.log(prompt)
-
     const result = await askGemini(prompt);
     // const response = await result.response;
     // const text = await response.text();
