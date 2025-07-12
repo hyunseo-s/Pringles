@@ -113,11 +113,11 @@ app.post('/auth/logout', async (req: Request, res: Response) => {
 // //  ============================= TOPICS =============================
 // // ====================================================================
 
-// app.post('/topics/:classId/create', async (req: Request, res: Response) => {
+
+// app.post('/topics/create', async (req: Request, res: Response) => {
 //   try {
-//     const classId = req.params.classId;
 //     const { topics } = req.body;
-//     const topicId = await createTopics(classId, topics);
+//     const topicId = await createTopics(topics);
 //     res.status(200).json(topicId);
 //   } catch (error) {
 //     res.status(400).json({ error: error.message })
