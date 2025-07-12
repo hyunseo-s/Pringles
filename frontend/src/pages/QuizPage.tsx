@@ -7,10 +7,11 @@ import { useDisclosure } from '@mantine/hooks';
 import ShortAnswer from '../components/quiz/ShortAnswer';
 import Explanation from '../components/quiz/Explanation';
 import Question from '../components/quiz/Question';
+import { ScoreCard } from '../components/quiz/ScoreCard';
 
 const questions: Prompt[] = [
   {
-    question: `Let \\( x = 5 \\). Then \\( x^2 = 25 \\).`,
+    question: `Let $x = 5$. Then \\( x^2 = 25 \\).`,
     type: "multiple",
     answer: [{
       answerOption: "1",
@@ -151,7 +152,7 @@ const QuizPage = () => {
       </Flex>
 
       {/* Confirmation Modal */}
-      <Modal opened={opened} onClose={close} title="Are you sure you want to end the session?" centered>
+      {/* <Modal opened={opened} onClose={close} title="Are you sure you want to end the session?" centered>
         <Flex direction={'column'} gap={20}>
           <Text size="sm">Your progress will be saved.</Text>
           <Flex justify={'space-between'}>
@@ -159,7 +160,18 @@ const QuizPage = () => {
             <Button color="red" onClick={handleFinish}>FINISH</Button>
           </Flex>
         </Flex>
+      </Modal> */}
+
+      {/* Session Score Modal */}
+      <Modal opened={opened} onClose={close} centered>
+        <Flex direction={'column'} gap={20} w={"100%"}>
+          <ScoreCard data={[62, 32, 2, 5]}/>
+          <Flex justify={'center'}>
+            <Button color="blue" variant='light' onClick={handleFinish}>RETURN</Button>
+          </Flex>
+        </Flex>
       </Modal>
+
 		</Flex>
   );
 }

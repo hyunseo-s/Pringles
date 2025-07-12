@@ -3,6 +3,10 @@ import { useMantineTheme } from '@mantine/core';
 
 const config = {
   loader: { load: ["input/tex", "output/chtml"] },
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']], 
+    displayMath: [['$$', '$$'], ['\\[', '\\]']] 
+  }
 };
 
 const Question = ({ question }: { question: string}) => {

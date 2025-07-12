@@ -1,4 +1,4 @@
-import { ActionIcon, Badge, Button, Divider, Flex, Paper, Text } from "@mantine/core"
+import { ActionIcon, Button, Divider, Flex, Paper, Text } from "@mantine/core"
 import { IconArrowDown, IconArrowLeft } from "@tabler/icons-react";
 import { useNavigate } from "react-router";
 import type { TopicProps } from "./TeacherTopicView";
@@ -7,15 +7,15 @@ import StudentStats, { type StudentStatsType } from "./StudentStats.tsx";
 import { useRef } from "react";
 
 const studentSnapshot : StudentStatsType[] = [
-	{ title: 'Best Score', icon: 'star', value: '90', diff: 18 },
-    { title: 'Average Score', icon: 'target', value: '80', diff: -18 },
+	{ title: 'Best Session Score', icon: 'star', value: '90', diff: 18 },
+    { title: 'Avg Session Score', icon: 'target', value: '80', diff: -18 },
     { title: 'Questions Completed', icon: 'answer', value: '745', diff: 18 }
 ]
 
 const studentLevels : StudentStatsType[] = [
-	{ title: 'Level 1-2 Questions', icon: 'level1', value: '90/100'},
-    { title: 'Level 3-4 Questions', icon: 'level2', value: '80/100'},
-    { title: 'Level 5 Questions', icon: 'level3', value: '7/100' }
+	{ title: 'Level 1-2 Questions', icon: 'level1', value: '90 / 100'},
+    { title: 'Level 3-4 Questions', icon: 'level2', value: '80 / 100'},
+    { title: 'Level 5 Questions', icon: 'level3', value: '7 / 100' }
 ]
 
 const previousQs = [{ type: "written answer", level: 1, question: "Explain the process of photosynthesis in plants."}, { type: "multiple", level: 2, question: "Which planet is known as the 'Red Planet'?"}];
