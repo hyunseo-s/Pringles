@@ -15,8 +15,8 @@ function App() {
   return (
     <>
 			<MantineProvider>
+				<Notifications />
 				<UserProvider>
-					<Notifications />
 					<BrowserRouter>
 						<NavBar />
 						<Routes>

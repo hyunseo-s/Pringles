@@ -10,23 +10,31 @@ import {
 import { useForm } from '@mantine/form';
 import { handleError, handleSuccess } from '../utils/handlers';
 import { useNavigate } from 'react-router';
-import { post } from '../utils/apiClient';
+import { get, post } from '../utils/apiClient';
+import { useEffect } from 'react';
+import { useUser } from '../context/UserContext';
 
 const LoginPage = () => {
 	const form = useForm({
-    mode: 'uncontrolled',
     initialValues: {
       email: '',
       password: '',
     },
 
     validate: {
-      	email: (value) => (/^\S+@\S+$/.test(value) ? null : 'Invalid email'),
-		password: (value) => (value ? null : 'Invalid password'),
+      email: (value) => (/^\S+@\S+$/.test(value) ? null : 'Invalid email'),
+			password: (value) => (value ? null : 'Invalid password'),
     },
   });
 
 	const navigate = useNavigate();
+
+	const { user, setUser } = useUser();
+	useEffect(() => {
+		if (user) {
+			navigate("/dashboard"); // or whatever your login path is
+		}
+	}, [user, navigate]);
 
 	const handleSubmit = async (values) => {
 		const res = await post("/auth/login", values);
@@ -38,7 +46,9 @@ const LoginPage = () => {
 
 		handleSuccess(res.message);
 		localStorage.setItem("token", res.token);
-		navigate('/dashboard')
+
+		const userResponse = await get('/user', undefined);
+		setUser(userResponse);
 	}
 
   return (
@@ -58,7 +68,10 @@ const LoginPage = () => {
 				</form>
 				<Text ta="center" mt="md">
 					Don't have an account?{' '}
-					<Anchor href="/register" fw={500} onClick={(event) => event.preventDefault()}>
+					<Anchor href="#" fw={500} onClick={(event) =>{
+						event.preventDefault()
+						navigate('/register')
+						}}>
 						Register
 					</Anchor>
 				</Text>

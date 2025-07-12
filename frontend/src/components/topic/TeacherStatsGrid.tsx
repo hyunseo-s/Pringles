@@ -44,7 +44,7 @@ export function TeacherStatsGrid() {
 					}
         </Group>
         <Text fz="xs" c="dimmed" mt={7}>
-          Compared to previous month
+          Students in this level
         </Text>
       </Paper>
     );

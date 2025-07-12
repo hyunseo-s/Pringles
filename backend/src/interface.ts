@@ -4,8 +4,18 @@ export interface Database {
 
 export interface RegisterObj {
 	email: string;
-	username: string;
 	password: string;
+	nameFirst: string;
+	nameLast: string;
+	role: string;
+}
+
+export interface answerQueObj {
+	studentId: number;
+	topicId: number;
+	sessionId: number;
+	questionId: number;
+	answer: string;
 }
 
 export interface User {
