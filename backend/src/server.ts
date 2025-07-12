@@ -7,7 +7,7 @@ import { initDB } from './initDb';
 import { login, register } from './funcs/auth';
 import { decodeJWT } from './utils';
 import { addStudents, createClass, getClass, getClasses } from './funcs/classes';
-import { answerQuestion, startSession } from './funcs/session';
+import { answerQuestion, endSession, startSession } from './funcs/session';
 import { addQuestion, createTopics, getStudentsLevels, getStudentTopicData, getTeacherTopicData, getTopics } from './funcs/topics';
 import { getUser } from './funcs/user';
 
@@ -263,15 +263,15 @@ app.put('/session/:topicId/:sessionId/:questionId/answer', async (req: Request, 
   }
 });
 
-// app.post('/session/:topicId/:sessionId/end', async (req: Request, res: Response) => {
-//   try {
-//     const { topicId, sessionId } = req.params;
-//     const results = await endSession(parseInt(topicId), parseInt(sessionId));
-//     res.status(200).json(results);
-//   } catch (error) {
-//     res.status(400).json({ error: error.message })
-//   }
-// })
+app.post('/session/:topicId/:sessionId/end', async (req: Request, res: Response) => {
+  try {
+    const { topicId, sessionId } = req.params;
+    const results = await endSession(parseInt(topicId), parseInt(sessionId));
+    res.status(200).json(results);
+  } catch (error) {
+    res.status(400).json({ error: error.message })
+  }
+})
 
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================

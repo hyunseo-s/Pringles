@@ -59,19 +59,32 @@ export const answerQuestion = async ({ studentId, topicId, sessionId, questionId
 	const res = await askGemini(prompt);
 	console.log(res);
 
+	let level = await db.get(`SELECT level FROM topic_student WHERE studentid = '${studentId}' and topicid = '${topicId}'`);
+	level = parseInt(level)
+
 	let increment;
 	const mark = JSON.parse(res);
-	if (mark.correct) {
-		increment = "numRight";
 
+	if (mark.correct) {
 		// Student has answered question correctly
+		increment = "numRight";
+		if (level < 10) level++;
+
 		await db.run(
 			`INSERT INTO question_student (questionid, studentid) VALUES (?, ?)`,[questionId, studentId]
 		);
 	} else {
 		increment = "numWrong";
+		if (level > 1) level--;
 	}
 	
+	// Update student's level for given topic
+	await db.run(
+		`UPDATE topic_student SET level = ? WHERE topicid = ? and studentid = ?`,
+		[level, sessionId, studentId]
+	);
+
+
 	// Increment numWrong or numRight in session
 	const currValStr = await db.get(`SELECT ${increment} FROM questions WHERE topicid = '${topicId}'`);
 	let currVal = parseInt(currValStr)
@@ -94,9 +107,35 @@ export const answerQuestion = async ({ studentId, topicId, sessionId, questionId
 	return res;
 }
 
-// export const endSession = async (topicId, sessionId) => {
-// 	const db = await getDbConnection();
-// 	const { numWrong, numRight } = await db.all(`
-// 		SELECT numWrong, numRight FROM sessions WHERE sessionid = '${sessionId}'`
-// 	);	
-// }
+export const endSession = async (topicId: number, sessionId: number) => {
+	const db = await getDbConnection();
+	const res = await db.get(`
+		SELECT numWrong, numRight FROM sessions WHERE sessionid = '${sessionId}'`
+	);
+
+	const answers = await db.all(`
+		SELECT q.level, a.correct 
+		FROM answers as a 
+		JOIN questions as q ON a.questionid = q.questionid
+		WHERE a.sessionid = '${sessionId}'`
+	);
+
+	const easyQsTotal = answers.filter((a: {level: number, correct: boolean}) => a.level <= 3);
+	const easyCorrect = easyQsTotal.filter((q: {level: number, correct: boolean}) => q.correct).length;
+	const medQsTotal = answers.filter((a: {level: number, correct: boolean}) => a.level > 3 && a.level <= 7);
+	const medCorrect = medQsTotal.filter((q: {level: number, correct: boolean}) => q.correct).length;
+	const hardQsTotal = answers.filter((a: {level: number, correct: boolean}) => a.level > 7);
+	const hardCorrect = hardQsTotal.filter((q: {level: number, correct: boolean}) => q.correct).length;
+
+
+	return {
+		numWrong: res.numWrong,
+		numRight: res.numRight,
+		easyCorrect,
+		easyQsTotal: easyQsTotal.length,
+  	medCorrect,
+  	medQsTotal: medQsTotal.length,
+		hardCorrect,
+		hardQsTotal: hardQsTotal.length,
+	}
+}
