@@ -7,7 +7,6 @@ import { QuestionList } from "./QuestionList"
 
 export interface TopicProps {
 	topic: Topic,
-	classId: string
 }
 
 export const TeacherTopicView = ({ topic }: TopicProps) => {
