@@ -57,27 +57,27 @@ export const getStudentTopicData = async (studentId: number, topicId: number) =>
 	const level = await db.get(`SELECT level FROM topic_student WHERE topicid = '${topicId}' and studentid = '${studentId}'`);
 	console.log(level)
 
-	const answers = await db.get(`
+	const answers = await db.all(`
 		SELECT	q.level, a.correct 
 		FROM	answers AS a
 		JOIN	questions AS q ON a.questionid = q.questionid
 		WHERE	q.topicid = '${topicId}' and a.studentid = '${studentId}'
 	`);
 	
-	const easyQsTotal = answers.filter((a: {level: number, correct: boolean}) => a.level <= 3).length;
+	const easyQsTotal = answers.filter((a: {level: number, correct: boolean}) => a.level <= 3);
 	const easyCorrect = easyQsTotal.filter((q: {level: number, correct: boolean}) => q.correct).length;
-	const medQsTotal = answers.filter((a: {level: number, correct: boolean}) => a.level > 3 && a.level <= 7).length;
+	const medQsTotal = answers.filter((a: {level: number, correct: boolean}) => a.level > 3 && a.level <= 7);
 	const medCorrect = medQsTotal.filter((q: {level: number, correct: boolean}) => q.correct).length;
-	const hardQsTotal = answers.filter((a: {level: number, correct: boolean}) => a.level > 7).length;
+	const hardQsTotal = answers.filter((a: {level: number, correct: boolean}) => a.level > 7);
 	const hardCorrect = hardQsTotal.filter((q: {level: number, correct: boolean}) => q.correct).length;
 	
 	return {
 		easyCorrect,
-		easyQsTotal,
-		medQsTotal,
-		medCorrect,
-		hardQsTotal,
+		easyQsTotal: easyQsTotal.length,
+    medCorrect,
+		medQsTotal: medQsTotal.length,
 		hardCorrect,
+    hardQsTotal: hardQsTotal.length,
 		level,
 	};
 }
@@ -95,16 +95,26 @@ export const getTeacherTopicData = async (teacherId: number, topicId: number) =>
 	return { questionData: questions };
 }
 
-// export const getStudentsLevels = async (teacherId: number, topicId: number) => {
-// 	const db = await getDbConnection();
-// 	const user = await db.get(`SELECT * FROM users WHERE userid = '${teacherId}' AND role = 'teacher'`);	
+export const getStudentsLevels = async (teacherId: number, classId: number) => {
+	const db = await getDbConnection();
+	// const user = await db.get(`SELECT * FROM users WHERE userid = '${teacherId}' AND role = 'teacher'`);	
 
-// 	if (!user) throw new Error("No such teacher exists");
+	// if (!user) throw new Error("No such teacher exists");
 
-// 	const levels = await db.get(`
-// 		SELECT	q.level, a.correct 
-// 		FROM	answers AS a
-// 		JOIN	questions AS q ON a.questionid = q.questionid
-// 		WHERE	q.topicid = '${topicId}' and a.studentid = '${studentId}'
-// 	`);
-// }
+  // const topics = 
+	// const levels = await db.all;;(`
+	// 	SELECT  level
+	// 	FROM    topic_student
+	// 	WHERE	  topicid = '${topicId}'
+	// `);
+	
+	// const easy = levels.filter((level: number) => level <= 3);
+  // const med = levels.filter((level:number) => level > 3 && level <= 7);
+  // const hard = levels.filter((level:number) => level > 7);
+
+  // return {
+  //   easy,
+  //   med,
+  //   hard
+  // }
+}

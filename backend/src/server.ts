@@ -7,7 +7,7 @@ import morgan from 'morgan';
 import { initDB } from './initDb';
 import { login, register } from './funcs/auth';
 import { decodeJWT } from './utils';
-import { addQuestion, createTopics, getStudentTopicData, getTeacherTopicData, getTopics } from './funcs/topics';
+import { addQuestion, createTopics, getStudentsLevels, getStudentTopicData, getTeacherTopicData, getTopics } from './funcs/topics';
 import { addStudents, createClass, getClass, getStudentsClasses } from './funcs/classes';
 import { startSession } from './funcs/session';
 
@@ -190,17 +190,17 @@ app.get('/topic/:topicId/student/data', (req: Request, res: Response) => {
   }
 });
 
-// app.get('/topic/:topicId/students/level', (req: Request, res: Response) => {
-//   const topicId = parseInt(req.params.topicId);
-//   const token = req.header('Authorization').split(" ")[1];
-//   const teacherId = parseInt(decodeJWT(token));
-//   try {
-//     const topicData = getStudentsLevels(teacherId, topicId);
-//     res.status(200).json(topicData);
-//   } catch (error) {
-//     res.status(404).json({ error: error.message });
-//   }
-// });
+app.get('/topic/:classId/students/level', (req: Request, res: Response) => {
+  const classId = parseInt(req.params.classId);
+  const token = req.header('Authorization').split(" ")[1];
+  const teacherId = parseInt(decodeJWT(token));
+  try {
+    const topicData = getStudentsLevels(teacherId, classId);
+    res.status(200).json(topicData);
+  } catch (error) {
+    res.status(404).json({ error: error.message });
+  }
+});
 
 // ====================================================================
 //  =========================== SESSIONS =============================
