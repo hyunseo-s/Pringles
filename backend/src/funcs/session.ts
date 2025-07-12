@@ -145,7 +145,7 @@ export const multiAnswerQuestion = async ({ studentId, topicId, sessionId, quest
 		`UPDATE questions SET ${increment} = ? WHERE questionid = ?`,
 		[currVal, questionId]
 	);
-	
+
 	return {}
 }
 
@@ -220,7 +220,7 @@ export const answerQuestion = async ({ studentId, topicId, sessionId, questionId
 	);
 
 	await db.run(
-		`INSERT INTO answers (questionid, studentid, sessonid, answer, correct) VALUES (?, ?, ?, ?, ?)`,
+		`INSERT INTO answers (questionid, studentid, sessionid, answer, correct) VALUES (?, ?, ?, ?, ?)`,
 		[questionId, studentId, sessionId, answer, mark.correct]
 	);
 
