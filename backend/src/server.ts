@@ -7,7 +7,7 @@ import { initDB } from './initDb';
 import { login, register } from './funcs/auth';
 import { decodeJWT } from './utils';
 import { addStudents, createClass, getClass, getClasses } from './funcs/classes';
-import { generateQuestion, getLevel, getQuestion, startSession, answerQuestion, endSession } from './funcs/session';
+import { generateQuestion, getLevel, getQuestion, startSession, answerQuestion, endSession, multiAnswerQuestion } from './funcs/session';
 import { addQuestion, createTopics, getStudentsLevels, getStudentTopicData, getTeacherTopicData, getTopicName, getTopics } from './funcs/topics';
 import { getUser } from './funcs/user';
 
@@ -281,6 +281,7 @@ app.get('/session/:topicId/:sessionId/question', async (req: Request, res: Respo
     res.status(404).json({ error: error.message });
   }
 });
+
 // app.get('/session/:classId/:topicId/:sessionId/question', async (req: Request, res: Response) => {
 //   const { classId, topicId, sessionId } = req.params;
 //   try {
@@ -290,6 +291,29 @@ app.get('/session/:topicId/:sessionId/question', async (req: Request, res: Respo
 //     res.status(404).json({ error: error.message });
 //   }
 // });
+
+app.put('/session/:topicId/:sessionId/:questionId/multi/answer', async (req: Request, res: Response) => {
+  const { topicId, sessionId, questionId } = req.params;
+  const { answer, correct } = req.body;
+  const token = req.header('Authorization').split(" ")[1];
+  const studentId = parseInt(decodeJWT(token));
+
+  const resObj = {
+    studentId,
+    topicId: parseInt(topicId),
+    sessionId: parseInt(sessionId), 
+    questionId: parseInt(questionId), 
+    answer,
+    correct
+  }
+
+  try {
+    const result = await multiAnswerQuestion(resObj);
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
 
 app.put('/session/:topicId/:sessionId/:questionId/answer', async (req: Request, res: Response) => {
   const { topicId, sessionId, questionId } = req.params;
@@ -307,7 +331,7 @@ app.put('/session/:topicId/:sessionId/:questionId/answer', async (req: Request, 
 
   try {
     const result = await answerQuestion(resObj);
-    res.status(200).send(result);
+    res.status(200).json(result);
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
