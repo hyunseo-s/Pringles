@@ -6,19 +6,27 @@ import { getDbConnection } from '../db';
 const JWT_SECRET = "TOPSECRET";
 
 // Register a new user
-export const register = async ({ username, email, password } : RegisterObj) => {
+export const register = async ({ email, password, nameFirst, nameLast, role } : RegisterObj) => {
 	const db = await getDbConnection();
 
-	const res = await db.run(
-		`INSERT INTO users (username, email, password) VALUES (?, ?, ?)`,
-		[username, email, password]
-	);
+	const users = await db.all(`SELECT * FROM users WHERE email = '${email}' and role = '${role}'`);
 
-	const token = jwt.sign(
-		{ user: res.lastID, email }, JWT_SECRET, { expiresIn: '1h' }
-	);
+	if (users.length > 0) throw new Error("Email already taken");
 
-	return { message: 'Registration success', token };
+	try {
+		const res = await db.run(
+			`INSERT INTO users (email, password, nameFirst, nameLast, role) VALUES (?, ?, ?, ?, ?)`,
+			[email, password, nameFirst, nameLast, role]
+		);
+		console.log(res.lastID)
+		const token = jwt.sign(
+			{ user: res.lastID}, JWT_SECRET, { expiresIn: '1h' }
+		);
+
+		return { message: 'Registration success', token };
+	} catch (err) {
+		console.log(err)
+	}
 }
 
 // User login function
@@ -28,10 +36,10 @@ export const login = async (email: string, password: string) => {
 	const users = await db.all(`SELECT * FROM users WHERE email = '${email}' AND password = '${password}'`);
 
 	if (users.length == 0) {
-			throw new Error("Invalid credentials");
+		throw new Error("Invalid credentials");
 	}
-
-	const token = jwt.sign({ user: users[0].id, email: users[0].email }, JWT_SECRET, { expiresIn: "1h" });
+	console.log(users[0].id)
+	const token = jwt.sign({ user: users[0].id}, JWT_SECRET, { expiresIn: "1h" });
 
 	return { message: "Login success", token };
 };

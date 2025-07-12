@@ -20,7 +20,6 @@ export const initDB = async () => {
 			password TEXT NOT NULL,
       nameFirst TEXT NOT NULL,
       nameLast TEXT NOT NULL,
-      profileImg TEXT,
       role TEXT NOT NULL
     )
   `);
