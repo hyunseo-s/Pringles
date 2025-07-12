@@ -148,8 +148,9 @@ app.get('/classes/:classId', (req: Request, res: Response) => {
 app.post('/topics/:classId/create', async (req: Request, res: Response) => {
   try {
     const classId = req.params.classId
-    const { topics } = req.body;
-    const topicId = await createTopics(classId, topics);
+    const { topicName } = req.body;
+    console.log(topicName)
+    const topicId = await createTopics(classId, topicName);
     res.status(200).json(topicId);
   } catch (error) {
     res.status(400).json({ error: error.message })
