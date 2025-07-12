@@ -4,10 +4,6 @@ import {
   IconCellSignal2,
   IconCellSignal3,
   IconCellSignal4,
-  IconCoin,
-  IconDiscount2,
-  IconReceipt2,
-  IconUserPlus,
 } from '@tabler/icons-react';
 import { Group, Paper, SimpleGrid, Text } from '@mantine/core';
 import classes from './TeacherStatsGrid.module.css';

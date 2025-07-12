@@ -1,58 +1,72 @@
-import { Flex, Group, RingProgress, Text, useMantineTheme } from '@mantine/core';
-import classes from './StudentStats.module.css';
+import {
+    IconArrowDownRight,
+    IconArrowUpRight,
+    IconCarambola,
+    IconTarget,
+    IconMessageReply,
+    IconCellSignal2,
+    IconCellSignal3,
+    IconCellSignal4,
 
-const stats = [
-  { value: 447, label: 'Best Score' },
-  { value: 447, label: 'Average Score' },
-];
+} from '@tabler/icons-react';
+import { Group, Paper, SimpleGrid, Text } from '@mantine/core';
+  
+const icons = {
+    star: IconCarambola,
+    target: IconTarget,
+    answer: IconMessageReply,
+    level1: IconCellSignal2,
+    level2: IconCellSignal3,
+    level3: IconCellSignal4,
+};
 
-const StudentStats = () => {
-  const theme = useMantineTheme();
-  const completed = 1887;
-  const total = 2334;
-  const items = stats.map((stat) => (
-    <div key={stat.label}>
-      <Text className={classes.label}>{stat.value}</Text>
-      <Text size="xs" c="dimmed">
-        {stat.label}
-      </Text>
-    </div>
-  ));
-
-  return (
-    <Flex gap={50}>
-        <div className={classes.ring}>
-            <RingProgress
-            roundCaps
-            thickness={6}
-            size={170}
-            sections={[{ value: (completed / total) * 100, color: theme.primaryColor }]}
-            label={
-                <div>
-                <Text ta="center" fz="1.5rem" className={classes.label}>
-                    {((completed / total) * 100).toFixed(0)}%
-                </Text>
-                <Text ta="center" fz="xs" c="dimmed">
-                    Last Attempt
-                </Text>
-                </div>
-            }
-        />
-        </div>
-        
-        <div>
-            <div>
-            <Text className={classes.lead} mt={30}>
-                1887
-            </Text>
-            <Text fz="xs" c="dimmed">
-                Questions Completed
-            </Text>
-            </div>
-            <Group mt="lg">{items}</Group>
-        </div>
-    </Flex>
-  );
+export type StudentStatsType = {
+    title: string;
+    icon: "star" | "target" | "answer" | "level1" | "level2" | "level3";
+    value: string;
+    diff?: number;
 }
+  
+const StudentStats = ({ data } : { data: StudentStatsType[] }) => {
+    const setColour = (icon: string) => {
+        if (icon === "level1") {
+            return "red";
+        } else if (icon === "level2") {
+            return "orange";
+        } else if (icon === "level3") {
+            return "green";
+        }
+
+        return "gray";
+    } 
+
+    const stats = data.map((stat) => {
+        const Icon = icons[stat.icon];
+        const DiffIcon = stat.diff && stat.diff > 0 ? IconArrowUpRight : IconArrowDownRight;
+
+        return (
+            <Paper withBorder p="md" radius="md" key={stat.title}>
+                <Group justify="space-between">
+                    <Text size="xs" c="dimmed" tt="uppercase" fw={700}>
+                        {stat.title}
+                    </Text>
+                    <Icon size={22} stroke={1.5} color={setColour(stat.icon)}/>
+                </Group>
+                
+                <Group align="flex-end" gap="xs" mt={25}>
+                    <Text fw={700} fz={"1.5rem"} lh={1}>{stat.value}</Text>
+                    {stat.diff && <Text c={stat.diff > 0 ? 'teal' : 'red'} fz="sm" fw={500} className="flex items-center" lh={1}>
+                        <span>{stat.diff}</span>
+                        <DiffIcon size={16} stroke={1.5} />
+                    </Text>}
+                </Group>
+            </Paper>
+        );
+    });
+
+    return (
+        <SimpleGrid cols={{ base: 1, xs: 2, md: 3 }}>{stats}</SimpleGrid>
+    );
+};
 
 export default StudentStats;
