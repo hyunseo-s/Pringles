@@ -29,7 +29,7 @@ export const StudentTopicView = ({ topic, classId }: TopicProps) => {
 			return;
 		}
 		
-		studentSnapshot[0].value = topic.studentData?.level.toString();
+		studentSnapshot[0].value = topic.studentData?.level.toFixed(1);
 		const totalQs = topic.studentData?.easyQsTotal + topic.studentData?.medQsTotal + topic.studentData?.hardQsTotal;
 		studentSnapshot[1].value = totalQs.toString();
 
