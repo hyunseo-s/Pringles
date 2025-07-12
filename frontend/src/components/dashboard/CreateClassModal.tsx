@@ -53,7 +53,6 @@ export const CreateClassModal = ({ opened, close }: CreateClassModalProps) => {
 									const newEmails = [...emails];
 									newEmails.push("");
 									setEmails(newEmails);
-									console.log(newEmails)
 								}}
 								size='xs' variant='outline' rightSection={<IconPlus  size={14} 
 								color='var(--mantine-color-blue-6)'

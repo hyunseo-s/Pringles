@@ -69,10 +69,8 @@ app.get('/user', async (req: Request, res: Response) => {
   try {
     // Check if the token is still valid:
     const token = req.header('Authorization').split(" ")[1];
-		console.log('received', token)
     const userId = decodeJWT(token);
-		const json = await getUser(userId);
-		console.log(json)
+		const json = await getUser(parseInt(userId));
     res.status(200).json(json);
   } catch (error) {
     res.status(400).json({ error: error.message })
@@ -158,11 +156,11 @@ app.post('/topics/:classId/create', async (req: Request, res: Response) => {
   }
 })
 
-app.get('/topics/:classId', (req: Request, res: Response) => {
+app.get('/topics/:classId', async (req: Request, res: Response) => {
   const classId = parseInt(req.params.classId);
   try {
-    const classes = getTopics(classId);
-    res.status(200).json(classes);
+    const topics = await getTopics(classId);
+    res.status(200).json(topics);
   } catch (error) {
     res.status(404).json({ error: error.message });
   }
@@ -191,12 +189,12 @@ app.get('/topic/:topicId/teacher/data', (req: Request, res: Response) => {
   }
 });
 
-app.get('/topic/:topicId/student/data', (req: Request, res: Response) => {
+app.get('/topic/:topicId/student/data', async (req: Request, res: Response) => {
   const topicId = parseInt(req.params.topicId);
   try {
     const token = req.header('Authorization').split(" ")[1];
     const studentId = parseInt(decodeJWT(token));
-    const topicData = getStudentTopicData(studentId, topicId);
+    const topicData = await getStudentTopicData(studentId, topicId);
     res.status(200).json(topicData);
   } catch (error) {
     res.status(404).json({ error: error.message });

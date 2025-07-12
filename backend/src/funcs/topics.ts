@@ -55,7 +55,6 @@ export const getStudentTopicData = async (studentId: number, topicId: number) =>
 
 	// get all questions 
 	const level = await db.get(`SELECT level FROM topic_student WHERE topicid = '${topicId}' and studentid = '${studentId}'`);
-	console.log(level)
 
 	const answers = await db.all(`
 		SELECT	q.level, a.correct 
@@ -78,7 +77,7 @@ export const getStudentTopicData = async (studentId: number, topicId: number) =>
 		medQsTotal: medQsTotal.length,
 		hardCorrect,
 		hardQsTotal: hardQsTotal.length,
-		level,
+		...level,
 	};
 }
 

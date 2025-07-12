@@ -11,15 +11,40 @@ import { CreateClassModal } from '../components/dashboard/CreateClassModal';
 import { handleError, handleSuccess } from '../utils/handlers';
 import { get, post } from '../utils/apiClient';
 import type { Class } from '../types/Class';
+import type { Topic } from '../types/Topic';
 
 const DashboardPage = () => {
 	const [openedTopicModal, { open: openTopicModal, close: closeTopicModal }] = useDisclosure(false);
 	const [openedClassModal, { open: openClassModal, close: closeClassModal }] = useDisclosure(false);
 
 	const [classes, setClasses] = useState<Class[]>([]);
+	const [topics, setTopics] = useState<Topic[]>([]);
+	const [classIndex, setClassIndex] = useState(0);
+	const { user } = useUser();
+
+	useEffect(() => {
+			const getTopics = async () => {
+				const res = await get(`/topics/${classes[classIndex].classid}`, undefined);
+	
+				if (res.error) {
+					handleError(res.error);
+					return;
+				}
+	
+				const newTopics = [];
+	
+				for (let i = 0; i < res.length; i++) {
+					const topicData = await get(`/topic/${res[i].topic}/${user?.role}/data`, undefined);
+					newTopics.push({...res[i], data: topicData})
+				}
+	
+				setTopics(newTopics);
+			}
+			if (classes.length == 0) return;
+			getTopics();
+		}, [classIndex, user, classes]);
 
 	const navigate = useNavigate();
-	const { user } = useUser();
 
   useEffect(() => {
     if (!user) {
@@ -40,7 +65,7 @@ const DashboardPage = () => {
 
   }, []);
 
-	const [classIndex, setClassIndex] = useState(0);
+	
 
   if (!user) return null; // optional: show a loading spinner here
   return (
@@ -67,7 +92,7 @@ const DashboardPage = () => {
 			</div>
 			<hr style={{color: 'lightgray', marginBottom:'1.5rem'}}/>
 			<Flex mb='2rem'>
-				<StatsRing />
+				<StatsRing topics={topics} />
 			</Flex>
 			<Flex justify='space-between' mb='2rem'>
 				<Text size='1.5rem'>Class Topics</Text>
@@ -76,7 +101,7 @@ const DashboardPage = () => {
 				</Button>
 				<AddTopicModal opened={openedTopicModal} close={closeTopicModal} />
 			</Flex>
-			{ classes.length != 0  && <TopicsCarousel classId={classes[classIndex].classid} />}
+			{ classes.length != 0 && topics.length != 0  && <TopicsCarousel topics={topics} />}
 			
 		</Paper>
   );

@@ -114,6 +114,18 @@ export const initDB = async () => {
     )
   `);
 
+	await db.exec(`
+    CREATE TABLE IF NOT EXISTS answers (
+      answerid INTEGER PRIMARY KEY AUTOINCREMENT,
+      questionid INTEGER NOT NULL,
+      studentid INTEGER NOT NULL,
+      answer TEXT NOT NULL,
+      correct BOOLEAN NOT NULL,
+      FOREIGN KEY(questionid) REFERENCES question(questionid),
+      FOREIGN KEY(studentid) REFERENCES users(userid)
+    )
+  `);
+
   await db.exec(`
     CREATE TABLE IF NOT EXISTS question_answerq (
       questionid INTEGER NOT NULL,
@@ -181,6 +193,7 @@ export const initDB = async () => {
 		}
 	}
 
+	// Insert topics
 	await db.exec(`
    	INSERT INTO topics (topicid, classid, topicname) VALUES (1, 1, 'Basic Trigonometry');
 		INSERT INTO topics (topicid, classid, topicname) VALUES (2, 1, 'Quadratic Equations');
@@ -212,7 +225,16 @@ export const initDB = async () => {
 		INSERT INTO topics (topicid, classid, topicname) VALUES (26, 9, 'Cells');
 		INSERT INTO topics (topicid, classid, topicname) VALUES (27, 9, 'Periodic Table');
 	`);
-	
+
+	// Insert questions into Year 9 Maths
+	for (let i = 3; i <= 50; i++ ) {
+		await db.exec(`
+			INSERT INTO topic_student (topicid, studentid, level) VALUES (1, ${i}, ${Math.random() * 10});
+			INSERT INTO topic_student (topicid, studentid, level) VALUES (2, ${i}, ${Math.random() * 10});
+			INSERT INTO topic_student (topicid, studentid, level) VALUES (3, ${i}, ${Math.random() * 10});
+		`);
+	}
+
   return db;
 }
 
