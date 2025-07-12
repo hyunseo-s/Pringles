@@ -6,9 +6,10 @@ import morgan from 'morgan';
 import { initDB } from './initDb';
 import { login, register } from './funcs/auth';
 import { decodeJWT } from './utils';
-import { addStudents, createClass, getClass, getStudentsClasses } from './funcs/classes';
+import { addStudents, createClass, getClass, getClasses } from './funcs/classes';
 import { generateQuestion, getLevel, getQuestion, startSession } from './funcs/session';
-// import { addQuestion, createTopics, getStudentTopicData, getTeacherTopicData, getTopics } from './funcs/topics';
+import { addQuestion, createTopics, getStudentsLevels, getStudentTopicData, getTeacherTopicData, getTopics } from './funcs/topics';
+import { getUser } from './funcs/user';
 
 // Set up web app
 const app = express();
@@ -64,14 +65,29 @@ app.post('/auth/logout', async (req: Request, res: Response) => {
   }
 });
 
+app.get('/user', async (req: Request, res: Response) => {
+  try {
+    // Check if the token is still valid:
+    const token = req.header('Authorization').split(" ")[1];
+		console.log('received', token)
+    const userId = decodeJWT(token);
+		const json = await getUser(userId);
+		console.log(json)
+    res.status(200).json(json);
+  } catch (error) {
+    res.status(400).json({ error: error.message })
+  }
+});
+
 // ====================================================================
 //  ============================ CLASSES =============================
 // ====================================================================
 
-app.get('/classes', (req: Request, res: Response) => {
-  const { studentId } = req.params;
+app.get('/classes', async (req: Request, res: Response) => {
   try {
-    const classes = getStudentsClasses(studentId);
+		const token = req.header('Authorization').split(" ")[1];
+    const userId = decodeJWT(token);
+    const classes = await getClasses(userId);
     res.status(200).json(classes);
   } catch (error) {
     res.status(404).json({ error: error.message });
@@ -115,72 +131,89 @@ app.get('/classes/:classId', (req: Request, res: Response) => {
   }
 });
 
+// app.get('/classes/:classId/data', (req: Request, res: Response) => {
+//   const classId = req.params.classId;
+//   try {
+//     const classData = getClassData(classId);
+//     res.status(200).json(classData);
+//   } catch (error) {
+//     res.status(404).json({ error: error.message });
+//   }
+// });
+
 
 // ====================================================================
 //  ============================= TOPICS =============================
 // ====================================================================
 
 
-// app.post('/topics/create', async (req: Request, res: Response) => {
-//   try {
-//     const { topics } = req.body;
-//     const topicId = await createTopics(topics);
-//     res.status(200).json(topicId);
-//   } catch (error) {
-//     res.status(400).json({ error: error.message })
-//   }
-// })
+app.post('/topics/:classId/create', async (req: Request, res: Response) => {
+  try {
+    const classId = req.params.classId
+    const { topics } = req.body;
+    const topicId = await createTopics(classId, topics);
+    res.status(200).json(topicId);
+  } catch (error) {
+    res.status(400).json({ error: error.message })
+  }
+})
 
-// app.get('/topics/:classId', (req: Request, res: Response) => {
-//   const classId = parseInt(req.params.classId);
-//   try {
-//     const classes = getTopics(classId);
-//     res.status(200).json(classes);
-//   } catch (error) {
-//     res.status(404).json({ error: error.message });
-//   }
-// });
+app.get('/topics/:classId', (req: Request, res: Response) => {
+  const classId = parseInt(req.params.classId);
+  try {
+    const classes = getTopics(classId);
+    res.status(200).json(classes);
+  } catch (error) {
+    res.status(404).json({ error: error.message });
+  }
+});
 
-// app.post('/topics/:topicId/question', async (req: Request, res: Response) => {
-//   const topicId = parseInt(req.params.topicId);
-//   const { question, level } = req.body;
-//   try {
-//     const questionId = await addQuestion(topicId, level, question);
-//     res.status(200).json(questionId);
-//   } catch (error) {
-//     res.status(400).json({ error: error.message });
-//   }
-// });
+app.post('/topics/:topicId/question', async (req: Request, res: Response) => {
+  const topicId = parseInt(req.params.topicId);
+  const { question, level } = req.body;
+  try {
+    const questionId = await addQuestion(topicId, level, question);
+    res.status(200).json(questionId);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
 
-// app.get('/topic/:topicId/teacher/data', (req: Request, res: Response) => {
-//   const topicId = parseInt(req.params.topicId);
-//   try {
-//     const topicData = getTeacherTopicData(topicId);
-//     res.status(200).json(topicData);
-//   } catch (error) {
-//     res.status(404).json({ error: error.message });
-//   }
-// });
+app.get('/topic/:topicId/teacher/data', (req: Request, res: Response) => {
+  const topicId = parseInt(req.params.topicId);
+  try {
+    const token = req.header('Authorization').split(" ")[1];
+    const teacherId = parseInt(decodeJWT(token));
+    const topicData = getTeacherTopicData(teacherId, topicId);
+    res.status(200).json(topicData);
+  } catch (error) {
+    res.status(404).json({ error: error.message });
+  }
+});
 
-// app.get('/topic/:topicId/student/data', (req: Request, res: Response) => {
-//   const topicId = parseInt(req.params.topicId);
-//   try {
-//     const topicData = getStudentTopicData(topicId);
-//     res.status(200).json(topicData);
-//   } catch (error) {
-//     res.status(404).json({ error: error.message });
-//   }
-// });
+app.get('/topic/:topicId/student/data', (req: Request, res: Response) => {
+  const topicId = parseInt(req.params.topicId);
+  try {
+    const token = req.header('Authorization').split(" ")[1];
+    const studentId = parseInt(decodeJWT(token));
+    const topicData = getStudentTopicData(studentId, topicId);
+    res.status(200).json(topicData);
+  } catch (error) {
+    res.status(404).json({ error: error.message });
+  }
+});
 
-// app.get('/classes/:classId/data', (req: Request, res: Response) => {
-//   const classId = req.params.classId;
-//   try {
-//     const topicsData = getTopicsData(classId);
-//     res.status(200).json(topicsData);
-//   } catch (error) {
-//     res.status(404).json({ error: error.message });
-//   }
-// });
+app.get('/topic/:classId/students/level', (req: Request, res: Response) => {
+  const classId = parseInt(req.params.classId);
+  try {
+    const token = req.header('Authorization').split(" ")[1];
+    const teacherId = parseInt(decodeJWT(token));
+    const topicData = getStudentsLevels(teacherId, classId);
+    res.status(200).json(topicData)
+  } catch (error) {
+    res.status(404).json({ error: error.message });
+  }
+});
 
 // ====================================================================
 //  =========================== SESSIONS =============================

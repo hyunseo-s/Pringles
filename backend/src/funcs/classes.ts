@@ -1,21 +1,29 @@
 import { getDbConnection } from '../db';
 
 // Function to get the list of classes given a student Id
-export async function getStudentsClasses(studentId: string) {
+export async function getClasses(userId: string) {
 
     const db = await getDbConnection();
 
     // Get the classes info from the Classes table by joining class students 
     // relation on where class id matches and student id matches
-    const classes = await db.all(
+    const tClasses = await db.all(
+        `SELECT c.classId, c.classname, c.classImg 
+         FROM classes c 
+         JOIN class_teacher cs ON c.classId = cs.classId 
+         WHERE cs.teacherId = ?`,
+        [userId]
+    );
+
+		const sClasses = await db.all(
         `SELECT c.classId, c.classname, c.classImg 
          FROM classes c 
          JOIN class_student cs ON c.classId = cs.classId 
          WHERE cs.studentId = ?`,
-        [studentId]
+        [userId]
     );
 
-    return { classes };
+    return { classes: [...tClasses, ...sClasses] };
 }
 
 // Function to add the student to a class given the classId and list of students

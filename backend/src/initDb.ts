@@ -8,6 +8,7 @@ export const initDB = async () => {
     DROP TABLE IF EXISTS class_student;
 		DROP TABLE IF EXISTS class_teacher;
 		DROP TABLE IF EXISTS classes;
+    DROP TABLE IF EXISTS question_answerq;
 		DROP TABLE IF EXISTS question_student;
     DROP TABLE IF EXISTS questions;
     DROP TABLE IF EXISTS topics;
@@ -42,6 +43,7 @@ export const initDB = async () => {
       topicid INTEGER NOT NULL,
       question TEXT NOT NULL,
       level INTEGER NOT NULL,
+      type STRING NOT NULL,
 			numRight INTEGER NOT NULL,
       numWrong INTEGER NOT NULL,
       FOREIGN KEY(topicid) REFERENCES topics(topicid)
@@ -112,18 +114,27 @@ export const initDB = async () => {
     )
   `);
 
+  await db.exec(`
+    CREATE TABLE IF NOT EXISTS question_answerq (
+      questionid INTEGER NOT NULL,
+      answer STRING NOT NULL,
+      correct BOOLEAN NOT NULL,
+      PRIMARY KEY(questionid, correct)
+    )
+  `);
+
 	// Insert teachers and students
 	await db.exec(`
-   	INSERT INTO users (userid, email, password, nameFirst, nameLast, role) VALUES (1, 'justin@mail.com', 'password', 'Justin', 'Son', 'teacher');
-	 	INSERT INTO users (userid, email, password, nameFirst, nameLast, role) VALUES (2, 'ezc@mail.com', 'password', 'Elizabeth', 'Zhu Chan', 'teacher');
-	 	INSERT INTO users (userid, email, password, nameFirst, nameLast, role) VALUES (3, 'ivan@mail.com', 'password', 'Ivan', 'Chan', 'student');
-	 	INSERT INTO users (userid, email, password, nameFirst, nameLast, role) VALUES (4, 'parker@mail.com', 'password', 'Parker', 'Qiu', 'student');
-	 	INSERT INTO users (userid, email, password, nameFirst, nameLast, role) VALUES (5, 'felix@mail.com', 'password', 'Felix', 'Cao', 'student');
+   	INSERT INTO users (userid, email, password, nameFirst, nameLast, role) VALUES (1, 'justin@mail.com', '123', 'Justin', 'Son', 'teacher');
+	 	INSERT INTO users (userid, email, password, nameFirst, nameLast, role) VALUES (2, 'ezc@mail.com', '123', 'Elizabeth', 'Zhu Chan', 'teacher');
+	 	INSERT INTO users (userid, email, password, nameFirst, nameLast, role) VALUES (3, 'ivan@mail.com', '123', 'Ivan', 'Chan', 'student');
+	 	INSERT INTO users (userid, email, password, nameFirst, nameLast, role) VALUES (4, 'parker@mail.com', '123', 'Parker', 'Qiu', 'student');
+	 	INSERT INTO users (userid, email, password, nameFirst, nameLast, role) VALUES (5, 'felix@mail.com', '123', 'Felix', 'Cao', 'student');
 	`);
 
 	for (let i = 1; i <= 50; i++) {
 		await db.exec(`
-			INSERT INTO users (userid, email, password, nameFirst, nameLast, role) VALUES (${i + 5}, 'adam${i}@mail.com', 'password', 'Justin', 'Son', 'student');
+			INSERT INTO users (userid, email, password, nameFirst, nameLast, role) VALUES (${i + 5}, 'adam${i}@mail.com', '123', 'Justin', 'Son', 'student');
 		`);
 	}
 
@@ -133,11 +144,11 @@ export const initDB = async () => {
 		INSERT INTO classes (classid, classname) VALUES (2, 'YEAR 10 MATHS');
 		INSERT INTO classes (classid, classname) VALUES (3, 'YEAR 11 MATHS');
 		INSERT INTO classes (classid, classname) VALUES (4, 'YEAR 12 MATHS');
-		INSERT INTO classes (classid, classname) VALUES (5, 'COMP1511 Wednesday');
-		INSERT INTO classes (classid, classname) VALUES (6, 'COMP1511 Thursday');
-		INSERT INTO classes (classid, classname) VALUES (7, 'COMP1521 Monday');
-		INSERT INTO classes (classid, classname) VALUES (8, 'COMP1521 Tuesday');
-		INSERT INTO classes (classid, classname) VALUES (9, 'COMP1531 Friday');
+		INSERT INTO classes (classid, classname) VALUES (5, 'YEAR 7A ENGLISH');
+		INSERT INTO classes (classid, classname) VALUES (6, 'YEAR 7B ENGLISH');
+		INSERT INTO classes (classid, classname) VALUES (7, 'YEAR 8A SCIENCE');
+		INSERT INTO classes (classid, classname) VALUES (8, 'YEAR 8B SCIENCE');
+		INSERT INTO classes (classid, classname) VALUES (9, 'YEAR 8C SCIENCE');
 	`);
 
 	// Insert class teacher relationship
@@ -169,6 +180,39 @@ export const initDB = async () => {
 			)
 		}
 	}
+
+	await db.exec(`
+   	INSERT INTO topics (topicid, classid, topicname) VALUES (1, 1, 'Basic Trigonometry');
+		INSERT INTO topics (topicid, classid, topicname) VALUES (2, 1, 'Quadratic Equations');
+		INSERT INTO topics (topicid, classid, topicname) VALUES (3, 1, 'Coordinate Geometry');
+		INSERT INTO topics (topicid, classid, topicname) VALUES (4, 2, 'Circle Geometry');
+		INSERT INTO topics (topicid, classid, topicname) VALUES (5, 2, 'Further Trigonometry');
+		INSERT INTO topics (topicid, classid, topicname) VALUES (6, 2, 'Non Linear Geometry');
+		INSERT INTO topics (topicid, classid, topicname) VALUES (7, 3, 'Solving Inequalities');
+		INSERT INTO topics (topicid, classid, topicname) VALUES (8, 3, 'Projectile Motion');
+		INSERT INTO topics (topicid, classid, topicname) VALUES (9, 3, 'Differentiation');
+		INSERT INTO topics (topicid, classid, topicname) VALUES (10, 4, 'Integration');
+		INSERT INTO topics (topicid, classid, topicname) VALUES (11, 4, 'Simple Harmonic Equation');
+		INSERT INTO topics (topicid, classid, topicname) VALUES (12, 4, 'Mechanics');
+
+		INSERT INTO topics (topicid, classid, topicname) VALUES (13, 5, 'Creative Writing');
+		INSERT INTO topics (topicid, classid, topicname) VALUES (14, 5, 'Macbeth');
+		INSERT INTO topics (topicid, classid, topicname) VALUES (15, 5, 'Rime of the Ancient Mariner');
+		INSERT INTO topics (topicid, classid, topicname) VALUES (16, 6, 'Creative Writing');
+		INSERT INTO topics (topicid, classid, topicname) VALUES (17, 6, 'Macbeth');
+		INSERT INTO topics (topicid, classid, topicname) VALUES (18, 6, 'Rime of the Ancient Mariner');
+
+		INSERT INTO topics (topicid, classid, topicname) VALUES (19, 7, 'Ecosystems');
+		INSERT INTO topics (topicid, classid, topicname) VALUES (20, 7, 'Cells');
+		INSERT INTO topics (topicid, classid, topicname) VALUES (21, 7, 'Periodic Table');
+		INSERT INTO topics (topicid, classid, topicname) VALUES (22, 8, 'Ecosystems');
+		INSERT INTO topics (topicid, classid, topicname) VALUES (23, 8, 'Cells');
+		INSERT INTO topics (topicid, classid, topicname) VALUES (24, 8, 'Periodic Table');
+		INSERT INTO topics (topicid, classid, topicname) VALUES (25, 9, 'Ecosystems');
+		INSERT INTO topics (topicid, classid, topicname) VALUES (26, 9, 'Cells');
+		INSERT INTO topics (topicid, classid, topicname) VALUES (27, 9, 'Periodic Table');
+	`);
+	
   return db;
 }
 
