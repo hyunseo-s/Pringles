@@ -113,16 +113,16 @@ export const initDB = async () => {
 
 	// Insert teachers and students
 	await db.exec(`
-   	INSERT INTO users (userid, email, password, nameFirst, nameLast, role) VALUES (1, 'justin@mail.com', 'password', 'Justin', 'Son', 'teacher');
-	 	INSERT INTO users (userid, email, password, nameFirst, nameLast, role) VALUES (2, 'ezc@mail.com', 'password', 'Elizabeth', 'Zhu Chan', 'teacher');
-	 	INSERT INTO users (userid, email, password, nameFirst, nameLast, role) VALUES (3, 'ivan@mail.com', 'password', 'Ivan', 'Chan', 'student');
-	 	INSERT INTO users (userid, email, password, nameFirst, nameLast, role) VALUES (4, 'parker@mail.com', 'password', 'Parker', 'Qiu', 'student');
-	 	INSERT INTO users (userid, email, password, nameFirst, nameLast, role) VALUES (5, 'felix@mail.com', 'password', 'Felix', 'Cao', 'student');
+   	INSERT INTO users (userid, email, password, nameFirst, nameLast, role) VALUES (1, 'justin@mail.com', '123', 'Justin', 'Son', 'teacher');
+	 	INSERT INTO users (userid, email, password, nameFirst, nameLast, role) VALUES (2, 'ezc@mail.com', '123', 'Elizabeth', 'Zhu Chan', 'teacher');
+	 	INSERT INTO users (userid, email, password, nameFirst, nameLast, role) VALUES (3, 'ivan@mail.com', '123', 'Ivan', 'Chan', 'student');
+	 	INSERT INTO users (userid, email, password, nameFirst, nameLast, role) VALUES (4, 'parker@mail.com', '123', 'Parker', 'Qiu', 'student');
+	 	INSERT INTO users (userid, email, password, nameFirst, nameLast, role) VALUES (5, 'felix@mail.com', '123', 'Felix', 'Cao', 'student');
 	`);
 
 	for (let i = 1; i <= 50; i++) {
 		await db.exec(`
-			INSERT INTO users (userid, email, password, nameFirst, nameLast, role) VALUES (${i + 5}, 'adam${i}@mail.com', 'password', 'Justin', 'Son', 'student');
+			INSERT INTO users (userid, email, password, nameFirst, nameLast, role) VALUES (${i + 5}, 'adam${i}@mail.com', '123', 'Justin', 'Son', 'student');
 		`);
 	}
 
