@@ -26,6 +26,7 @@
     "better-react-mathjax": "^2.3.0",
     "embla-carousel": "^8.6.0",
     "embla-carousel-react": "^8.6.0",
+    "leva": "^0.10.0",
     "maath": "^0.10.8",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
