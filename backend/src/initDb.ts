@@ -14,6 +14,7 @@ export const initDB = async () => {
 		DROP TABLE IF EXISTS topic_student;
     DROP TABLE IF EXISTS sessions;
 		DROP TABLE IF EXISTS users;
+    DROP TABLE IF EXISTS answers;
   `);
 
   await db.exec(`
