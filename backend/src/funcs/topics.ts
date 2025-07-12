@@ -18,7 +18,7 @@ export const createTopics = async (classId: string , topics: string[]) => {
 
 		for (const student of students) {
 			await db.run(
-				`INSERT INTO topic_student (topicid, studentid, level) VALUES (?, ?)`, [res.lastID, student.studentid, 5]
+				`INSERT INTO topic_student (topicid, studentid, level) VALUES (?, ?, ?)`, [res.lastID, student.studentid, 5]
 			);
 		}
 	}
@@ -29,7 +29,7 @@ export const createTopics = async (classId: string , topics: string[]) => {
 export const getTopics = async (classId: number) => {
 	const db = await getDbConnection();
 	const topics = await db.all(`SELECT topicname FROM topics WHERE classid = '${classId}'`);
-
+	console.log(topics)
 	return {topics};
 }
 
@@ -52,7 +52,7 @@ export const getStudentTopicData = async (studentId: number, topicId: number) =>
 
 	// get all questions 
 	const level = await db.get(`SELECT level FROM topic_student WHERE topicid = '${topicId}' and studentid = '${studentId}'`);
-	console.log(level.level)
+	console.log(level)
 
 	const answers = await db.get(`
 		SELECT	q.level, a.correct 
@@ -75,7 +75,7 @@ export const getStudentTopicData = async (studentId: number, topicId: number) =>
 		medCorrect,
 		hardQsTotal,
 		hardCorrect,
-		level: level.level,
+		level: level,
 	};
 }
 
