@@ -4,7 +4,7 @@ import { ActionIcon, Anchor, InputLabel, NumberInput, Text } from '@mantine/core
 import { useListState } from '@mantine/hooks';
 import classes from './QuestionList.module.css';
 import { useState } from 'react';
-import { IconCross, IconX } from '@tabler/icons-react';
+import { IconX } from '@tabler/icons-react';
 
 const data = [
   { position: 6, difficulty: 10, dateCreated: new Date(), symbol: '1', question: 'What is the powerhouse of the cell?' },
