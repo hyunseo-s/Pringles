@@ -97,24 +97,38 @@ export const getTeacherTopicData = async (teacherId: number, topicId: number) =>
 
 export const getStudentsLevels = async (teacherId: number, classId: number) => {
 	const db = await getDbConnection();
-	// const user = await db.get(`SELECT * FROM users WHERE userid = '${teacherId}' AND role = 'teacher'`);	
+  const topicLevels = [];
+	const user = await db.get(`SELECT * FROM users WHERE userid = '${teacherId}' AND role = 'teacher'`);	
 
-	// if (!user) throw new Error("No such teacher exists");
+	if (!user) throw new Error("No such teacher exists");
 
-  // const topics = 
-	// const levels = await db.all;;(`
-	// 	SELECT  level
-	// 	FROM    topic_student
-	// 	WHERE	  topicid = '${topicId}'
-	// `);
-	
-	// const easy = levels.filter((level: number) => level <= 3);
-  // const med = levels.filter((level:number) => level > 3 && level <= 7);
-  // const hard = levels.filter((level:number) => level > 7);
+  const topics = await db.all(`
+		SELECT  topicid, topicname
+		FROM    topics
+		WHERE	  classid = '${classId}'
+	`);
 
-  // return {
-  //   easy,
-  //   med,
-  //   hard
-  // }
+  for (const topic of topics) {
+    const levels = await db.all(`
+      SELECT  level
+      FROM    topic_student
+      WHERE	  topicid = '${topic.topicid}'
+    `);
+
+    const easy = levels.filter((level: number) => level <= 3).length;
+    const med = levels.filter((level:number) => level > 3 && level <= 7).length;
+    const hard = levels.filter((level:number) => level > 7).length;
+    
+    const topicInfo = {
+      topicId: topic.topicId,
+      topicName: topic.topicname,
+      easy,
+      med, 
+      hard
+    }
+
+    topicLevels.push(topicInfo)
+  }
+
+  return { topicLevels }
 }
