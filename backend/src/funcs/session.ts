@@ -22,10 +22,9 @@ export async function getLevel(studentId: string, topicId: string) {
     const db = await getDbConnection();
 
     const res = await db.get(
-        `SELECT level FROM topic_student WHERE topicid = '${topicId}' AND studentid = '${studentId}'`
+        `SELECT level FROM topic_student WHERE topicid = ${topicId} AND studentid = ${studentId}`
     );
 
-    console.log(res)
     return { level: res.level };
 }
 
@@ -57,14 +56,14 @@ export async function getQuestion(topicId: string) {
 }
 
 // Generate new question given topic and session id
-export async function generateQuestion(studentLevel: string, topicId: string, easyQuestion: string, medQuestion: string, hardQuestion: string, easyQuestionLevel: string, medQuestionLevel: string, hardQuestionLevel: string) {
-
+export async function generateQuestion(studentLevel: string, topicName: string, easyQuestion: string, medQuestion: string, hardQuestion: string, easyQuestionLevel: string, medQuestionLevel: string, hardQuestionLevel: string) {
+		
     const prompt = `
-        Generate a single multiple-choice question on the topic: "${topicId}". 
-        This is a level "${easyQuestionLevel}" difficulty question that you can base it off to generate (easy question): "${easyQuestion}".
-        This is a level "${medQuestionLevel}" difficulty question that you can base it off to generate (easy question): "${medQuestion}".
-        This is a level "${hardQuestionLevel}" difficulty question that you can base it off to generate (easy question): "${hardQuestion}".
-        The generated question should have the difficulty level "${studentLevel}".
+        Generate a single multiple-choice question on the topic: "${topicName}". 
+        This is a level ${easyQuestionLevel} difficulty question that you can base it off to generate (easy question): "${easyQuestion}".
+        This is a level ${medQuestionLevel} difficulty question that you can base it off to generate (medium question): "${medQuestion}".
+        This is a level ${hardQuestionLevel} difficulty question that you can base it off to generate (hard question): "${hardQuestion}".
+        The generated question should have the difficulty level ${studentLevel} out of 10 with 10 being the most difficult.
         
         Format the response as JSON:
         {
@@ -94,6 +93,8 @@ export async function generateQuestion(studentLevel: string, topicId: string, ea
         }
     `;
 
+		console.log(prompt)
+
     const result = await askGemini(prompt);
     // const response = await result.response;
     // const text = await response.text();
@@ -103,7 +104,6 @@ export async function generateQuestion(studentLevel: string, topicId: string, ea
 
 export const answerQuestion = async ({ studentId, topicId, sessionId, questionId, answer }: answerQueObj) => {
 	const db = await getDbConnection();
-	console.log(topicId, sessionId, questionId, answer)
 
 	const question = await db.get(`SELECT question FROM questions WHERE questionid = '${questionId}'`);
 
@@ -130,7 +130,6 @@ export const answerQuestion = async ({ studentId, topicId, sessionId, questionId
 	
 	`
 	const res = await askGemini(prompt);
-	console.log(res);
 
 	let increment;
 	const mark = JSON.parse(res);

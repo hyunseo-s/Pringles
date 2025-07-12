@@ -18,9 +18,9 @@ const TopicPage = () => {
       const id = parseInt(topicId ?? "0");
 
       // Fetch name of topic
-      const name = await get(`/topics/${topicId}/name`, undefined);
-      if (name.error) {
-        handleError(name.error);
+      const topicRes = await get(`/topic/${topicId}`, undefined);
+      if (topicRes.error) {
+        handleError(topicRes.error);
         return;
       }
 
@@ -32,8 +32,9 @@ const TopicPage = () => {
       }
 
       const newTopic : Topic = {
+				classId: topicRes.classid,
         topic: id,
-        topicName: name.topicname,
+        topicName: topicRes.topicname,
         teacherData: {}
       }
 

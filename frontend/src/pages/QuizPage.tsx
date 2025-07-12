@@ -8,7 +8,7 @@ import ShortAnswer from '../components/quiz/ShortAnswer';
 import Explanation from '../components/quiz/Explanation';
 import Question from '../components/quiz/Question';
 import { ScoreCard } from '../components/quiz/ScoreCard';
-import { post } from '../utils/apiClient';
+import { get, post, put } from '../utils/apiClient';
 
 const questions: Prompt[] = [
   {
@@ -77,13 +77,34 @@ const QuizPage = () => {
     }
   }, [user, navigate]);
 
-  if (!user) return null; // optional: show a loading spinner here
+	useEffect(() => {
+		console.log('topicid:', typeof topicId);
+		if (!topicId) return;
+		const fetchQuestion = async () => {
+			const res = await get(`/session/question/${topicId}`, undefined);
 
-  const fetchQuestion = async () => {
-		const res = await post('/session/question', { topicId });
-		console.log(res);
-    setPrompt(questions[1]);
-  }
+			if (res.error) return;
+			const cleaned = res.result.replace(/```json\n|```/g, '');
+
+			// Step 2: Parse to object
+			const parsed = JSON.parse(cleaned);
+			if (parsed.options) {
+				setPrompt({
+					question: parsed.question,
+					type: 'multiple',
+					answer: parsed.options.map(option => ({
+						correct: option.is_correct,
+						rationale: option.rationale,
+						answerOption: option.text
+					}))
+				});
+			}
+		}
+		fetchQuestion()
+	}, [topicId])
+
+  if (!user) return null; // optional: show a loading spinner here
+	
 
   const handleSubmit = () => {
     // Check if user input is correct for multiple choice answer
@@ -94,9 +115,12 @@ const QuizPage = () => {
     }
     
     // Check if user input is correct for written answer
-    const fetchCorrect = () => {
+    const fetchCorrect = async () => {
+			const res = await put('/session/answer', {
+				answer: '',topicId: topicId, sessionId: sessionId, questionId: 1
+			})
       // calls /session/{classId}/{topicId}/{sessionId}/{questionId}/answer
-      const res : WrittenSolution = {correct: true, rationale: "This is the reason"};
+      // const res : WrittenSolution = {correct: true, rationale: "This is the reason"};
       setCorrect(res.correct);
       setExplanation(res.rationale);
     }
@@ -107,8 +131,29 @@ const QuizPage = () => {
   const handleNext = () => {
     setInput(null);
     setCorrect(null);
-    fetchQuestion();
+    fetchNextQuestion();
   }
+
+	const fetchNextQuestion = async () => {
+		const res = await get(`/session/question/${topicId}`, undefined);
+
+		if (res.error) return;
+		const cleaned = res.result.replace(/```json\n|```/g, '');
+
+		// Step 2: Parse to object
+		const parsed = JSON.parse(cleaned);
+		if (parsed.options) {
+			setPrompt({
+				question: parsed.question,
+				type: 'multiple',
+				answer: parsed.options.map(option => ({
+					correct: option.is_correct,
+					rationale: option.rationale,
+					answerOption: option.text
+				}))
+			});
+		}
+	}
 
   const handleFinish = () => {
     navigate(`/topic/${topicId}`)
