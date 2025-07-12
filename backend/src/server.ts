@@ -7,6 +7,8 @@ import morgan from 'morgan';
 import { initDB } from './initDb';
 import { login, register } from './funcs/auth';
 import { decodeJWT } from './utils';
+import { addStudents, createClass, getClass, getStudentsClasses } from './funcs/classes';
+import { startSession } from './funcs/session';
 // import { addQuestion, createTopics, getStudentTopicData, getTeacherTopicData, getTopics } from './funcs/topics';
 
 // Set up web app
@@ -25,9 +27,9 @@ const HOST: string = process.env.IP || '127.0.0.1';
 //  ================= WORK IS DONE BELOW THIS LINE ===================
 // ====================================================================
 
-// app.get('/echo', async (req: Request, res: Response) => {
-//   return res.status(200).json({ message: 'echo' })
-// });
+app.get('/echo', async (req: Request, res: Response) => {
+  return res.status(200).json({ message: 'echo' })
+});
 
 // ====================================================================
 //  ============================== AUTH ==============================
@@ -68,79 +70,69 @@ app.post('/auth/logout', async (req: Request, res: Response) => {
 // //  ============================ CLASSES =============================
 // // ====================================================================
 
-// app.get('/classes/', (req: Request, res: Response) => {
-//   const { studentId } = req.params;
-//   try {
-//     const classes = getStudentsClasses(studentId);
-//     res.status(200).json(classes);
-//   } catch (error) {
-//     res.status(404).json({ error: error.message });
-//   }
-// });
+app.get('/classes/', (req: Request, res: Response) => {
+  const { studentId } = req.params;
+  try {
+    const classes = getStudentsClasses(studentId);
+    res.status(200).json(classes);
+  } catch (error) {
+    res.status(404).json({ error: error.message });
+  }
+});
 
-// app.post('/classes/:classid/add', async (req: Request, res: Response) => {
-//   try {
-//     const { classId } = req.params;
-//     const { students } = req.body;
-//     const addedStudents = await addStudents(classId, students);
-//     res.status(200).json(addedStudents);
-//   } catch (error) {
-//     res.status(400).json({ error: error.message });
-//   }
-// });
+app.post('/classes/:classid/add', async (req: Request, res: Response) => {
+  try {
+    const { classId } = req.params;
+    const { students } = req.body;
+    const addedStudents = await addStudents(classId, students);
+    res.status(200).json(addedStudents);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
 
-// app.post('/classes/create', async (req: Request, res: Response) => {
-//   try {
-//     const { name, students, classImg } = req.body;
-//     const token = req.header('Authorization').split(" ")[1];
-//     const teacherId = decodeJWT(token);
-//     const classId = await createClass(name, students, classImg, teacherId);
-//     res.status(200).json(classId);
-//   } catch (error) {
-//     res.status(400).json({ error: error.message });
-//   }
-// });
+app.post('/classes/create', async (req: Request, res: Response) => {
+  try {
+    const { name, students, classImg } = req.body;
+    const token = req.header('Authorization').split(" ")[1];
+    const teacherId = decodeJWT(token);
+    const classId = await createClass(name, students, classImg, teacherId);
+    res.status(200).json(classId);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
 
-// app.get('/classes/:classId', (req: Request, res: Response) => {
-//   const { classId } = req.params;
-//   try {
-//     const classInfo = getClass(classId);
-//     res.status(200).json(classInfo);
-//   } catch (error) {
-//     res.status(404).json({ error: error.message });
-//   }
-// });
+app.get('/classes/:classId', (req: Request, res: Response) => {
+  const { classId } = req.params;
+  try {
+    const classInfo = getClass(classId);
+    res.status(200).json(classInfo);
+  } catch (error) {
+    res.status(404).json({ error: error.message });
+  }
+});
 
-// app.post('/classes/:classid/add', async (req: Request, res: Response) => {
-//   try {
-//     const { classid } = req.params;
-//     const { students } = req.body;
-//     const addedStudents = await addStudents(classid, students);
-//     res.status(200).json(addedStudents);
-//   } catch (error) {
-//     res.status(400).json({ error: error.message });
-//   }
-// });
+app.post('/classes/:classid/add', async (req: Request, res: Response) => {
+  try {
+    const { classid } = req.params;
+    const { students } = req.body;
+    const addedStudents = await addStudents(classid, students);
+    res.status(200).json(addedStudents);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
 
-// app.post('/classes/create', async (req: Request, res: Response) => {
-//   try {
-//     const { name, students, classImg } = req.body;
-//     const classId = await createClasses(name, students, classImg);
-//     res.status(200).json(classId);
-//   } catch (error) {
-//     res.status(400).json({ error: error.message });
-//   }
-// });
-
-// app.get('/classes/:classId', (req: Request, res: Response) => {
-//   const { classId } = req.params;
-//   try {
-//     const classInfo = getClasses(classId);
-//     res.status(200).json(classInfo);
-//   } catch (error) {
-//     res.status(404).json({ error: error.message });
-//   }
-// });
+app.get('/classes/:classId', (req: Request, res: Response) => {
+  const { classId } = req.params;
+  try {
+    const classInfo = getClass(classId);
+    res.status(200).json(classInfo);
+  } catch (error) {
+    res.status(404).json({ error: error.message });
+  }
+});
 
 
 // // ====================================================================
@@ -213,15 +205,17 @@ app.post('/auth/logout', async (req: Request, res: Response) => {
 // //  =========================== SESSIONS =============================
 // // ====================================================================
 
-// app.post('/session/:classId/:topicId/start', async (req: Request, res: Response) => {
-//   try {
-//     const { classId, topicId } = req.body;
-//     const sessionId = await startSession(classId, topicId);
-//     res.status(200).json(sessionId);
-//   } catch (error) {
-//     res.status(400).json({ error: error.message })
-//   }
-// });
+app.post('/session/:classId/:topicId/start', async (req: Request, res: Response) => {
+  try {
+    const { classId, topicId } = req.body;
+    const token = req.header('Authorization').split(" ")[1];
+    const studentId = decodeJWT(token);
+    const sessionId = await startSession(classId, topicId, studentId);
+    res.status(200).json(sessionId);
+  } catch (error) {
+    res.status(400).json({ error: error.message })
+  }
+});
 
 // app.get('/session/:classId/:topicId/:sessionId/question', (req: Request, res: Response) => {
 //   const { classId, topicId, sessionId } = req.params;
