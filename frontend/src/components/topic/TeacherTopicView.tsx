@@ -1,4 +1,4 @@
-import { ActionIcon, Progress, Text } from "@mantine/core"
+import { ActionIcon, Progress } from "@mantine/core"
 import { IconArrowLeft } from "@tabler/icons-react"
 import type { Topic } from "../../types/Topic"
 import { TeacherStatsGrid } from "./TeacherStatsGrid"
@@ -6,7 +6,7 @@ import { useNavigate } from "react-router"
 import { QuestionList } from "./QuestionList"
 
 export interface TopicProps {
-	topic: Topic
+	topic: Topic,
 }
 
 export const TeacherTopicView = ({ topic }: TopicProps) => {
@@ -27,7 +27,7 @@ export const TeacherTopicView = ({ topic }: TopicProps) => {
 				Banner
 			</div>
 			<p className="text-3xl my-6">
-				{topic.name}
+				{topic.topicName}
 			</p>
 			<div className="flex gap-20 mb-10">
 				<div className="flex flex-col">

@@ -2,13 +2,13 @@ import { ActionIcon, Button, Divider, Flex, Paper, Text } from "@mantine/core"
 import { IconArrowDown, IconArrowLeft } from "@tabler/icons-react";
 import { useNavigate } from "react-router";
 import type { TopicProps } from "./TeacherTopicView";
-import { useParams } from 'react-router-dom';
 import StudentStats, { type StudentStatsType } from "./StudentStats.tsx";
 import { useRef } from "react";
+import { post } from "../../utils/apiClient.ts";
 
 const studentSnapshot : StudentStatsType[] = [
 	{ title: 'Best Session Score', icon: 'star', value: '90', diff: 18 },
-    { title: 'Avg Session Score', icon: 'target', value: '80', diff: -18 },
+    { title: 'Current Level', icon: 'target', value: '80' },
     { title: 'Questions Completed', icon: 'answer', value: '745', diff: 18 }
 ]
 
@@ -20,17 +20,17 @@ const studentLevels : StudentStatsType[] = [
 
 const previousQs = [{ type: "written answer", level: 1, question: "Explain the process of photosynthesis in plants."}, { type: "multiple", level: 2, question: "Which planet is known as the 'Red Planet'?"}];
 
-export const StudentTopicView = ({ topic }: TopicProps) => {
+export const StudentTopicView = ({ topic, classId }: TopicProps) => {
 	const navigate = useNavigate();
-	// const { topicId } = useParams();
 	const targetRef = useRef<HTMLDivElement>(null);
 
-	const handleStart = async () => {
-		// calls /session/{classId}/{topicId}/start
-		// const res = await post("/session/{classId}/{topicId}/start", values);
+	console.log(topic);
 
-		// navigate(`/quiz/${res.sessionId}`)
-		navigate(`/quiz/0/0`)
+	const handleStart = async () => {
+		const classId = 7;
+		const res = await post(`/session/start`, { classId, topicId: topic.topic});
+		if (res.error) return;
+		navigate(`/quiz/${topic.topic}/${res.sessionId}`)
 	}
 
 	const scrollToTarget = () => {
@@ -55,7 +55,7 @@ export const StudentTopicView = ({ topic }: TopicProps) => {
 			<Flex align="center" justify='space-between' className="my-18">
 				<Flex direction="column" gap={"3.5rem"}>
 					<p className="text-6xl">
-						{topic.name}
+						{topic.topicName}
 					</p>
 
 					<Button radius="xl" w="200" onClick={() => handleStart()}>START PRACTICE</Button>

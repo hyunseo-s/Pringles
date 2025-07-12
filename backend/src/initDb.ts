@@ -282,32 +282,32 @@ INSERT INTO questions (questionid, topicid, question, level, type, numRight, num
 
 -- Ecosystems (topicid: 19)
 INSERT INTO questions (questionid, topicid, question, level, type, numRight, numWrong) VALUES (31, 19, 'Define a food chain and give an example involving at least three organisms.', 2, 'written', 0, 0);
-INSERT INTO questions (questionid, topicid, question, level, type, numRight, numWrong) VALUES (32, 19, 'Explain the role of decomposers in an ecosystem.', 3, 'written', 0, 0);
-INSERT INTO questions (questionid, topicid, question, level, type, numRight, numWrong) VALUES (33, 19, 'Draw and label a basic carbon cycle including photosynthesis and respiration.', 4, 'written', 0, 0);
-INSERT INTO questions (questionid, topicid, question, level, type, numRight, numWrong) VALUES (34, 19, 'What is meant by the term "trophic level"? Give an example.', 2, 'written', 0, 0);
-INSERT INTO questions (questionid, topicid, question, level, type, numRight, numWrong) VALUES (35, 19, 'Explain how energy is transferred and lost between trophic levels using a pyramid of energy.', 5, 'written', 0, 0);
+INSERT INTO questions (questionid, topicid, question, level, type, numRight, numWrong) VALUES (32, 19, 'Explain the role of decomposers in an ecosystem.', 6, 'written', 0, 0);
+INSERT INTO questions (questionid, topicid, question, level, type, numRight, numWrong) VALUES (33, 19, 'Draw and label a basic carbon cycle including photosynthesis and respiration.', 1, 'written', 0, 0);
+INSERT INTO questions (questionid, topicid, question, level, type, numRight, numWrong) VALUES (34, 19, 'What is meant by the term "trophic level"? Give an example.', 8, 'written', 0, 0);
+INSERT INTO questions (questionid, topicid, question, level, type, numRight, numWrong) VALUES (35, 19, 'Explain how energy is transferred and lost between trophic levels using a pyramid of energy.', 3, 'written', 0, 0);
 
 -- Cells (topicid: 20)
 INSERT INTO questions (questionid, topicid, question, level, type, numRight, numWrong) VALUES (36, 20, 'Label the parts of a typical animal cell and describe their functions.', 2, 'written', 0, 0);
-INSERT INTO questions (questionid, topicid, question, level, type, numRight, numWrong) VALUES (37, 20, 'Compare and contrast plant and animal cells using at least three key differences.', 3, 'written', 0, 0);
-INSERT INTO questions (questionid, topicid, question, level, type, numRight, numWrong) VALUES (38, 20, 'Describe the function of mitochondria and relate it to cellular respiration: $\\text{C}_6\\text{H}_{12}\\text{O}_6 + 6\\text{O}_2 \\rightarrow 6\\text{CO}_2 + 6\\text{H}_2\\text{O} + \\text{energy}$.', 4, 'written', 0, 0);
-INSERT INTO questions (questionid, topicid, question, level, type, numRight, numWrong) VALUES (39, 20, 'What is the role of ribosomes in protein synthesis?', 3, 'written', 0, 0);
+INSERT INTO questions (questionid, topicid, question, level, type, numRight, numWrong) VALUES (37, 20, 'Compare and contrast plant and animal cells using at least three key differences.', 8, 'written', 0, 0);
+INSERT INTO questions (questionid, topicid, question, level, type, numRight, numWrong) VALUES (38, 20, 'Describe the function of mitochondria and relate it to cellular respiration: $\\text{C}_6\\text{H}_{12}\\text{O}_6 + 6\\text{O}_2 \\rightarrow 6\\text{CO}_2 + 6\\text{H}_2\\text{O} + \\text{energy}$.', 2, 'written', 0, 0);
+INSERT INTO questions (questionid, topicid, question, level, type, numRight, numWrong) VALUES (39, 20, 'What is the role of ribosomes in protein synthesis?', 8, 'written', 0, 0);
 INSERT INTO questions (questionid, topicid, question, level, type, numRight, numWrong) VALUES (40, 20, 'Explain why red blood cells lack nuclei and how this helps their function.', 4, 'written', 0, 0);
 
 -- Periodic Table (topicid: 21)
 INSERT INTO questions (questionid, topicid, question, level, type, numRight, numWrong) VALUES (41, 21, 'What do elements in the same group of the periodic table have in common?', 2, 'written', 0, 0);
-INSERT INTO questions (questionid, topicid, question, level, type, numRight, numWrong) VALUES (42, 21, 'Describe the trend in reactivity down Group 1 (alkali metals).', 3, 'written', 0, 0);
-INSERT INTO questions (questionid, topicid, question, level, type, numRight, numWrong) VALUES (43, 21, 'What is the atomic number and what does it represent in terms of protons and electrons?', 2, 'written', 0, 0);
-INSERT INTO questions (questionid, topicid, question, level, type, numRight, numWrong) VALUES (44, 21, 'Balance the chemical equation: $\\text{Na} + \\text{H}_2\\text{O} \\rightarrow \\text{NaOH} + \\text{H}_2$', 5, 'written', 0, 0);
+INSERT INTO questions (questionid, topicid, question, level, type, numRight, numWrong) VALUES (42, 21, 'Describe the trend in reactivity down Group 1 (alkali metals).', 5, 'written', 0, 0);
+INSERT INTO questions (questionid, topicid, question, level, type, numRight, numWrong) VALUES (43, 21, 'What is the atomic number and what does it represent in terms of protons and electrons?', 7, 'written', 0, 0);
+INSERT INTO questions (questionid, topicid, question, level, type, numRight, numWrong) VALUES (44, 21, 'Balance the chemical equation: $\\text{Na} + \\text{H}_2\\text{O} \\rightarrow \\text{NaOH} + \\text{H}_2$', 8, 'written', 0, 0);
 INSERT INTO questions (questionid, topicid, question, level, type, numRight, numWrong) VALUES (45, 21, 'Explain why noble gases in Group 18 are chemically unreactive.', 4, 'written', 0, 0);
 	`);
 
 	await db.exec(`
-INSERT INTO answers (answerid, questionid, sessionid, studentid, answer, correct) VALUES (1, 31, 100, 3, 'I think food chains are like the weather patterns.', false);
+INSERT INTO answers (answerid, questionid, sessionid, studentid, answer, correct) VALUES (1, 31, 100, 3, 'I think food chains are like the weather patterns.', true);
 INSERT INTO answers (answerid, questionid, sessionid, studentid, answer, correct) VALUES (2, 31, 100, 4, 'A food chain is when animals live together in groups.', false);
 INSERT INTO answers (answerid, questionid, sessionid, studentid, answer, correct) VALUES (3, 31, 100, 5, 'It shows who eats whom in nature, e.g., plant → deer → lion.', true);
 INSERT INTO answers (answerid, questionid, sessionid, studentid, answer, correct) VALUES (4, 31, 100, 6, 'Its the DNA of animals that make them a chain.', false);
-INSERT INTO answers (answerid, questionid, sessionid, studentid, answer, correct) VALUES (5, 31, 100, 7, 'A food chain shows how energy flows, like grass → rabbit → fox.', true);
+INSERT INTO answers (answerid, questionid, sessionid, studentid, answer, correct) VALUES (5, 31, 100, 7, 'A food chain shows how energy flows, like grass → rabbit → grass.', false);
 INSERT INTO answers (answerid, questionid, sessionid, studentid, answer, correct) VALUES (6, 31, 100, 8, 'A food chain is a link from producer to top consumer: algae → fish → eagle.', true);
 INSERT INTO answers (answerid, questionid, sessionid, studentid, answer, correct) VALUES (7, 31, 100, 9, 'I dont know what a food chain is.', false);
 INSERT INTO answers (answerid, questionid, sessionid, studentid, answer, correct) VALUES (8, 31, 100, 10, 'Energy passes from plant to herbivore to carnivore, like grass → insect → bird.', true);
@@ -315,17 +315,17 @@ INSERT INTO answers (answerid, questionid, sessionid, studentid, answer, correct
 INSERT INTO answers (answerid, questionid, sessionid, studentid, answer, correct) VALUES (10, 32, 100, 4, 'Bacteria and fungi help decompose dead material and keep the ecosystem healthy.', true);
 INSERT INTO answers (answerid, questionid, sessionid, studentid, answer, correct) VALUES (11, 32, 100, 5, 'Decomposers are plants that grow in dark places.', false);
 INSERT INTO answers (answerid, questionid, sessionid, studentid, answer, correct) VALUES (12, 32, 100, 6, 'They make food using sunlight like producers.', false);
-INSERT INTO answers (answerid, questionid, sessionid, studentid, answer, correct) VALUES (13, 32, 100, 7, 'Decomposers break down dead things and recycle nutrients into the soil.', true);
+INSERT INTO answers (answerid, questionid, sessionid, studentid, answer, correct) VALUES (13, 32, 100, 7, 'Decomposers break down dead things and recycle nutrients into the soil.', false);
 INSERT INTO answers (answerid, questionid, sessionid, studentid, answer, correct) VALUES (14, 32, 100, 8, 'Decomposers are at the top of the food chain.', false);
-INSERT INTO answers (answerid, questionid, sessionid, studentid, answer, correct) VALUES (15, 32, 100, 9, 'Decomposers clean up waste and return matter to the cycle.', true);
+INSERT INTO answers (answerid, questionid, sessionid, studentid, answer, correct) VALUES (15, 32, 100, 9, 'Decomposers clean up waste and return matter to the water specifically.', false);
 INSERT INTO answers (answerid, questionid, sessionid, studentid, answer, correct) VALUES (16, 32, 100, 10, 'I dont really know what decomposers do.', false);
 INSERT INTO answers (answerid, questionid, sessionid, studentid, answer, correct) VALUES (17, 33, 100, 3, 'CO2 is taken in by plants and then cycled back by breathing organisms.', true);
 INSERT INTO answers (answerid, questionid, sessionid, studentid, answer, correct) VALUES (18, 33, 100, 4, 'I dont understand what the carbon cycle is.', false);
 INSERT INTO answers (answerid, questionid, sessionid, studentid, answer, correct) VALUES (19, 33, 100, 5, 'Carbon is absorbed by plants in photosynthesis and released by animals through respiration.', true);
 INSERT INTO answers (answerid, questionid, sessionid, studentid, answer, correct) VALUES (20, 33, 100, 6, 'Its a process only happening in volcanoes.', false);
-INSERT INTO answers (answerid, questionid, sessionid, studentid, answer, correct) VALUES (21, 33, 100, 7, 'Plants fix carbon, and animals release it again via respiration.', true);
+INSERT INTO answers (answerid, questionid, sessionid, studentid, answer, correct) VALUES (21, 33, 100, 7, 'Plants fix carbon, and animals release it again via plants.', false);
 INSERT INTO answers (answerid, questionid, sessionid, studentid, answer, correct) VALUES (22, 33, 100, 8, 'It involves turning carbon into gold using sunlight.', false);
-INSERT INTO answers (answerid, questionid, sessionid, studentid, answer, correct) VALUES (23, 33, 100, 9, 'The cycle moves carbon between atmosphere, plants, and animals.', true);
+INSERT INTO answers (answerid, questionid, sessionid, studentid, answer, correct) VALUES (23, 33, 100, 9, 'The cycle moves carbon between books, plants, and animals.', false);
 INSERT INTO answers (answerid, questionid, sessionid, studentid, answer, correct) VALUES (24, 33, 100, 10, 'The carbon cycle is when carbon melts into the ground.', false);
 INSERT INTO answers (answerid, questionid, sessionid, studentid, answer, correct) VALUES (25, 34, 100, 3, 'Plants are in the first trophic level; herbivores are in the second.', true);
 INSERT INTO answers (answerid, questionid, sessionid, studentid, answer, correct) VALUES (26, 34, 100, 4, 'Not sure what trophic means here.', false);
@@ -341,12 +341,12 @@ INSERT INTO answers (answerid, questionid, sessionid, studentid, answer, correct
 INSERT INTO answers (answerid, questionid, sessionid, studentid, answer, correct) VALUES (36, 35, 100, 6, 'I think energy is constant between levels.', false);
 INSERT INTO answers (answerid, questionid, sessionid, studentid, answer, correct) VALUES (37, 35, 100, 7, 'Energy increases as you go up the pyramid.', false);
 INSERT INTO answers (answerid, questionid, sessionid, studentid, answer, correct) VALUES (38, 35, 100, 8, 'The pyramid grows energy for animals to use.', false);
-INSERT INTO answers (answerid, questionid, sessionid, studentid, answer, correct) VALUES (39, 35, 100, 9, 'Energy decreases at each level due to heat loss and metabolism.', true);
+INSERT INTO answers (answerid, questionid, sessionid, studentid, answer, correct) VALUES (39, 35, 100, 9, 'Energy decreases at each level due to heat loss and food.', false);
 INSERT INTO answers (answerid, questionid, sessionid, studentid, answer, correct) VALUES (40, 35, 100, 10, 'Most energy is lost through respiration and waste.', true);
 INSERT INTO answers (answerid, questionid, sessionid, studentid, answer, correct) VALUES (41, 36, 100, 3, 'The nucleus holds DNA, and cytoplasm is where reactions happen.', true);
 INSERT INTO answers (answerid, questionid, sessionid, studentid, answer, correct) VALUES (42, 36, 100, 4, 'The nucleus helps with digestion in cells.', false);
 INSERT INTO answers (answerid, questionid, sessionid, studentid, answer, correct) VALUES (43, 36, 100, 5, 'Only red blood cells have organelles.', false);
-INSERT INTO answers (answerid, questionid, sessionid, studentid, answer, correct) VALUES (44, 36, 100, 6, 'Mitochondria = energy, nucleus = control, membrane = border.', true);
+INSERT INTO answers (answerid, questionid, sessionid, studentid, answer, correct) VALUES (44, 36, 100, 6, 'Mitochondria = energy, nucleus = control, membrane = nothing.', false);
 INSERT INTO answers (answerid, questionid, sessionid, studentid, answer, correct) VALUES (45, 36, 100, 7, 'Nucleus controls the cell, mitochondria produce energy, membrane controls entry.', true);
 INSERT INTO answers (answerid, questionid, sessionid, studentid, answer, correct) VALUES (46, 36, 100, 8, 'Cell membrane protects; mitochondria make ATP; ribosomes build proteins.', true);
 INSERT INTO answers (answerid, questionid, sessionid, studentid, answer, correct) VALUES (47, 36, 100, 9, 'The animal cell is just a big empty circle.', false);
@@ -375,12 +375,12 @@ INSERT INTO answers (answerid, questionid, sessionid, studentid, answer, correct
 INSERT INTO answers (answerid, questionid, sessionid, studentid, answer, correct) VALUES (70, 39, 100, 8, 'Protein synthesis happens on ribosomes.', true);
 INSERT INTO answers (answerid, questionid, sessionid, studentid, answer, correct) VALUES (71, 39, 100, 9, 'Ribosomes are where proteins are synthesized from amino acids.', true);
 INSERT INTO answers (answerid, questionid, sessionid, studentid, answer, correct) VALUES (72, 39, 100, 10, 'Ribosomes build proteins using the cells genetic code.', true);
-INSERT INTO answers (answerid, questionid, sessionid, studentid, answer, correct) VALUES (73, 40, 100, 3, 'All cells must have a nucleus.', false);
+INSERT INTO answers (answerid, questionid, sessionid, studentid, answer, correct) VALUES (73, 40, 100, 3, 'All cells must have a nucleus.', true);
 INSERT INTO answers (answerid, questionid, sessionid, studentid, answer, correct) VALUES (74, 40, 100, 4, 'Im not sure why they lack a nucleus.', false);
 INSERT INTO answers (answerid, questionid, sessionid, studentid, answer, correct) VALUES (75, 40, 100, 5, 'They can hold more hemoglobin without a nucleus.', true);
 INSERT INTO answers (answerid, questionid, sessionid, studentid, answer, correct) VALUES (76, 40, 100, 6, 'No nucleus makes them more flexible for travel.', true);
 INSERT INTO answers (answerid, questionid, sessionid, studentid, answer, correct) VALUES (77, 40, 100, 7, 'Red blood cells dont need oxygen.', false);
-INSERT INTO answers (answerid, questionid, sessionid, studentid, answer, correct) VALUES (78, 40, 100, 8, 'More room for oxygen transport since theres no nucleus.', true);
+INSERT INTO answers (answerid, questionid, sessionid, studentid, answer, correct) VALUES (78, 40, 100, 8, 'I dont know.', false);
 INSERT INTO answers (answerid, questionid, sessionid, studentid, answer, correct) VALUES (79, 40, 100, 9, 'They have extra nuclei to store oxygen.', false);
 INSERT INTO answers (answerid, questionid, sessionid, studentid, answer, correct) VALUES (80, 40, 100, 10, 'No nucleus allows red blood cells to carry more oxygen.', true);
 INSERT INTO answers (answerid, questionid, sessionid, studentid, answer, correct) VALUES (81, 41, 100, 3, 'They react similarly because of their electron structure.', true);
