@@ -14,8 +14,8 @@ function App() {
   return (
     <>
 			<MantineProvider>
+				<Notifications />
 				<UserProvider>
-					<Notifications />
 					<BrowserRouter>
 						<Routes>
 							<Route path="/" element={<HomePage />} />
