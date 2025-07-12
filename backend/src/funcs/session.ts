@@ -14,26 +14,14 @@ export async function startSession(classId: string, topicId: string, studentId: 
     return { sessionId: res.lastID };
 }
 
-// gets the question given class, topic and session id
-export async function getQuestions(classId: string, topicId: string, sessionId: string) {
+// // gets the question given class, topic and session id
+// export async function getQuestions(classId: string, topicId: string, studentId: string) {
 
-    // const db = await getDbConnection();
+//     const db = await getDbConnection();
 
-    // const res = await db.run(
+//     const res = await db.run(
         
-    // );
+//     );
 
-    // return { sessionId: res.lastID };
-}
-
-// ends the session given classId, topicId and sessionId
-export async function endSession(classId: string, topicId: string, sessionId: string) {
-
-    // const db = await getDbConnection();
-
-    // const res = await db.run(
-        
-    // );
-
-    // return { sessionId: res.lastID };
-}
+//     return { sessionId: res.lastID };
+// }
