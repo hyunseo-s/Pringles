@@ -9,7 +9,11 @@
 		"ts-node-dev": "ts-node-dev -T src/server.ts"
 	},
 	"dependencies": {
+<<<<<<< HEAD
 		"@google/generative-ai": "^0.24.1",
+=======
+		"@google/generative-ai": "^0.24.0",
+>>>>>>> b7be369bb52a9b4405a251670d08ad59dcb8ebb5
 		"bcryptjs": "^3.0.2",
 		"cors": "^2.8.5",
 		"express": "^4.19.2",
