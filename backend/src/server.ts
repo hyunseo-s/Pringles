@@ -7,9 +7,9 @@ import morgan from 'morgan';
 import { initDB } from './initDb';
 import { login, register } from './funcs/auth';
 import { decodeJWT } from './utils';
+import { addQuestion, createTopics, getStudentTopicData, getTeacherTopicData, getTopics } from './funcs/topics';
 import { addStudents, createClass, getClass, getStudentsClasses } from './funcs/classes';
 import { endSession, getQuestions, startSession } from './funcs/session';
-// import { addQuestion, createTopics, getStudentTopicData, getTeacherTopicData, getTopics } from './funcs/topics';
 
 // Set up web app
 const app = express();
@@ -114,63 +114,6 @@ app.get('/classes/:classId', async (req: Request, res: Response) => {
   }
 });
 
-
-// ====================================================================
-//  ============================= TOPICS =============================
-// ====================================================================
-
-
-// app.post('/topics/create', async (req: Request, res: Response) => {
-//   try {
-//     const { topics } = req.body;
-//     const topicId = await createTopics(topics);
-//     res.status(200).json(topicId);
-//   } catch (error) {
-//     res.status(400).json({ error: error.message })
-//   }
-// })
-
-// app.get('/topics/:classId', (req: Request, res: Response) => {
-//   const classId = parseInt(req.params.classId);
-//   try {
-//     const classes = getTopics(classId);
-//     res.status(200).json(classes);
-//   } catch (error) {
-//     res.status(404).json({ error: error.message });
-//   }
-// });
-
-// app.post('/topics/:topicId/question', async (req: Request, res: Response) => {
-//   const topicId = parseInt(req.params.topicId);
-//   const { question, level } = req.body;
-//   try {
-//     const questionId = await addQuestion(topicId, level, question);
-//     res.status(200).json(questionId);
-//   } catch (error) {
-//     res.status(400).json({ error: error.message });
-//   }
-// });
-
-// app.get('/topic/:topicId/teacher/data', (req: Request, res: Response) => {
-//   const topicId = parseInt(req.params.topicId);
-//   try {
-//     const topicData = getTeacherTopicData(topicId);
-//     res.status(200).json(topicData);
-//   } catch (error) {
-//     res.status(404).json({ error: error.message });
-//   }
-// });
-
-// app.get('/topic/:topicId/student/data', (req: Request, res: Response) => {
-//   const topicId = parseInt(req.params.topicId);
-//   try {
-//     const topicData = getStudentTopicData(topicId);
-//     res.status(200).json(topicData);
-//   } catch (error) {
-//     res.status(404).json({ error: error.message });
-//   }
-// });
-
 // app.get('/classes/:classId/data', (req: Request, res: Response) => {
 //   const classId = req.params.classId;
 //   try {
@@ -180,6 +123,68 @@ app.get('/classes/:classId', async (req: Request, res: Response) => {
 //     res.status(404).json({ error: error.message });
 //   }
 // });
+
+// ====================================================================
+//  ============================= TOPICS =============================
+// ====================================================================
+
+
+app.post('/topics/{classId}/create', async (req: Request, res: Response) => {
+  try {
+    const classId = req.params.classId;
+    const { topics } = req.body;
+    const topicId = await createTopics(classId, topics);
+    res.status(200).json(topicId);
+  } catch (error) {
+    res.status(400).json({ error: error.message })
+  }
+})
+
+app.get('/topics/:classId', (req: Request, res: Response) => {
+  const classId = parseInt(req.params.classId);
+  try {
+    const classes = getTopics(classId);
+    res.status(200).json(classes);
+  } catch (error) {
+    res.status(404).json({ error: error.message });
+  }
+});
+
+app.post('/topics/:topicId/question', async (req: Request, res: Response) => {
+  const topicId = parseInt(req.params.topicId);
+  const { question, level } = req.body;
+  try {
+    const questionId = await addQuestion(topicId, level, question);
+    res.status(200).json(questionId);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
+app.get('/topic/:topicId/teacher/data', (req: Request, res: Response) => {
+  const topicId = parseInt(req.params.topicId);
+  const token = req.header('Authorization').split(" ")[1];
+  const teacherId = parseInt(decodeJWT(token));
+
+  try {
+    const topicData = getTeacherTopicData(teacherId, topicId);
+    res.status(200).json(topicData);
+  } catch (error) {
+    res.status(404).json({ error: error.message });
+  }
+});
+
+app.get('/topic/:topicId/student/data', (req: Request, res: Response) => {
+  const topicId = parseInt(req.params.topicId);
+  const token = req.header('Authorization').split(" ")[1];
+  const studentId = parseInt(decodeJWT(token));
+  try {
+    const topicData = getStudentTopicData(studentId, topicId);
+    res.status(200).json(topicData);
+  } catch (error) {
+    res.status(404).json({ error: error.message });
+  }
+});
 
 // ====================================================================
 //  =========================== SESSIONS =============================
@@ -250,6 +255,8 @@ app.use((req: Request, res: Response) => {
 // start server
 const server = app.listen(PORT, HOST, () => {
   console.log(`⚡️ Server started on port ${PORT} at ${HOST}`);
+
+  initDB()
 });
 
 // For coverage, handle Ctrl+C gracefully
@@ -257,6 +264,7 @@ process.on('SIGINT', () => {
   initDB()
   server.close(() => {
     console.log('Shutting down server gracefully.');
+    // initDB()
     process.exit();
   });
 });

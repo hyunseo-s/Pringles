@@ -1,5 +1,4 @@
 import { getDbConnection } from '../db';
-import { getAllUsers } from './auth';
 
 // Function to get the list of classes given a student Id
 export async function getStudentsClasses(studentId: string) {

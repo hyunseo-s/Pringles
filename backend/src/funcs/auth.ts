@@ -19,7 +19,7 @@ export const register = async ({ email, password, nameFirst, nameLast, role } : 
 			[email, password, nameFirst, nameLast, role]
 		);
 		const token = jwt.sign(
-			{ user: res.lastID}, JWT_SECRET, { expiresIn: '1h' }
+			{ user: res.lastID }, JWT_SECRET, { expiresIn: '1h' }
 		);
 
 		return { message: 'Registration success', token };
@@ -38,7 +38,7 @@ export const login = async (email: string, password: string) => {
 		throw new Error("Invalid credentials");
 	}
 	console.log(users[0].id)
-	const token = jwt.sign({ user: users[0].id}, JWT_SECRET, { expiresIn: "1h" });
+	const token = jwt.sign({ user: users[0].id }, JWT_SECRET, { expiresIn: "1h" });
 
 	return { message: "Login success", token };
 };
