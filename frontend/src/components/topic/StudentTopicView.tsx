@@ -4,6 +4,7 @@ import { useNavigate } from "react-router";
 import type { TopicProps } from "./TeacherTopicView";
 import StudentStats, { type StudentStatsType } from "./StudentStats.tsx";
 import { useEffect, useRef } from "react";
+import { post } from "../../utils/apiClient.ts";
 
 const studentSnapshot : StudentStatsType[] = [
     { title: 'Current Level', icon: 'target', value: '' },
@@ -19,7 +20,7 @@ const studentLevels : StudentStatsType[] = [
 
 const previousQs = [{ type: "written answer", level: 1, question: "Explain the process of photosynthesis in plants."}, { type: "multiple", level: 2, question: "Which planet is known as the 'Red Planet'?"}];
 
-export const StudentTopicView = ({ topic }: TopicProps) => {
+export const StudentTopicView = ({ topic, classId }: TopicProps) => {
 	const navigate = useNavigate();
 	const targetRef = useRef<HTMLDivElement>(null);
 
@@ -46,11 +47,10 @@ export const StudentTopicView = ({ topic }: TopicProps) => {
 	}, [topic])
 
 	const handleStart = async () => {
-		// calls /session/{classId}/{topicId}/start
-		// const res = await post("/session/{classId}/{topicId}/start", values);
-
-		// navigate(`/quiz/${res.sessionId}`)
-		navigate(`/quiz/${topic.topic}/0`)
+		const classId = 7;
+		const res = await post(`/session/start`, { classId, topicId: topic.topic});
+		if (res.error) return;
+		navigate(`/quiz/${topic.topic}/${res.sessionId}`)
 	}
 
 	const scrollToTarget = () => {
