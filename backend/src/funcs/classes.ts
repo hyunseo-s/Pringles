@@ -32,9 +32,9 @@ export async function addStudents(classId: string, students: string[]) {
             [email]
         );
 
-        if (!user) {
-            throw new Error(`User with email ${email} not found`);
-        }
+        // if (!user) {
+        //     throw new Error(`User with email ${email} not found`);
+        // }
 
         // Insert into class student table using the user info
         await db.run(
@@ -76,9 +76,9 @@ export async function createClass(name: string, students: string[], classImg: st
             [email]
         );
 
-        if (!user) {
-            throw new Error(`User with email ${email} not found`);
-        }
+        // if (!user) {
+        //     throw new Error(`User with email ${email} not found`);
+        // }
 
         // Insert into classes table using the info
         await db.run(
@@ -88,6 +88,47 @@ export async function createClass(name: string, students: string[], classImg: st
         );
       }
 
-    return { message: 'Students added' };
-;
+    return { classId };
+}
+
+// Function to get the list of classes given a class Id
+export async function getClass(classId: string) {
+
+    const db = await getDbConnection();
+
+    // Get class basic info
+    const classInfo = await db.get(
+        `SELECT classname, classImg FROM classes WHERE classid = ?`,
+        [classId]
+    );
+
+    // if (!classInfo) {
+    //     throw new Error(`Class with ID ${classId} not found`);
+    // }
+
+    // Get list of students in the class
+    const students = await db.all(
+        `SELECT u.userid, u.email
+        FROM users u
+        JOIN class_student cs ON u.userid = cs.studentid
+        WHERE cs.classid = ?`,
+        [classId]
+    );
+
+    // Get list of teachers in the class
+    const teachers = await db.all(
+        `SELECT u.userid, u.email
+        FROM users u
+        JOIN class_teacher ct ON u.userid = ct.teacherid
+        WHERE ct.classid = ?`,
+        [classId]
+    );
+
+    return {
+        classId,
+        classname: classInfo.classname,
+        classImg: classInfo.classImg,
+        students,
+        teachers
+    };
 }

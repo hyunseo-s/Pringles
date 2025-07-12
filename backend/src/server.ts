@@ -7,7 +7,7 @@ import morgan from 'morgan';
 import { initDB } from './initDb';
 import { login, register } from './funcs/auth';
 import { decodeJWT } from './utils';
-import { addStudents, getStudentsClasses } from './funcs/classes';
+import { addStudents, getClass, createClass, getStudentsClasses } from './funcs/classes';
 
 // Set up web app
 const app = express();
@@ -94,7 +94,7 @@ app.post('/classes/create', async (req: Request, res: Response) => {
     const { name, students, classImg } = req.body;
     const token = req.header('Authorization').split(" ")[1];
     const teacherId = decodeJWT(token);
-    const classId = await createClasses(name, students, classImg, teacherId);
+    const classId = await createClass(name, students, classImg, teacherId);
     res.status(200).json(classId);
   } catch (error) {
     res.status(400).json({ error: error.message });
@@ -104,7 +104,7 @@ app.post('/classes/create', async (req: Request, res: Response) => {
 app.get('/classes/:classId', (req: Request, res: Response) => {
   const { classId } = req.params;
   try {
-    const classInfo = getClasses(classId);
+    const classInfo = getClass(classId);
     res.status(200).json(classInfo);
   } catch (error) {
     res.status(404).json({ error: error.message });
