@@ -8,7 +8,7 @@ interface ClassButtonProps extends ButtonProps {
 
 export const ClassButton = ({ children, active, ...props }: ClassButtonProps) => {
   return (
-		<div className="w-40">
+		<div className="w-fit">
 			<Button
 				{...props}
 				variant={active ? "filled" : "outline"}

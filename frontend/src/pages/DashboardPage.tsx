@@ -8,10 +8,15 @@ import { TopicsCarousel } from '../components/dashboard/TopicsCarousel';
 import { useDisclosure } from '@mantine/hooks';
 import { AddTopicModal } from '../components/dashboard/AddTopicModal';
 import { CreateClassModal } from '../components/dashboard/CreateClassModal';
+import { handleError, handleSuccess } from '../utils/handlers';
+import { get, post } from '../utils/apiClient';
+import type { Class } from '../types/Class';
 
 const DashboardPage = () => {
 	const [openedTopicModal, { open: openTopicModal, close: closeTopicModal }] = useDisclosure(false);
 	const [openedClassModal, { open: openClassModal, close: closeClassModal }] = useDisclosure(false);
+
+	const [classes, setClasses] = useState<Class[]>([]);
 
 	const navigate = useNavigate();
 	const { user } = useUser();
@@ -22,16 +27,22 @@ const DashboardPage = () => {
     }
   }, [user, navigate]);
 
+	useEffect(() => {
+		const getClasses = async () => {
+			const res = await get("/classes", undefined);
+			if (res.error) {
+				handleError(res.error);
+				return;
+			}
+			setClasses(res.classes);
+		}
+		getClasses();
+
+  }, []);
+
 	const [classIndex, setClassIndex] = useState(0);
 
-	const classes = [
-		"YEAR 10 MATHS",
-		"YEAR 11 MATHS",
-		"YEAR 12 MATHS",
-	]
-
   if (!user) return null; // optional: show a loading spinner here
-
   return (
 		<Paper>
 			<div className='mb-4'>
@@ -42,14 +53,14 @@ const DashboardPage = () => {
 					</Button>
 					<CreateClassModal opened={openedClassModal} close={closeClassModal} />
 				</Flex>
-				<Flex gap={24}>
+				<Flex columnGap={24} rowGap={12} wrap='wrap'>
 					{
-						classes.map((c, i) => 
+						classes && classes.map((c, i) => 
 						<ClassButton 
 							active={classIndex == i} 
 							onClick={() =>setClassIndex(i)}
 						>
-								{c}
+								{c.classname}
 						</ClassButton>)
 					}
 				</Flex>
