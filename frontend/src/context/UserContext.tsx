@@ -18,7 +18,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>({
 		id: 0,
 		name: "Bob",
-		role: "teacher"
+		role: "student"
 	});
 
   return (

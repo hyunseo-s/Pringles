@@ -25,7 +25,7 @@ function App() {
 							<Route path="/register" element={<RegisterPage />} />
 							<Route path="/topic/:topicId" element={<TopicPage />} />
 							<Route path="/dashboard" element={<DashboardPage />} />
-							<Route path="/quiz" element={<QuizPage />} />
+							<Route path="/quiz/:topicId/:sessionId" element={<QuizPage />} />
 						</Routes>
 					</BrowserRouter>
 				</UserProvider>

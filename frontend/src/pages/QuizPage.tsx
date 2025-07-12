@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
 import { useUser } from '../context/UserContext';
 import { useEffect, useState } from 'react';
 import MultipleChoice from '../components/quiz/MultipleChoice';
@@ -55,6 +55,7 @@ export type WrittenSolution = {
 
 const QuizPage = () => {
 	const navigate = useNavigate();
+  const { topicId, sessionId } = useParams();
 	const { user } = useUser();
 
   // Fetched Data
@@ -76,7 +77,7 @@ const QuizPage = () => {
 
   if (!user) return null; // optional: show a loading spinner here
 
-  const fetchQuestion = () => {
+  const fetchQuestion = async () => {
     // calls /session/{classId}/{topicId}/{sessionId}/question
     setPrompt(questions[1]);
   }
@@ -107,7 +108,8 @@ const QuizPage = () => {
   }
 
   const handleFinish = () => {
-    navigate("/dashboard");
+    // navigate(`/topic/${topicId}`)
+    navigate("/topic/0");
   }
 
   return (

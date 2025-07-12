@@ -1,0 +1,18 @@
+.label {
+    font-family: Outfit, var(--mantine-font-family);
+    font-weight: 700;
+    line-height: 1;
+}
+
+.lead {
+    font-family: Outfit, var(--mantine-font-family);
+    font-weight: 700;
+    font-size: 22px;
+    line-height: 1;
+}
+
+.ring {
+    flex: 1;
+    display: flex;
+    justify-content: flex-start;
+}
