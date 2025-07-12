@@ -74,6 +74,19 @@ export const initDB = async () => {
   `);
 
   await db.exec(`
+    CREATE TABLE IF NOT EXISTS answers (
+      answerid INTEGER PRIMARY KEY AUTOINCREMENT,
+      questionid INTEGER NOT NULL,
+      sessionid INTEGER NOT NULL,
+      studentid INTEGER NOT NULL,
+      answer TEXT NOT NULL,
+      correct BOOLEAN NOT NULL,
+      FOREIGN KEY(questionid) REFERENCES question(questionid),
+      FOREIGN KEY(studentid) REFERENCES users(userid)
+    )
+  `);
+
+  await db.exec(`
     CREATE TABLE IF NOT EXISTS class_student (
       studentid INTEGER  NOT NULL,
       classid INTEGER NOT NULL,
