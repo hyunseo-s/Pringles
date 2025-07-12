@@ -176,3 +176,4 @@ dist/**/*
 
 # the database
 database.json
+backend/*.db
