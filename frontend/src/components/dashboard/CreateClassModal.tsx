@@ -23,17 +23,24 @@ export const CreateClassModal = ({ opened, close }: CreateClassModalProps) => {
 		},
 	});
 
-		const handleSubmit = async (values) => {
-			const res = await post("/smth", values);
-			
-			if (res.error) {
-				handleError(res.error);
-				return;
-			}
-	
-			handleSuccess(res.message);
-			close();
+	const handleSubmit = async (values) => {
+		
+		const payload = {
+			"name": values.name,
+			"students": emails,
+			"classImg": "nothing.jpg"
 		}
+
+		const res = await post("/classes/create", payload);
+		
+		if (res.error) {
+			handleError(res.error);
+			return;
+		}
+
+		handleSuccess(res.message);
+		close();
+	}
 	
 	return (
 		<>

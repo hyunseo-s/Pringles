@@ -22,7 +22,7 @@ const ShortAnswer = ({
         variant="filled"
         placeholder="Type your answer here (max 150 characters)"
         onChange={(e) => handleChange(e)}
-        maxLength={150}
+        maxLength={800}
         minRows={4}
         styles={(theme) => ({
           input : {

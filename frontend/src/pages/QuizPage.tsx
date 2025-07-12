@@ -9,11 +9,13 @@ import Explanation from '../components/quiz/Explanation';
 import Question from '../components/quiz/Question';
 import { ScoreCard } from '../components/quiz/ScoreCard';
 import { get, post, put } from '../utils/apiClient';
+import { handleError } from '../utils/handlers';
 
 const questions: Prompt[] = [
   {
     question: `Let $x = 5$. Then \\( x^2 = 25 \\).`,
     type: "multiple",
+		questionId: 100,
     answer: [{
       answerOption: "1",
       correct: false,
@@ -39,6 +41,7 @@ const questions: Prompt[] = [
 ]
 
 type Prompt = {
+	questionId: number;
   question: string;
   type: "multiple" | "written answer";
   answer?: Options[]
@@ -71,6 +74,8 @@ const QuizPage = () => {
   // Modal
   const [opened, { open, close }] = useDisclosure(false);
 
+	const [scoreData, setScoreData] = useState<[number, number, number, number, number]>([0,0,0,0,0])
+
   useEffect(() => {
     if (!user) {
       navigate("/login"); // or whatever your login path is
@@ -80,16 +85,17 @@ const QuizPage = () => {
 	useEffect(() => {
 		if (!topicId) return;
 		const fetchQuestion = async () => {
-			const res = await get(`/session/question/${topicId}`, undefined);
+			const res = await get(`/session/${topicId}/${sessionId}/question`, undefined);
 
 			if (res.error) return;
-			const cleaned = res.result.replace(/```json\n|```/g, '');
 
-			// Step 2: Parse to object
-			const parsed = JSON.parse(cleaned);
-			if (parsed.options) {
+			if (res.mode == 'multiple-choice') {
+				const cleaned = res.question.replace(/```json\n|```/g, '');
+				const parsed = JSON.parse(cleaned);
+				console.log(cleaned, parsed)
 				setPrompt({
 					question: parsed.question,
+					questionId: res.questionId,
 					type: 'multiple',
 					answer: parsed.options.map(option => ({
 						correct: option.is_correct,
@@ -97,31 +103,38 @@ const QuizPage = () => {
 						answerOption: option.text
 					}))
 				});
+			} else {
+				setPrompt({
+					questionId: res.questionId,
+					question: res.question,
+					type: 'written answer',
+				})
 			}
 		}
 		fetchQuestion()
-	}, [topicId])
+	}, [topicId, sessionId])
 
   if (!user) return null; // optional: show a loading spinner here
 	
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     // Check if user input is correct for multiple choice answer
     if (prompt.type === "multiple") {
       setCorrect(input === prompt.answer?.find((o) => o.correct)?.answerOption);
       setExplanation(prompt.answer?.find((o) => o.answerOption === input)?.rationale);
+			await put(`/session/${topicId}/${sessionId}/${prompt?.questionId}/multi/answer`, undefined);
       return;
     }
     
     // Check if user input is correct for written answer
     const fetchCorrect = async () => {
-			const res = await put('/session/answer', {
-				answer: '',topicId: topicId, sessionId: sessionId, questionId: 1
+			const res = await put(`/session/${topicId}/${sessionId}/${prompt?.questionId}/answer`, {
+				answer: input, topicId: topicId, sessionId: sessionId, questionId: prompt?.questionId
 			})
-      // calls /session/{classId}/{topicId}/{sessionId}/{questionId}/answer
-      // const res : WrittenSolution = {correct: true, rationale: "This is the reason"};
-      setCorrect(res.correct);
-      setExplanation(res.rationale);
+			const cleaned = res.replace(/```json\n|```/g, '');
+			const parsed = JSON.parse(cleaned);
+      setCorrect(parsed.correct);
+      setExplanation(parsed.rationale);
     }
 
     fetchCorrect();
@@ -133,29 +146,49 @@ const QuizPage = () => {
     fetchNextQuestion();
   }
 
-	const fetchNextQuestion = async () => {
-		const res = await get(`/session/question/${topicId}`, undefined);
+		const fetchNextQuestion = async () => {
+			const res = await get(`/session/${topicId}/${sessionId}/question`, undefined);
 
-		if (res.error) return;
-		const cleaned = res.result.replace(/```json\n|```/g, '');
+			if (res.error) return;
 
-		// Step 2: Parse to object
-		const parsed = JSON.parse(cleaned);
-		if (parsed.options) {
-			setPrompt({
-				question: parsed.question,
-				type: 'multiple',
-				answer: parsed.options.map(option => ({
-					correct: option.is_correct,
-					rationale: option.rationale,
-					answerOption: option.text
-				}))
-			});
+			if (res.mode == 'multiple-choice') {
+				const cleaned = res.question.replace(/```json\n|```/g, '');
+				const parsed = JSON.parse(cleaned);
+				setPrompt({
+					question: parsed.question,
+					questionId: res.questionId,
+					type: 'multiple',
+					answer: parsed.options.map(option => ({
+						correct: option.is_correct,
+						rationale: option.rationale,
+						answerOption: option.text
+					}))
+				});
+			} else {
+				setPrompt({
+					questionId: res.questionId,
+					question: res.question,
+					type: 'written answer',
+				})
+			}
 		}
-	}
 
-  const handleFinish = () => {
-    navigate(`/topic/${topicId}`)
+
+  const handleFinish = async() => {
+		console.log('HELO')
+		const res = await post(`/session/${topicId}/${sessionId}/end`, undefined);
+		if (res.error) {
+			handleError(res.error);
+			return;
+		}
+		setScoreData([
+			res.numRight + res.numWrong,
+			res.numRight / Math.max(res.numRight + res.numWrong, 1), 
+			res.easyCorrect / Math.max(res.easyQsTotal, 1),
+			res.medCorrect / Math.max(res.medQsTotal, 1),
+			res.hardCorrect / Math.max(res.hardQsTotal, 1),
+		])
+		open()
   }
 
   return (
@@ -193,9 +226,7 @@ const QuizPage = () => {
         }
 
         {/* Finish Button */}
-        <Button variant="light" color="gray" onClick={() => {
-					open()
-				}}>FINISH</Button>
+        <Button variant="light" color="gray" onClick={handleFinish}>FINISH</Button>
       </Flex>
 
       {/* Confirmation Modal */}
@@ -212,9 +243,9 @@ const QuizPage = () => {
       {/* Session Score Modal */}
       <Modal opened={opened} onClose={close} centered>
         <Flex direction={'column'} gap={20} w={"100%"}>
-          <ScoreCard data={[62, 32, 2, 5]}/>
+          <ScoreCard data={scoreData}/>
           <Flex justify={'center'}>
-            <Button color="blue" variant='light' onClick={handleFinish}>RETURN</Button>
+            <Button color="blue" variant='light' onClick={() => navigate(`/topic/${topicId}`)}>RETURN</Button>
           </Flex>
         </Flex>
       </Modal>

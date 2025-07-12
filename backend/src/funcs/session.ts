@@ -112,9 +112,10 @@ export async function generateQuestion(
         ? formatMultipleChoice
         : formatWrittenResponse;
 
-    const prompt = `
-    Generate a single "${selectedMode}" question on the topic: "${topicId}". 
 
+    const prompt = `
+    Generate a single "${selectedMode}" question on the topic: "${topicName}". 
+			
     Use the following questions as inspiration:
     - Level "${easyQuestionLevel}" (easy): "${easyQuestion}"
     - Level "${medQuestionLevel}" (medium): "${medQuestion}"

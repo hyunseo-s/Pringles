@@ -14,7 +14,7 @@ const NavBar = () => {
     }
 
     return (
-        <Flex w="100%" justify={"space-between"} mb={50} align={"center"}>
+        <Flex w="100%" justify={"space-between"} mb={20} align={"center"}>
             <Flex gap={"md"}>
                 <IconPizza style={{ width: '2rem', height: '2rem' }} stroke={1.5} color="#228be6"/>
                 <Text fz={"1.5rem"}>Pringles</Text>

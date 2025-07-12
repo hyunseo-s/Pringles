@@ -81,6 +81,9 @@ export async function createClass(name: string, students: string[], classImg: st
         [name, classImg]
     );
 
+    console.log("A")
+    console.log(res)
+
     // Once the table is created, we get the classId, and we put the teacher in
     const classId = res.lastID
     await db.run(
@@ -89,9 +92,15 @@ export async function createClass(name: string, students: string[], classImg: st
         [classId, teacherId]
     );
 
+
+    console.log(classId)
+
+    console.log(students)
+
     // Go through all students email first
     for (const email of students) {
 
+        console.log(email)
         // Get their user info
         const user = await db.get(
             `SELECT userid FROM users WHERE email = ?`,

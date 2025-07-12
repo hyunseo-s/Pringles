@@ -7,7 +7,6 @@ import { QuestionList } from "./QuestionList"
 import { useEffect, useState } from "react"
 import { get } from "../../utils/apiClient"
 import { handleError } from "../../utils/handlers"
-import type { QuestionData } from "../../types/QuestionData"
 import { Scene } from "../lusion/Lusion"
 
 export interface TopicProps {
@@ -18,32 +17,8 @@ export const TeacherTopicView = ({ topic }: TopicProps) => {
 	const navigate = useNavigate();
 	const [avgLevel, setAvgLevel] = useState<number>(0);
 	const [levels, setLevels] = useState<{easy: number, med: number, hard: number}>({easy: 0, med: 0, hard: 0});
-	const [questions, setQuestions] = useState<{id: number, answered: number, question: string, difficulty: number}[]>([]);
 
 	useEffect(() => {
-		if (!topic.teacherData.questionData) {
-			return;
-		}
-		
-		const groupedByQuestionId = topic.teacherData.questionData.reduce((acc, curr) => {
-			if (!acc[curr.questionid]) {
-				acc[curr.questionid] = [];
-			}
-			acc[curr.questionid].push(curr);
-			return acc;
-		}, {} as Record<number, QuestionData[]>);
-
-		const qs = Object.entries(groupedByQuestionId).map(
-			([id, data]) => ({
-				id: Number(id),
-				answered: data.length,
-				question: data[0].question,
-				difficulty: data[0].level,
-			})
-		);
-		setQuestions(qs);
-
-
 		const fetchLevels = async () => {
 			const res = await get(`/topic/${topic.classId}/students/level`, undefined);
 			
@@ -108,7 +83,7 @@ export const TeacherTopicView = ({ topic }: TopicProps) => {
 			<p className="text-lg mt-8 mb-6">
 				Students by Question
 			</p>
-			<QuestionList questions={questions}/>
+			<QuestionList topic={topic}/>
 		</div>
 	)
 }

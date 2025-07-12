@@ -7,15 +7,15 @@ import { IconPlus } from '@tabler/icons-react';
 
 interface AddTopicModalProps {
 	opened: boolean,
-
+	classId: number,
 }
 
 type Questions = {
 	question: string,
-	type: string
+	type: string,
 }
 
-export const AddTopicModal = ({ opened, close }: AddTopicModalProps) => {
+export const AddTopicModal = ({ opened, close, classId}: AddTopicModalProps) => {
 	const [questions, setQuestions] = useState<Questions[]>([]);
 
 	const form = useForm({
@@ -29,16 +29,20 @@ export const AddTopicModal = ({ opened, close }: AddTopicModalProps) => {
 		},
 	});
 
-	const handleSubmit = async () => {
-		console.log(questions);
-		// const res = await post("/smth", questions);
+	const handleSubmit = async (values) => {
 		
-		// if (res.error) {
-		// handleError(res.error);
-		// 	return;
-		// }
+		const res = await post(`/topics/${classId}/create`, { topicName: values.name});
+		
+		if (res.error) {
+			handleError(res.error);
+			return;
+		}
 
-		// handleSuccess(res.message);
+		for (let i = 0; i < questions.length; i++) {
+			await post(`/topics/${res.topicId}/question`, {question: questions[i].question, level: 5})
+		}
+
+		handleSuccess(res.message);
 		setQuestions([]);
 		form.reset();
 		close();

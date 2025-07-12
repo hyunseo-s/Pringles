@@ -55,8 +55,8 @@
 }
 
 @font-face {
-  font-family: 'Neue Montreal Mono';
-  src: url('/fonts/neue-montreal/NeueMontrealMono-Regular.otf') format('opentype');
+  font-family: 'NeueBit';
+  src: url('/fonts/neuebit-and-mondwest/NeueBit-Bold.otf') format('opentype');
   font-weight: 500;
   font-style: normal;
 }

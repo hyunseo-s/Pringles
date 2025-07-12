@@ -46,7 +46,7 @@ const DashboardPage = () => {
 			}
 			if (classes.length == 0) return;
 			getTopics();
-		}, [classIndex, user, classes]);
+		}, [classIndex, user, classes, openedTopicModal]);
 
 	const navigate = useNavigate();
 
@@ -57,6 +57,7 @@ const DashboardPage = () => {
   }, [user, navigate]);
 
 	useEffect(() => {
+		
 		const getClasses = async () => {
 			const res = await get("/classes", undefined);
 			if (res.error) {
@@ -67,9 +68,7 @@ const DashboardPage = () => {
 		}
 		getClasses();
 
-  }, []);
-
-	
+  }, [openedClassModal]);
 
   if (!user) return null; // optional: show a loading spinner here
   return (
@@ -107,12 +106,12 @@ const DashboardPage = () => {
 			<Flex justify='space-between' mb='2rem'>
 				<Text size='1.5rem'>Class Topics</Text>
 				{
-					user.role == 'teacher' && (
+					user.role == 'teacher' && classes && classes.length > 0 && (
 						<>
 							<Button variant="light" onClick={openTopicModal}>
 								Add New
 							</Button>
-							<AddTopicModal opened={openedTopicModal} close={closeTopicModal} />
+							<AddTopicModal opened={openedTopicModal} close={closeTopicModal} classId={classes[classIndex].classid} />
 						</>
 					)
 				}

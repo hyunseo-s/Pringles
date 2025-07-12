@@ -148,8 +148,9 @@ app.get('/classes/:classId', (req: Request, res: Response) => {
 app.post('/topics/:classId/create', async (req: Request, res: Response) => {
   try {
     const classId = req.params.classId
-    const { topics } = req.body;
-    const topicId = await createTopics(classId, topics);
+    const { topicName } = req.body;
+    console.log(topicName)
+    const topicId = await createTopics(classId, topicName);
     res.status(200).json(topicId);
   } catch (error) {
     res.status(400).json({ error: error.message })
@@ -264,41 +265,36 @@ app.get('/session/:topicId/:sessionId/question', async (req: Request, res: Respo
 
     const studentLevel = level.level
 
-    const easyQuestion = question.easy.question
-    const medQuestion = question.medium.question
-    const hardQuestion = question.hard.question
 
-    const easyQuestionLevel = easyQuestion.level
-    const medQuestionLevel = medQuestion.level
-    const hardQuestionLevel = hardQuestion.level
-
-    const topicName = await getTopicName(parseInt(topicId));
+    const topic = await getTopic(parseInt(topicId));
     // with the question, generate one of that level (for now multiple choice)
     const newQuestion = await generateQuestion(
       studentLevel, 
       topicId, 
-      easyQuestion,
-      medQuestion, 
-      hardQuestion, 
-      easyQuestionLevel, 
-      medQuestionLevel,
-      hardQuestionLevel,
-      topicName
+      question.easy.question,
+      question.medium.question, 
+      question.hard.question, 
+      question.easy.level,
+      question.medium.level,
+      question.hard.level,
+      topic.topicname
     );
 
+		let questionId;
     if (newQuestion.mode == "multiple-choice") {
       
       const res = await saveMultipleChoice(newQuestion.question, topicId, studentLevel)
       console.log(res)
+			questionId = res.questionId;
 
     } else if (newQuestion.mode == "written-response") {
 
       const res = await saveWrittenResponse(newQuestion.question, topicId, studentLevel)
       console.log(res)
+			questionId = res.questionId;
     }
 
-    
-    res.status(200).json(newQuestion.question);
+    res.status(200).json({...newQuestion, questionId});
 
   } catch (error) {
     res.status(400).json({ error: error.message });

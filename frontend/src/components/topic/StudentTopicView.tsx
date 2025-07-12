@@ -48,7 +48,7 @@ export const StudentTopicView = ({ topic }: TopicProps) => {
 	}, [topic])
 
 	const handleStart = async () => {
-		const res = await post(`/session/start`, { classId: topic.classId, topicId: topic.topic});
+		const res = await post(`/session/${topic.classId}/${topic.topic}/start`, undefined);
 		if (res.error) return;
 		navigate(`/quiz/${topic.topic}/${res.sessionId}`)
 	}

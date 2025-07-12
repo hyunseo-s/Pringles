@@ -1,31 +1,27 @@
 import { getDbConnection } from "../db";
 
-export const createTopics = async (classId: string , topics: string[]) => {
+export const createTopics = async (classId: string , topicName: string) => {
 	const db = await getDbConnection();
-	const allTopics = []
 
 	// check classId is valid
 	const classes = await db.all(`SELECT * FROM classes WHERE classid = '${classId}'`);
 	
 	if (classes.length === 0) throw new Error("No class found")
 
-	for (const topic of topics) {
-		const res = await db.run(
-			`INSERT INTO topics (classid, topicname) VALUES (?, ?)`,[classId, topic]
-		);
+	const res = await db.run(
+		`INSERT INTO topics (classid, topicname) VALUES (?, ?)`,[classId, topicName]
+	);
 
-		allTopics.push({ topicName: topic, topicId: res.lastID });
 		
-		const students = await db.all(`SELECT * FROM class_student WHERE classid = '${classId}'`);
+	const students = await db.all(`SELECT * FROM class_student WHERE classid = '${classId}'`);
 
-		for (const student of students) {
-			await db.run(
-				`INSERT INTO topic_student (topicid, studentid, level) VALUES (?, ?, ?)`, [res.lastID, student.studentid, 5]
-			);
-		}
+	for (const student of students) {
+		await db.run(
+			`INSERT INTO topic_student (topicid, studentid, level) VALUES (?, ?, ?)`, [res.lastID, student.studentid, 5]
+		);
 	}
 
-  return {topics: allTopics};
+  return {topicId: res.lastID};
 }
 
 export const getTopics = async (classId: number) => {
