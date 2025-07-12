@@ -24,6 +24,8 @@ const TopicPage = () => {
         return;
       }
 
+			if (!user) return;
+
       // Fetch topic data
       const res = await get(`/topic/${topicId}/${user?.role}/data`, undefined);
       if (res.error) {
@@ -35,7 +37,7 @@ const TopicPage = () => {
 				classId: topicRes.classid,
         topic: id,
         topicName: topicRes.topicname,
-        teacherData: {}
+        teacherData: res
       }
 
       if (user?.role === "student") {

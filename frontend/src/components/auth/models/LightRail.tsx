@@ -16,6 +16,21 @@ export function Model() {
 	const lightRail = useRef<THREE.Object3D>(null);
 	const { setLightRail } = useModelStore();
 
+	useEffect(() => {
+    return () => {
+      scene.traverse((child) => {
+        if (child.isMesh) {
+          child.geometry.dispose();
+          if (child.material.isMaterial) {
+            child.material.dispose();
+          } else if (Array.isArray(child.material)) {
+            child.material.forEach((mat) => mat.dispose());
+          }
+        }
+      });
+    };
+  }, [scene]);
+
 	// const scroll = useScroll();
 
 	useEffect(() => {

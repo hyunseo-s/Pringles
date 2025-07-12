@@ -1,6 +1,6 @@
 import { Center, OrbitControls } from "@react-three/drei";
 import { LightRail, Map } from "./models";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useFrame } from "@react-three/fiber";
 import * as THREE from 'three';
 import useModelStore from "../../store/useModelStore";
@@ -32,8 +32,10 @@ export default function Experience()
 				<ToneMapping mode={ ToneMappingMode.ACES_FILMIC } />
 			</EffectComposer>
 			<Center>
+				<Suspense fallback={null}>
 				<LightRail />
 				<Map rotation={[0, Math.PI/2, 0]} />
+				</Suspense>
 			</Center>
 		</>
 	)

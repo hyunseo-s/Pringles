@@ -15,9 +15,9 @@ const icons = {
 };
 
 const data = [
-  { title: 'LEVEL 1-2', icon: 'level1', iconColor: 'red', value: '13,456', diff: 34 },
-  { title: 'LEVEL 3-4', icon: 'level2', iconColor: 'orange', value: '4,145', diff: -13 },
-  { title: 'LEVEL 5', icon: 'level3', iconColor: 'green', value: '745', diff: 18 },
+  { title: 'LEVEL 1-2', icon: 'level1', iconColor: 'red', value: '4', diff: 25 },
+  { title: 'LEVEL 3-4', icon: 'level2', iconColor: 'orange', value: '7', diff: -20 },
+  { title: 'LEVEL 5', icon: 'level3', iconColor: 'green', value: '3', diff: 10 },
 ] as const;
 
 export function TeacherStatsGrid() {

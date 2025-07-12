@@ -60,7 +60,7 @@ export const TeacherTopicView = ({ topic }: TopicProps) => {
 			<p className="text-lg mt-8 mb-6">
 				Students by Question
 			</p>
-			<QuestionList />
+			<QuestionList topic={topic}/>
 		</div>
 	)
 }
