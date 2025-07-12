@@ -4,8 +4,11 @@ export interface Database {
 
 export interface RegisterObj {
 	email: string;
-	username: string;
 	password: string;
+	nameFirst: string;
+	nameLast: string;
+	profileImg: string;
+	role: string;
 }
 
 export interface User {
