@@ -111,7 +111,7 @@ const QuizPage = () => {
   }
 
   return (
-		<Flex mih="100vh" maw="100vw" direction={"column"} justify="center" align="center" gap={20}>
+		<Flex direction={"column"} justify="center" align="center" gap={20}>
 
       {/* Question */}
 		  <div><Question question={prompt?.question}/></div>
