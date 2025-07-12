@@ -18,7 +18,6 @@ export const register = async ({ email, password, nameFirst, nameLast, role } : 
 			`INSERT INTO users (email, password, nameFirst, nameLast, role) VALUES (?, ?, ?, ?, ?)`,
 			[email, password, nameFirst, nameLast, role]
 		);
-		console.log(res.lastID)
 		const token = jwt.sign(
 			{ user: res.lastID}, JWT_SECRET, { expiresIn: '1h' }
 		);

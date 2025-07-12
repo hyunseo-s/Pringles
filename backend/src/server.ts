@@ -38,11 +38,9 @@ app.get('/echo', async (req: Request, res: Response) => {
 app.post('/auth/register', async (req: Request, res: Response) => {
   try {
     const args = req.body;
-		console.log(args)
     const newToken = await register(args);
     res.status(201).json(newToken);
   } catch (error) {
-		console.log(error)
     res.status(400).json({ error: error.message })
   }
 });
@@ -70,10 +68,11 @@ app.post('/auth/logout', async (req: Request, res: Response) => {
 //  ============================ CLASSES =============================
 // ====================================================================
 
-app.get('/classes', (req: Request, res: Response) => {
-  const { studentId } = req.params;
+app.get('/classes', async (req: Request, res: Response) => {
   try {
-    const classes = getStudentsClasses(studentId);
+    const token = req.header('Authorization').split(" ")[1];
+    const studentId = decodeJWT(token);
+    const classes = await getStudentsClasses(studentId);
     res.status(200).json(classes);
   } catch (error) {
     res.status(404).json({ error: error.message });
@@ -82,11 +81,10 @@ app.get('/classes', (req: Request, res: Response) => {
 
 app.post('/classes/:classId/add', async (req: Request, res: Response) => {
   try {
-    console.log(req.params)
+
     const { classId } = req.params;
     const { students } = req.body;
 
-    console.log(classId)
     const addedStudents = await addStudents(classId, students);
     res.status(200).json(addedStudents);
   } catch (error) {
@@ -99,7 +97,6 @@ app.post('/classes/create', async (req: Request, res: Response) => {
     const { name, students, classImg } = req.body;
     const token = req.header('Authorization').split(" ")[1];
     const teacherId = decodeJWT(token);
-    console.log(teacherId)
     const classId = await createClass(name, students, classImg, teacherId);
     res.status(200).json(classId);
   } catch (error) {
@@ -107,10 +104,10 @@ app.post('/classes/create', async (req: Request, res: Response) => {
   }
 });
 
-app.get('/classes/:classId', (req: Request, res: Response) => {
+app.get('/classes/:classId', async (req: Request, res: Response) => {
   const { classId } = req.params;
   try {
-    const classInfo = getClass(classId);
+    const classInfo = await getClass(classId);
     res.status(200).json(classInfo);
   } catch (error) {
     res.status(404).json({ error: error.message });
@@ -257,8 +254,8 @@ const server = app.listen(PORT, HOST, () => {
 
 // For coverage, handle Ctrl+C gracefully
 process.on('SIGINT', () => {
+  initDB()
   server.close(() => {
-    initDB()
     console.log('Shutting down server gracefully.');
     process.exit();
   });
