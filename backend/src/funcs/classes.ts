@@ -88,7 +88,7 @@ export async function createClass(name: string, students: string[], classImg: st
         );
       }
 
-    return { classId };
+    return { classId: classId };
 }
 
 // Function to get the list of classes given a class Id

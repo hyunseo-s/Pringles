@@ -8,6 +8,7 @@ import { initDB } from './initDb';
 import { login, register } from './funcs/auth';
 import { decodeJWT } from './utils';
 import { addStudents, getClass, createClass, getStudentsClasses } from './funcs/classes';
+import { getQuestions, startSession } from './funcs/session';
 
 // Set up web app
 const app = express();
@@ -170,25 +171,28 @@ app.get('/classes/:classId', (req: Request, res: Response) => {
 // //  =========================== SESSIONS =============================
 // // ====================================================================
 
-// app.post('/session/:classId/:topicId/start', async (req: Request, res: Response) => {
-//   try {
-//     const { classId, topicId } = req.body;
-//     const sessionId = await startSession(classId, topicId);
-//     res.status(200).json(sessionId);
-//   } catch (error) {
-//     res.status(400).json({ error: error.message })
-//   }
-// });
+app.post('/session/:classId/:topicId/start', async (req: Request, res: Response) => {
+  try {
+    const { classId, topicId } = req.body;
+    const token = req.header('Authorization').split(" ")[1];
+    const studentId = decodeJWT(token);
 
-// app.get('/session/:classId/:topicId/:sessionId/question', (req: Request, res: Response) => {
-//   const { classId, topicId, sessionId } = req.params;
-//   try {
-//     const questions = getQuestions(classId, topicId, sessionId);
-//     res.status(200).json(questions);
-//   } catch (error) {
-//     res.status(404).json({ error: error.message });
-//   }
-// });
+    const sessionId = await startSession(classId, topicId, studentId);
+    res.status(200).json(sessionId);
+  } catch (error) {
+    res.status(400).json({ error: error.message })
+  }
+});
+
+app.get('/session/:classId/:topicId/:sessionId/question', (req: Request, res: Response) => {
+  const { classId, topicId, sessionId } = req.params;
+  try {
+    const questions = getQuestions(classId, topicId, sessionId);
+    res.status(200).json(questions);
+  } catch (error) {
+    res.status(404).json({ error: error.message });
+  }
+});
 
 // app.put('/session/:classId/:topicId/:sessionId/:questionId/answer', (req: Request, res: Response) => {
 //   const { classId, topicId, sessionId, questionId } = req.params;
