@@ -193,7 +193,6 @@ app.get('/topic/:topicId/teacher/data', async (req: Request, res: Response) => {
     const token = req.header('Authorization').split(" ")[1];
     const teacherId = parseInt(decodeJWT(token));
     const topicData = await getTeacherTopicData(teacherId, topicId);
-		console.log(topicData)
     res.status(200).json(topicData);
   } catch (error) {
     res.status(404).json({ error: error.message });
