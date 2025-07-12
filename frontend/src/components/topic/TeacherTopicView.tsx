@@ -4,6 +4,9 @@ import type { Topic } from "../../types/Topic"
 import { TeacherStatsGrid } from "./TeacherStatsGrid"
 import { useNavigate } from "react-router"
 import { QuestionList } from "./QuestionList"
+import { useEffect, useState } from "react"
+import { get } from "../../utils/apiClient"
+import { handleError } from "../../utils/handlers"
 import { Scene } from "../lusion/Lusion"
 
 export interface TopicProps {
@@ -12,6 +15,26 @@ export interface TopicProps {
 
 export const TeacherTopicView = ({ topic }: TopicProps) => {
 	const navigate = useNavigate();
+	const [avgLevel, setAvgLevel] = useState<number>(0);
+	const [levels, setLevels] = useState<{easy: number, med: number, hard: number}>({easy: 0, med: 0, hard: 0});
+
+	useEffect(() => {
+		const fetchLevels = async () => {
+			const res = await get(`/topic/${topic.classId}/students/level`, undefined);
+			
+			if (res.error) {
+				handleError(res.error);
+				return;
+			}
+
+			const t = res.find((t) => t.topicId === topic.topic);
+			setLevels({ easy: t.easy, med: t.med, hard: t.hard });
+			setAvgLevel( Math.floor((t.easy * 2.5 + t.med * 3.5 + t.hard * 5) / (t.easy + t.med + t.hard)) )
+		}
+		
+		fetchLevels();
+	}, [topic]);
+
 	return (
 		<div>
 			<ActionIcon
@@ -36,7 +59,7 @@ export const TeacherTopicView = ({ topic }: TopicProps) => {
 						Class Average Score
 					</div>
 					<div className="text-xl text-center my-3">
-						80
+						{80}
 					</div>
 					<Progress value={80} />
 				</div>
@@ -45,18 +68,18 @@ export const TeacherTopicView = ({ topic }: TopicProps) => {
 						Class Average Level
 					</div>
 					<div className="text-xl text-center my-3">
-						6
+						{avgLevel}
 					</div>
-					<Progress value={6 * 10} />
+					<Progress value={2 * avgLevel * 10} />
 				</div>
 			</div>
 			<p className="text-2xl mb-4">
-				Topic Breakdown
+				Class Breakdown
 			</p>
 			<p className="text-lg mb-3">
 				Students by Level
 			</p>
-			<TeacherStatsGrid />
+			<TeacherStatsGrid levels={levels}/>
 			<p className="text-lg mt-8 mb-6">
 				Students by Question
 			</p>

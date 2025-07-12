@@ -1,5 +1,5 @@
 import cx from 'clsx';
-import { ActionIcon, Anchor, InputLabel, NumberInput, Text } from '@mantine/core';
+import { ActionIcon, Anchor, NumberInput, Text } from '@mantine/core';
 import { useListState } from '@mantine/hooks';
 import classes from './QuestionList.module.css';
 import { useEffect, useState } from 'react';
