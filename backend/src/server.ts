@@ -7,8 +7,8 @@ import { initDB } from './initDb';
 import { login, register } from './funcs/auth';
 import { decodeJWT } from './utils';
 import { addStudents, createClass, getClass, getClasses } from './funcs/classes';
-import { generateQuestion, getLevel, getQuestion, startSession, answerQuestion } from './funcs/session';
-import { addQuestion, createTopics, getStudentsLevels, getStudentTopicData, getTeacherTopicData, getTopic, getTopics } from './funcs/topics';
+import { getQuestions, saveMultipleChoice, saveWrittenResponse, multiAnswerQuestion, endSession, generateQuestion, getLevel, startSession, answerQuestion  } from './funcs/session';
+import { addQuestion, createTopics, getStudentsLevels, getStudentTopicData, getTeacherTopicData, getTopics, getTopicName, getTopic } from './funcs/topics';
 import { getUser } from './funcs/user';
 
 // Set up web app
@@ -176,6 +176,16 @@ app.get('/topic/:topicId', async (req: Request, res: Response) => {
   }
 });
 
+app.get('/topic/:topicId/name', async (req: Request, res: Response) => {
+  const topicId = parseInt(req.params.topicId);
+  try {
+    const topic = await getTopicName(topicId);
+    res.status(200).json(topic);
+  } catch (error) {
+    res.status(404).json({ error: error.message });
+  }
+});
+
 app.post('/topics/:topicId/question', async (req: Request, res: Response) => {
   const topicId = parseInt(req.params.topicId);
   const { question, level } = req.body;
@@ -227,9 +237,9 @@ app.get('/topic/:classId/students/level', async (req: Request, res: Response) =>
 //  =========================== SESSIONS =============================
 // ====================================================================
 
-app.post('/session/start', async (req: Request, res: Response) => {
+app.post('/session/:classId/:topicId/start', async (req: Request, res: Response) => {
   try {
-    const { classId, topicId } = req.body;
+    const { classId, topicId } = req.params;
     const token = req.header('Authorization').split(" ")[1];
     const studentId = decodeJWT(token);
     const sessionId = await startSession(classId, topicId, studentId);
@@ -239,7 +249,7 @@ app.post('/session/start', async (req: Request, res: Response) => {
   }
 });
 
-app.get('/session/question/:topicId', async (req: Request, res: Response) => {
+app.get('/session/:topicId/:sessionId/question', async (req: Request, res: Response) => {
   try {
     const { topicId } = req.params;
 
@@ -250,49 +260,75 @@ app.get('/session/question/:topicId', async (req: Request, res: Response) => {
     const level = await getLevel(studentId, topicId)
 
     // get random question that is of the matching topic
-    const question = await getQuestion(topicId)
+    const question = await getQuestions(topicId)
 
     const studentLevel = level.level
 
     const easyQuestion = question.easy.question
-    const medQeustion = question.medium.question
+    const medQuestion = question.medium.question
     const hardQuestion = question.hard.question
 
-    const easyQuestionLevel = question.easy.level
-    const medQuestionLevel = question.medium.level
-    const hardQuestionLevel = question.hard.level
+    const easyQuestionLevel = easyQuestion.level
+    const medQuestionLevel = medQuestion.level
+    const hardQuestionLevel = hardQuestion.level
 
-		const topic = await getTopic(parseInt(topicId));
-
+    const topicName = await getTopicName(parseInt(topicId));
     // with the question, generate one of that level (for now multiple choice)
-    const newQeustion = await generateQuestion(
-        studentLevel, 
-        topic.topicname, 
-        easyQuestion,
-        medQeustion, 
-        hardQuestion, 
-        easyQuestionLevel, 
-        medQuestionLevel,
-        hardQuestionLevel
-      );
-    console.log(newQeustion)
+    const newQuestion = await generateQuestion(
+      studentLevel, 
+      topicId, 
+      easyQuestion,
+      medQuestion, 
+      hardQuestion, 
+      easyQuestionLevel, 
+      medQuestionLevel,
+      hardQuestionLevel,
+      topicName
+    );
 
-    res.status(200).json(newQeustion);
+    if (newQuestion.mode == "multiple-choice") {
+      
+      const res = await saveMultipleChoice(newQuestion.question, topicId, studentLevel)
+      console.log(res)
+
+    } else if (newQuestion.mode == "written-response") {
+
+      const res = await saveWrittenResponse(newQuestion.question, topicId, studentLevel)
+      console.log(res)
+    }
+
+    
+    res.status(200).json(newQuestion.question);
+
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
 });
-// app.get('/session/:classId/:topicId/:sessionId/question', async (req: Request, res: Response) => {
-//   const { classId, topicId, sessionId } = req.params;
-//   try {
-//     const questions = getQuestions(classId, topicId, sessionId);
-//     res.status(200).json(questions);
-//   } catch (error) {
-//     res.status(404).json({ error: error.message });
-//   }
-// });
 
-app.put('/session/answer', async (req: Request, res: Response) => {
+app.put('/session/:topicId/:sessionId/:questionId/multi/answer', async (req: Request, res: Response) => {
+  const { topicId, sessionId, questionId } = req.params;
+  const { answer, correct } = req.body;
+  const token = req.header('Authorization').split(" ")[1];
+  const studentId = parseInt(decodeJWT(token));
+
+  const resObj = {
+    studentId,
+    topicId: parseInt(topicId),
+    sessionId: parseInt(sessionId), 
+    questionId: parseInt(questionId), 
+    answer,
+    correct
+  }
+
+  try {
+    const result = await multiAnswerQuestion(resObj);
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
+app.put('/session/:topicId/:sessionId/:questionId/answer', async (req: Request, res: Response) => {
   const { topicId, sessionId, questionId } = req.params;
   const { answer } = req.body;
   const token = req.header('Authorization').split(" ")[1];
@@ -308,21 +344,21 @@ app.put('/session/answer', async (req: Request, res: Response) => {
 
   try {
     const result = await answerQuestion(resObj);
-    res.status(200).send(result);
+    res.status(200).json(result);
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
 });
 
-// app.post('/session/:topicId/:sessionId/end', async (req: Request, res: Response) => {
-//   try {
-//     const { topicId, sessionId } = req.params;
-//     const results = await endSession(parseInt(topicId), parseInt(sessionId));
-//     res.status(200).json(results);
-//   } catch (error) {
-//     res.status(400).json({ error: error.message })
-//   }
-// })
+app.post('/session/:topicId/:sessionId/end', async (req: Request, res: Response) => {
+  try {
+    const { topicId, sessionId } = req.params;
+    const results = await endSession(parseInt(topicId), parseInt(sessionId));
+    res.status(200).json(results);
+  } catch (error) {
+    res.status(400).json({ error: error.message })
+  }
+})
 
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================

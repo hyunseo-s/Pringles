@@ -131,8 +131,7 @@ export const initDB = async () => {
     CREATE TABLE IF NOT EXISTS question_answerq (
       questionid INTEGER NOT NULL,
       answer STRING NOT NULL,
-      correct BOOLEAN NOT NULL,
-      PRIMARY KEY(questionid, correct)
+      correct BOOLEAN NOT NULL
     )
   `);
 

@@ -32,12 +32,16 @@ export const getTopics = async (classId: number) => {
 	const db = await getDbConnection();
 	const topics = await db.all(`SELECT * FROM topics WHERE classid = '${classId}'`);
 
-	return topics.map((topic) => ({ topicName: topic.topicname, topic: topic.topicid, classId }));
+	return topics.map((topic) => ({ topicName: topic.topicname, topic: topic.topicid }));
 }
-
 export const getTopic = async (topicId: number) => {
 	const db = await getDbConnection();
 	return await db.get(`SELECT * FROM topics WHERE topicid = '${topicId}'`);
+}
+
+export const getTopicName = async (topicId: number) => {
+	const db = await getDbConnection();
+	return await db.get(`SELECT topicname FROM topics WHERE topicid = '${topicId}'`);
 }
 
 export const addQuestion = async (topicId: number, level: number, question: string) => {
