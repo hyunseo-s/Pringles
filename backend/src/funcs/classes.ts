@@ -61,7 +61,7 @@ export async function createClass(name: string, students: string[], classImg: st
 
     // Once the table is created, we get the classId, and we put the teacher in
     const classId = res.lastID
-    
+
     await db.run(
         `INSERT INTO class_teacher (classId, teacherId) 
         VALUES (?, ?)`,
@@ -79,6 +79,10 @@ export async function createClass(name: string, students: string[], classImg: st
         // if (!user) {
         //     throw new Error(`User with email ${email} not found`);
         // }
+        console.log(user)
+
+        console.log(classId)
+        console.log(user.userid)
 
         // Insert into classes table using the info
         await db.run(

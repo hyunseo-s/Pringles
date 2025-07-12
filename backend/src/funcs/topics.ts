@@ -11,7 +11,7 @@ export const createTopics = async (classId: string , topics: string[]) => {
 	console.log(topics)
 	for (const topic of topics) {
 		await db.run(
-			`INSERT INTO topics (classid, topicname) VALUES (?)`,[classId, topic]
+			`INSERT INTO topics (classid, topicname) VALUES (?, ?)`,[classId, topic]
 		);
 	}
 
@@ -66,7 +66,8 @@ export const getStudentTopicData = async (studentId: number, topicId: number) =>
 		medQsTotal,
 		medCorrect,
 		hardQsTotal,
-		hardCorrect
+		hardCorrect,
+		level: level.level
 	};
 }
 

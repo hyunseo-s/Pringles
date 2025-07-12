@@ -129,7 +129,7 @@ app.get('/classes/:classId', async (req: Request, res: Response) => {
 // ====================================================================
 
 
-app.post('/topics/{classId}/create', async (req: Request, res: Response) => {
+app.post('/topics/:classId/create', async (req: Request, res: Response) => {
   try {
     const classId = req.params.classId;
     const { topics } = req.body;
@@ -256,12 +256,12 @@ app.use((req: Request, res: Response) => {
 const server = app.listen(PORT, HOST, () => {
   console.log(`⚡️ Server started on port ${PORT} at ${HOST}`);
 
-  initDB()
+  // initDB()
 });
 
 // For coverage, handle Ctrl+C gracefully
-process.on('SIGINT', () => {
-  initDB()
+process.on('SIGINT', async () => {
+  await initDB()
   server.close(() => {
     console.log('Shutting down server gracefully.');
     // initDB()
