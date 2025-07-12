@@ -230,14 +230,11 @@ export const initDB = async () => {
 	
 	// Insert topic student levels into Year 9 Maths
 	for (let i = 3; i <= 50; i++ ) {
-		await db.exec(`
-			INSERT INTO topic_student (topicid, studentid, level) VALUES (1, ${i}, ${Math.random() * 10});
-			INSERT INTO topic_student (topicid, studentid, level) VALUES (2, ${i}, ${Math.random() * 10});
-			INSERT INTO topic_student (topicid, studentid, level) VALUES (3, ${i}, ${Math.random() * 10});
-			INSERT INTO topic_student (topicid, studentid, level) VALUES (4, ${i}, ${Math.random() * 10});
-			INSERT INTO topic_student (topicid, studentid, level) VALUES (, ${i}, ${Math.random() * 10});
-			INSERT INTO topic_student (topicid, studentid, level) VALUES (3, ${i}, ${Math.random() * 10});
-		`);
+		for (let j = 1; j <= 27; j++)  {
+			await db.exec(`
+				INSERT INTO topic_student (topicid, studentid, level) VALUES (${j}, ${i}, ${Math.random() * 10});
+			`);
+		}
 	}
 
 	// Insert questions
