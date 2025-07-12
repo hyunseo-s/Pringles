@@ -66,9 +66,9 @@ app.post('/auth/logout', async (req: Request, res: Response) => {
   }
 });
 
-// // ====================================================================
-// //  ============================ CLASSES =============================
-// // ====================================================================
+// ====================================================================
+//  ============================ CLASSES =============================
+// ====================================================================
 
 app.get('/classes', (req: Request, res: Response) => {
   const { studentId } = req.params;
@@ -118,9 +118,9 @@ app.get('/classes/:classId', (req: Request, res: Response) => {
 });
 
 
-// // ====================================================================
-// //  ============================= TOPICS =============================
-// // ====================================================================
+// ====================================================================
+//  ============================= TOPICS =============================
+// ====================================================================
 
 
 // app.post('/topics/create', async (req: Request, res: Response) => {
@@ -184,9 +184,9 @@ app.get('/classes/:classId', (req: Request, res: Response) => {
 //   }
 // });
 
-// // ====================================================================
-// //  =========================== SESSIONS =============================
-// // ====================================================================
+// ====================================================================
+//  =========================== SESSIONS =============================
+// ====================================================================
 
 app.post('/session/:classId/:topicId/start', async (req: Request, res: Response) => {
   try {
@@ -200,36 +200,36 @@ app.post('/session/:classId/:topicId/start', async (req: Request, res: Response)
   }
 });
 
-// app.get('/session/:classId/:topicId/:sessionId/question', (req: Request, res: Response) => {
-//   const { classId, topicId, sessionId } = req.params;
-//   try {
-//     const questions = getQuestions(classId, topicId, sessionId);
-//     res.status(200).json(questions);
-//   } catch (error) {
-//     res.status(404).json({ error: error.message });
-//   }
-// });
+app.get('/session/:classId/:topicId/:sessionId/question', (req: Request, res: Response) => {
+  const { classId, topicId, sessionId } = req.params;
+  try {
+    const questions = getQuestions(classId, topicId, sessionId);
+    res.status(200).json(questions);
+  } catch (error) {
+    res.status(404).json({ error: error.message });
+  }
+});
 
-// app.put('/session/:classId/:topicId/:sessionId/:questionId/answer', (req: Request, res: Response) => {
-//   const { classId, topicId, sessionId, questionId } = req.params;
-//   const { Answer } = req.body;
-//   try {
-//     const result = answerQuestion(classId, topicId, sessionId, questionId, Answer);
-//     res.status(200).json(result);
-//   } catch (error) {
-//     res.status(400).json({ error: error.message });
-//   }
-// });
+app.put('/session/:classId/:topicId/:sessionId/:questionId/answer', (req: Request, res: Response) => {
+  const { classId, topicId, sessionId, questionId } = req.params;
+  const { Answer } = req.body;
+  try {
+    const result = answerQuestion(classId, topicId, sessionId, questionId, Answer);
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
 
-// app.post('/session/:classId/:topicId/:sessionId/end', async (req: Request, res: Response) => {
-//   try {
-//     const { classId, topicId, sessionId } = req.body;
-//     const results = await endSession(classId, topicId, sessionId);
-//     res.status(200).json(results);
-//   } catch (error) {
-//     res.status(400).json({ error: error.message })
-//   }
-// })
+app.post('/session/:classId/:topicId/:sessionId/end', async (req: Request, res: Response) => {
+  try {
+    const { classId, topicId, sessionId } = req.body;
+    const results = await endSession(classId, topicId, sessionId);
+    res.status(200).json(results);
+  } catch (error) {
+    res.status(400).json({ error: error.message })
+  }
+})
 
 // ====================================================================
 //  ================= WORK IS DONE ABOVE THIS LINE ===================
