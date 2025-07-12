@@ -1,9 +1,11 @@
 import { useNavigate } from 'react-router';
 import { useUser } from '../context/UserContext';
 import { useEffect, useState } from 'react';
-import MultipleChoice from '../components/MultipleChoice';
+import MultipleChoice from '../components/quiz/MultipleChoice';
 import { Button, Flex, Modal, Text } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
+import ShortAnswer from '../components/quiz/ShortAnswer';
+import Explanation from '../components/quiz/Explanation';
 
 const options = [
   { id: "first", label: "First" },
@@ -23,7 +25,7 @@ const QuizPage = () => {
 	const navigate = useNavigate();
 	const { user } = useUser();
   const [ answer, setAnswer ] = useState<string | null>(null);
-  const [ correct, setCorrect ] = useState<string | null>(null);
+  const [ correct, setCorrect ] = useState<boolean | null>(null);
   const [opened, { open, close }] = useDisclosure(false);
 
   const [option, setOption] = useState<boolean>(true); // TO REMOVE
@@ -41,7 +43,7 @@ const QuizPage = () => {
       return "first";
     }
 
-    setCorrect(fetchCorrect());
+    setCorrect(fetchCorrect() === answer);
   }
 
   const handleNext = () => {
@@ -60,9 +62,14 @@ const QuizPage = () => {
       {/* Question */}
 		  <div>What is the longest river in the world, and through which countries does it flow?</div>
 
-      {/* Answer(s) */}
-      <MultipleChoice answer={setAnswer} correctId={correct} options={option ? options : options2}/>
+      {/* User Answer Input */}
+      <MultipleChoice answer={setAnswer} correct={correct} options={option ? options : options2}/>
+      <ShortAnswer answer={setAnswer} correct={correct} />
 
+      {/* Explanation */}
+      {correct !== null && <Explanation correct={correct} answer={"first"} explanation='It is supposed to be first'/>}
+
+      {/* Control Buttons */}
       <Flex direction={'column'} gap={10}>
         {/* Submit / Next Buttons */}
         {correct === null
@@ -75,7 +82,7 @@ const QuizPage = () => {
           </Button>
           :
           <Button 
-            color={correct === answer ? "green" : "red"} 
+            color={correct ? "green" : "red"} 
             onClick={() => handleNext()}
           >
             NEXT

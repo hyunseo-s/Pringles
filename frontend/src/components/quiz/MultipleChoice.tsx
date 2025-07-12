@@ -4,17 +4,17 @@ import { useState } from "react";
 const MultipleChoice = ({ 
 	options, 
 	answer, 
-	correctId 
+	correct
 } : { 
 	answer: React.Dispatch<React.SetStateAction<string | null>>, 
-	correctId: string | null, 
+	correct: boolean | null, 
 	options: {id: string, label: string}[]
 }) => {
 	const [selected, setSelected] = useState<string | null>(null);
 
 	const handleClick = (id: string) => {
 		// Disables clicks after submitting answer
-		if (correctId !== null) {
+		if (correct !== null) {
 			return;
 		}
 
@@ -28,11 +28,11 @@ const MultipleChoice = ({
 	};
 
 	const setColours = (id: string) : DefaultMantineColor => {
-		if (correctId === null && selected === id) {
+		if (correct === null && selected === id) {
 			return "blue";
-		} else if (correctId !== null && selected === id && id === correctId) {
+		} else if (correct !== null && selected === id && correct) {
 			return "green";
-		} else if (correctId !== null && selected === id && id !== correctId) {
+		} else if (correct !== null && selected === id && !correct) {
 			return "red";
 		}
 
