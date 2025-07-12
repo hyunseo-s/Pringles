@@ -6,7 +6,7 @@ export const handleError = (message: string) => {
 		title: 'Error',
 		color: 'red',
 		message: message,
-		autoClose: 1500,
+		autoClose: 15000,
 	})
 }
 

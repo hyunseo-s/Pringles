@@ -5,12 +5,19 @@ export const initDB = async () => {
 
 	// Drop all existing tables
   await db.exec(`
-    DROP TABLE IF EXISTS users;
-    -- Add additional DROP statements for other tables here if needed
-    DROP TABLE IF EXISTS classes;
+    DROP TABLE IF EXISTS class_student;
+		DROP TABLE IF EXISTS class_teacher;
+		DROP TABLE IF EXISTS classes;
+		DROP TABLE IF EXISTS question_student;
     DROP TABLE IF EXISTS questions;
     DROP TABLE IF EXISTS topics;
+		DROP TABLE IF EXISTS topic_student;
     DROP TABLE IF EXISTS sessions;
+		DROP TABLE IF EXISTS users;
+<<<<<<< HEAD
+    DROP TABLE IF EXISTS answers;
+=======
+>>>>>>> main
   `);
 
   await db.exec(`
@@ -119,7 +126,126 @@ export const initDB = async () => {
       PRIMARY KEY(studentid, topicid)
     )
   `);
-  
+<<<<<<< HEAD
+=======
+
+	// Insert teachers and students
+	await db.exec(`
+   	INSERT INTO users (userid, email, password, nameFirst, nameLast, role) VALUES (1, 'justin@mail.com', 'password', 'Justin', 'Son', 'teacher');
+	 	INSERT INTO users (userid, email, password, nameFirst, nameLast, role) VALUES (2, 'ezc@mail.com', 'password', 'Elizabeth', 'Zhu Chan', 'teacher');
+	 	INSERT INTO users (userid, email, password, nameFirst, nameLast, role) VALUES (3, 'ivan@mail.com', 'password', 'Ivan', 'Chan', 'student');
+	 	INSERT INTO users (userid, email, password, nameFirst, nameLast, role) VALUES (4, 'parker@mail.com', 'password', 'Parker', 'Qiu', 'student');
+	 	INSERT INTO users (userid, email, password, nameFirst, nameLast, role) VALUES (5, 'felix@mail.com', 'password', 'Felix', 'Cao', 'student');
+	`);
+
+	for (let i = 1; i <= 50; i++) {
+		await db.exec(`
+			INSERT INTO users (userid, email, password, nameFirst, nameLast, role) VALUES (${i + 5}, 'adam${i}@mail.com', 'password', 'Justin', 'Son', 'student');
+		`);
+	}
+
+	// Insert classes
+	await db.exec(`
+   	INSERT INTO classes (classid, classname) VALUES (1, 'YEAR 9 MATHS');
+		INSERT INTO classes (classid, classname) VALUES (2, 'YEAR 10 MATHS');
+		INSERT INTO classes (classid, classname) VALUES (3, 'YEAR 11 MATHS');
+		INSERT INTO classes (classid, classname) VALUES (4, 'YEAR 12 MATHS');
+		INSERT INTO classes (classid, classname) VALUES (5, 'COMP1511 Wednesday');
+		INSERT INTO classes (classid, classname) VALUES (6, 'COMP1511 Thursday');
+		INSERT INTO classes (classid, classname) VALUES (7, 'COMP1521 Monday');
+		INSERT INTO classes (classid, classname) VALUES (8, 'COMP1521 Tuesday');
+		INSERT INTO classes (classid, classname) VALUES (9, 'COMP1531 Friday');
+	`);
+
+	// Insert class teacher relationship
+	await db.exec(`
+   	INSERT INTO class_teacher (classid, teacherid) VALUES (1, 1);
+		INSERT INTO class_teacher (classid, teacherid) VALUES (2, 1);
+		INSERT INTO class_teacher (classid, teacherid) VALUES (3, 1);
+		INSERT INTO class_teacher (classid, teacherid) VALUES (4, 1);
+		INSERT INTO class_teacher (classid, teacherid) VALUES (5, 2);
+		INSERT INTO class_teacher (classid, teacherid) VALUES (6, 2);
+		INSERT INTO class_teacher (classid, teacherid) VALUES (7, 2);
+		INSERT INTO class_teacher (classid, teacherid) VALUES (8, 2);
+		INSERT INTO class_teacher (classid, teacherid) VALUES (9, 2);
+	`);
+
+	// Insert student class relationship
+	for (let i = 1; i < 10; i++) {
+		await db.exec(`
+			INSERT INTO class_student (classid, studentid) VALUES (${i}, 3);
+			INSERT INTO class_student (classid, studentid) VALUES (${i}, 4);
+			INSERT INTO class_student (classid, studentid) VALUES (${i}, 5);`
+		)
+	}
+
+	for (let i = 1; i <= 50; i++) {
+		for (let j = 1; j < 5; j++) {
+			await db.exec(`
+				INSERT INTO class_student (classid, studentid) VALUES (${j}, ${i + 5});`
+			)
+		}
+	}
   return db;
 }
+>>>>>>> main
 
+	// Insert teachers and students
+	await db.exec(`
+   	INSERT INTO users (userid, email, password, nameFirst, nameLast, role) VALUES (1, 'justin@mail.com', 'password', 'Justin', 'Son', 'teacher');
+	 	INSERT INTO users (userid, email, password, nameFirst, nameLast, role) VALUES (2, 'ezc@mail.com', 'password', 'Elizabeth', 'Zhu Chan', 'teacher');
+	 	INSERT INTO users (userid, email, password, nameFirst, nameLast, role) VALUES (3, 'ivan@mail.com', 'password', 'Ivan', 'Chan', 'student');
+	 	INSERT INTO users (userid, email, password, nameFirst, nameLast, role) VALUES (4, 'parker@mail.com', 'password', 'Parker', 'Qiu', 'student');
+	 	INSERT INTO users (userid, email, password, nameFirst, nameLast, role) VALUES (5, 'felix@mail.com', 'password', 'Felix', 'Cao', 'student');
+	`);
+
+	for (let i = 1; i <= 50; i++) {
+		await db.exec(`
+			INSERT INTO users (userid, email, password, nameFirst, nameLast, role) VALUES (${i + 5}, 'adam${i}@mail.com', 'password', 'Justin', 'Son', 'student');
+		`);
+	}
+
+	// Insert classes
+	await db.exec(`
+   	INSERT INTO classes (classid, classname) VALUES (1, 'YEAR 9 MATHS');
+		INSERT INTO classes (classid, classname) VALUES (2, 'YEAR 10 MATHS');
+		INSERT INTO classes (classid, classname) VALUES (3, 'YEAR 11 MATHS');
+		INSERT INTO classes (classid, classname) VALUES (4, 'YEAR 12 MATHS');
+		INSERT INTO classes (classid, classname) VALUES (5, 'COMP1511 Wednesday');
+		INSERT INTO classes (classid, classname) VALUES (6, 'COMP1511 Thursday');
+		INSERT INTO classes (classid, classname) VALUES (7, 'COMP1521 Monday');
+		INSERT INTO classes (classid, classname) VALUES (8, 'COMP1521 Tuesday');
+		INSERT INTO classes (classid, classname) VALUES (9, 'COMP1531 Friday');
+	`);
+
+	// Insert class teacher relationship
+	await db.exec(`
+   	INSERT INTO class_teacher (classid, teacherid) VALUES (1, 1);
+		INSERT INTO class_teacher (classid, teacherid) VALUES (2, 1);
+		INSERT INTO class_teacher (classid, teacherid) VALUES (3, 1);
+		INSERT INTO class_teacher (classid, teacherid) VALUES (4, 1);
+		INSERT INTO class_teacher (classid, teacherid) VALUES (5, 2);
+		INSERT INTO class_teacher (classid, teacherid) VALUES (6, 2);
+		INSERT INTO class_teacher (classid, teacherid) VALUES (7, 2);
+		INSERT INTO class_teacher (classid, teacherid) VALUES (8, 2);
+		INSERT INTO class_teacher (classid, teacherid) VALUES (9, 2);
+	`);
+
+	// Insert student class relationship
+	for (let i = 1; i < 10; i++) {
+		await db.exec(`
+			INSERT INTO class_student (classid, studentid) VALUES (${i}, 3);
+			INSERT INTO class_student (classid, studentid) VALUES (${i}, 4);
+			INSERT INTO class_student (classid, studentid) VALUES (${i}, 5);`
+		)
+	}
+
+	for (let i = 1; i <= 50; i++) {
+		for (let j = 1; j < 5; j++) {
+			await db.exec(`
+				INSERT INTO class_student (classid, studentid) VALUES (${j}, ${i + 5});`
+			)
+		}
+	}
+  return db;
+}

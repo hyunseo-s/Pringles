@@ -11,6 +11,8 @@ import { useForm } from '@mantine/form';
 import { handleError, handleSuccess } from '../utils/handlers';
 import { useNavigate } from 'react-router';
 import { post } from '../utils/apiClient';
+import { useEffect } from 'react';
+import { useUser } from '../context/UserContext';
 
 const LoginPage = () => {
 	const form = useForm({
@@ -27,6 +29,13 @@ const LoginPage = () => {
   });
 
 	const navigate = useNavigate();
+
+	const { user } = useUser();
+	useEffect(() => {
+		if (user) {
+			navigate("/dashboard"); // or whatever your login path is
+		}
+	}, [user, navigate]);
 
 	const handleSubmit = async (values) => {
 		const res = await post("/auth/login", values);
@@ -58,7 +67,9 @@ const LoginPage = () => {
 				</form>
 				<Text ta="center" mt="md">
 					Don't have an account?{' '}
-					<Anchor href="/register" fw={500} onClick={(event) => event.preventDefault()}>
+					<Anchor href="#" fw={500} onClick={(event) =>{
+						navigate('/register')
+						event.preventDefault()}}>
 						Register
 					</Anchor>
 				</Text>
