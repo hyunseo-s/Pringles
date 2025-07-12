@@ -8,6 +8,7 @@ import ShortAnswer from '../components/quiz/ShortAnswer';
 import Explanation from '../components/quiz/Explanation';
 import Question from '../components/quiz/Question';
 import { ScoreCard } from '../components/quiz/ScoreCard';
+import { post } from '../utils/apiClient';
 
 const questions: Prompt[] = [
   {
@@ -79,7 +80,8 @@ const QuizPage = () => {
   if (!user) return null; // optional: show a loading spinner here
 
   const fetchQuestion = async () => {
-    // calls /session/{classId}/{topicId}/{sessionId}/question
+		const res = await post('/session/question', { topicId });
+		console.log(res);
     setPrompt(questions[1]);
   }
 

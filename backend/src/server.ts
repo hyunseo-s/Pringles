@@ -227,7 +227,7 @@ app.get('/topic/:classId/students/level', async (req: Request, res: Response) =>
 //  =========================== SESSIONS =============================
 // ====================================================================
 
-app.post('/session/:classId/:topicId/start', async (req: Request, res: Response) => {
+app.post('/session/start', async (req: Request, res: Response) => {
   try {
     const { classId, topicId } = req.body;
     const token = req.header('Authorization').split(" ")[1];
@@ -239,9 +239,9 @@ app.post('/session/:classId/:topicId/start', async (req: Request, res: Response)
   }
 });
 
-app.get('/session/:topicId/:sessionId/question', async (req: Request, res: Response) => {
+app.get('/session/question', async (req: Request, res: Response) => {
   try {
-    const {topicId } = req.params;
+    const { topicId } = req.body;
 
     const token = req.header('Authorization').split(" ")[1];
     const studentId = decodeJWT(token);

@@ -6,7 +6,8 @@ import { useNavigate } from "react-router"
 import { QuestionList } from "./QuestionList"
 
 export interface TopicProps {
-	topic: Topic
+	topic: Topic,
+	classId: string
 }
 
 export const TeacherTopicView = ({ topic }: TopicProps) => {

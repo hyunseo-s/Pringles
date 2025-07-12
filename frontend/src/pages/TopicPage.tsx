@@ -18,7 +18,8 @@ const TopicPage = () => {
   if (!user) return null; // optional: show a loading spinner here
 
 	const topic: Topic = {
-		name: 'Algebra'
+		topic: 19,
+		topicName: 'Ecosystem',
 	}
 
   return (
