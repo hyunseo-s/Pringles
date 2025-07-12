@@ -7,7 +7,7 @@ import morgan from 'morgan';
 import { initDB } from './initDb';
 import { login, register } from './funcs/auth';
 import { decodeJWT } from './utils';
-import { addQuestion, createTopics, getStudentTopicData, getTeacherTopicData, getTopics } from './funcs/topics';
+import { addQuestion, createTopics, getTopics } from './funcs/topics';
 import { addStudents, createClass, getClass, getStudentsClasses } from './funcs/classes';
 import { startSession } from './funcs/session';
 
@@ -173,25 +173,25 @@ app.post('/topics/:topicId/question', async (req: Request, res: Response) => {
   }
 });
 
-app.get('/topic/:topicId/teacher/data', (req: Request, res: Response) => {
-  const topicId = parseInt(req.params.topicId);
-  try {
-    const topicData = getTeacherTopicData(topicId);
-    res.status(200).json(topicData);
-  } catch (error) {
-    res.status(404).json({ error: error.message });
-  }
-});
+// app.get('/topic/:topicId/teacher/data', (req: Request, res: Response) => {
+//   const topicId = parseInt(req.params.topicId);
+//   try {
+//     const topicData = getTeacherTopicData(topicId);
+//     res.status(200).json(topicData);
+//   } catch (error) {
+//     res.status(404).json({ error: error.message });
+//   }
+// });
 
-app.get('/topic/:topicId/student/data', (req: Request, res: Response) => {
-  const topicId = parseInt(req.params.topicId);
-  try {
-    const topicData = getStudentTopicData(topicId);
-    res.status(200).json(topicData);
-  } catch (error) {
-    res.status(404).json({ error: error.message });
-  }
-});
+// app.get('/topic/:topicId/student/data', (req: Request, res: Response) => {
+//   const topicId = parseInt(req.params.topicId);
+//   try {
+//     const topicData = getStudentTopicData(topicId);
+//     res.status(200).json(topicData);
+//   } catch (error) {
+//     res.status(404).json({ error: error.message });
+//   }
+// });
 
 // app.get('/classes/:classId/data', (req: Request, res: Response) => {
 //   const classId = req.params.classId;
@@ -280,6 +280,7 @@ const server = app.listen(PORT, HOST, () => {
 process.on('SIGINT', () => {
   server.close(() => {
     console.log('Shutting down server gracefully.');
+    // initDB()
     process.exit();
   });
 });
