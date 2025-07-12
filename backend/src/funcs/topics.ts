@@ -2,6 +2,7 @@ import { getDbConnection } from "../db";
 
 export const createTopics = async (classId: string , topics: string[]) => {
 	const db = await getDbConnection();
+	const allTopics = []
 
 	// check classId is valid
 	const classes = await db.all(`SELECT * FROM classes WHERE classid = '${classId}'`);
@@ -13,6 +14,8 @@ export const createTopics = async (classId: string , topics: string[]) => {
 		const res = await db.run(
 			`INSERT INTO topics (classid, topicname) VALUES (?, ?)`,[classId, topic]
 		);
+
+		allTopics.push({ topicName: topic, topicId: res.lastID });
 		
 		const students = await db.all(`SELECT * FROM class_student WHERE classid = '${classId}'`);
 
@@ -23,14 +26,14 @@ export const createTopics = async (classId: string , topics: string[]) => {
 		}
 	}
 
-  return {};
+  return {topics: allTopics};
 }
 
 export const getTopics = async (classId: number) => {
 	const db = await getDbConnection();
-	const topics = await db.all(`SELECT topicname FROM topics WHERE classid = '${classId}'`);
+	const topics = await db.all(`SELECT * FROM topics WHERE classid = '${classId}'`);
 
-	return {topics};
+	return topics.map((topic) => ({ topicName: topic.topicname, topic: topic.topicid }));
 }
 
 export const addQuestion = async (topicId: number, level: number, question: string) => {
@@ -52,7 +55,7 @@ export const getStudentTopicData = async (studentId: number, topicId: number) =>
 
 	// get all questions 
 	const level = await db.get(`SELECT level FROM topic_student WHERE topicid = '${topicId}' and studentid = '${studentId}'`);
-	console.log(level.level)
+	console.log(level)
 
 	const answers = await db.get(`
 		SELECT	q.level, a.correct 
@@ -75,7 +78,7 @@ export const getStudentTopicData = async (studentId: number, topicId: number) =>
 		medCorrect,
 		hardQsTotal,
 		hardCorrect,
-		level: level.level,
+		level,
 	};
 }
 
