@@ -133,7 +133,7 @@ app.get('/classes/:classId', (req: Request, res: Response) => {
 // ====================================================================
 
 
-app.post('/topics/{classId}/create', async (req: Request, res: Response) => {
+app.post('/topics/:classId/create', async (req: Request, res: Response) => {
   try {
     const classId = req.params.classId;
     const { topics } = req.body;
@@ -189,6 +189,18 @@ app.get('/topic/:topicId/student/data', (req: Request, res: Response) => {
     res.status(404).json({ error: error.message });
   }
 });
+
+// app.get('/topic/:topicId/students/level', (req: Request, res: Response) => {
+//   const topicId = parseInt(req.params.topicId);
+//   const token = req.header('Authorization').split(" ")[1];
+//   const teacherId = parseInt(decodeJWT(token));
+//   try {
+//     const topicData = getStudentsLevels(teacherId, topicId);
+//     res.status(200).json(topicData);
+//   } catch (error) {
+//     res.status(404).json({ error: error.message });
+//   }
+// });
 
 // ====================================================================
 //  =========================== SESSIONS =============================

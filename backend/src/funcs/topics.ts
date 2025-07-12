@@ -10,9 +10,17 @@ export const createTopics = async (classId: string , topics: string[]) => {
 
 	console.log(topics)
 	for (const topic of topics) {
-		await db.run(
-			`INSERT INTO topics (classid, topicname) VALUES (?)`,[classId, topic]
+		const res = await db.run(
+			`INSERT INTO topics (classid, topicname) VALUES (?, ?)`,[classId, topic]
 		);
+		
+		const students = await db.all(`SELECT * FROM class_student WHERE classid = '${classId}'`);
+
+		for (const student of students) {
+			await db.run(
+				`INSERT INTO topic_student (topicid, studentid, level) VALUES (?, ?)`, [res.lastID, student.studentid, 5]
+			);
+		}
 	}
 
   return {};
@@ -44,7 +52,7 @@ export const getStudentTopicData = async (studentId: number, topicId: number) =>
 
 	// get all questions 
 	const level = await db.get(`SELECT level FROM topic_student WHERE topicid = '${topicId}' and studentid = '${studentId}'`);
-	console.log(level)
+	console.log(level.level)
 
 	const answers = await db.get(`
 		SELECT	q.level, a.correct 
@@ -66,7 +74,8 @@ export const getStudentTopicData = async (studentId: number, topicId: number) =>
 		medQsTotal,
 		medCorrect,
 		hardQsTotal,
-		hardCorrect
+		hardCorrect,
+		level: level.level,
 	};
 }
 
@@ -74,7 +83,7 @@ export const getTeacherTopicData = async (teacherId: number, topicId: number) =>
 	const db = await getDbConnection();
 	const user = await db.get(`SELECT * FROM users WHERE userid = '${teacherId}' AND role = 'teacher'`);	
 
-	if (!user) throw new Error("No such student exists");
+	if (!user) throw new Error("No such teacher exists");
 
 	// get all questions 
 	// select all questions with given topic id
@@ -82,3 +91,17 @@ export const getTeacherTopicData = async (teacherId: number, topicId: number) =>
 
 	return { questionData: questions };
 }
+
+// export const getStudentsLevels = async (teacherId: number, topicId: number) => {
+// 	const db = await getDbConnection();
+// 	const user = await db.get(`SELECT * FROM users WHERE userid = '${teacherId}' AND role = 'teacher'`);	
+
+// 	if (!user) throw new Error("No such teacher exists");
+
+// 	const levels = await db.get(`
+// 		SELECT	q.level, a.correct 
+// 		FROM	answers AS a
+// 		JOIN	questions AS q ON a.questionid = q.questionid
+// 		WHERE	q.topicid = '${topicId}' and a.studentid = '${studentId}'
+// 	`);
+// }
