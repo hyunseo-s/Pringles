@@ -309,7 +309,7 @@ export const answerQuestion = async ({ studentId, topicId, sessionId, questionId
 	console.log(res);
 
 	let level = await db.get(`SELECT level FROM topic_student WHERE studentid = '${studentId}' and topicid = '${topicId}'`);
-	level = parseInt(level)
+	level = parseInt(level.level)
 
 	let increment;
 
