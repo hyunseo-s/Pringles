@@ -1,5 +1,7 @@
 export const StudentTopicView = () => {
-	return <>
-		StudentTopicView
-	</>
+	return (
+		<div className="h-100 bg-gray">
+			Header
+		</div>
+	)
 }

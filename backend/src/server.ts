@@ -65,19 +65,19 @@ app.post('/auth/logout', async (req: Request, res: Response) => {
   }
 });
 
-// ====================================================================
-//  ============================ CLASSES =============================
-// ====================================================================
+// // ====================================================================
+// //  ============================ CLASSES =============================
+// // ====================================================================
 
-app.get('/classes/', (req: Request, res: Response) => {
-  const { studentId } = req.params;
-  try {
-    const classes = getStudentsClasses(studentId);
-    res.status(200).json(classes);
-  } catch (error) {
-    res.status(404).json({ error: error.message });
-  }
-});
+// app.get('/classes/', (req: Request, res: Response) => {
+//   const { studentId } = req.params;
+//   try {
+//     const classes = getStudentsClasses(studentId);
+//     res.status(200).json(classes);
+//   } catch (error) {
+//     res.status(404).json({ error: error.message });
+//   }
+// });
 
 app.post('/classes/:classid/add', async (req: Request, res: Response) => {
   try {
@@ -112,9 +112,41 @@ app.get('/classes/:classId', (req: Request, res: Response) => {
   }
 });
 
-// ====================================================================
-//  ============================= TOPICS =============================
-// ====================================================================
+// app.post('/classes/:classid/add', async (req: Request, res: Response) => {
+//   try {
+//     const { classid } = req.params;
+//     const { students } = req.body;
+//     const addedStudents = await addStudents(classid, students);
+//     res.status(200).json(addedStudents);
+//   } catch (error) {
+//     res.status(400).json({ error: error.message });
+//   }
+// });
+
+// app.post('/classes/create', async (req: Request, res: Response) => {
+//   try {
+//     const { name, students, classImg } = req.body;
+//     const classId = await createClasses(name, students, classImg);
+//     res.status(200).json(classId);
+//   } catch (error) {
+//     res.status(400).json({ error: error.message });
+//   }
+// });
+
+// app.get('/classes/:classId', (req: Request, res: Response) => {
+//   const { classId } = req.params;
+//   try {
+//     const classInfo = getClasses(classId);
+//     res.status(200).json(classInfo);
+//   } catch (error) {
+//     res.status(404).json({ error: error.message });
+//   }
+// });
+
+
+// // ====================================================================
+// //  ============================= TOPICS =============================
+// // ====================================================================
 
 // app.post('/topics/create', async (req: Request, res: Response) => {
 //   try {
@@ -170,7 +202,6 @@ app.get('/classes/:classId', (req: Request, res: Response) => {
 // // ====================================================================
 // //  =========================== SESSIONS =============================
 // // ====================================================================
-
 app.post('/session/:classId/:topicId/start', async (req: Request, res: Response) => {
   try {
     const { classId, topicId } = req.body;
@@ -184,15 +215,25 @@ app.post('/session/:classId/:topicId/start', async (req: Request, res: Response)
   }
 });
 
-app.get('/session/:classId/:topicId/:sessionId/question', (req: Request, res: Response) => {
-  const { classId, topicId, sessionId } = req.params;
-  try {
-    const questions = getQuestions(classId, topicId, sessionId);
-    res.status(200).json(questions);
-  } catch (error) {
-    res.status(404).json({ error: error.message });
-  }
-});
+// app.post('/session/:classId/:topicId/start', async (req: Request, res: Response) => {
+//   try {
+//     const { classId, topicId } = req.body;
+//     const sessionId = await startSession(classId, topicId);
+//     res.status(200).json(sessionId);
+//   } catch (error) {
+//     res.status(400).json({ error: error.message })
+//   }
+// });
+
+// app.get('/session/:classId/:topicId/:sessionId/question', (req: Request, res: Response) => {
+//   const { classId, topicId, sessionId } = req.params;
+//   try {
+//     const questions = getQuestions(classId, topicId, sessionId);
+//     res.status(200).json(questions);
+//   } catch (error) {
+//     res.status(404).json({ error: error.message });
+//   }
+// });
 
 // app.put('/session/:classId/:topicId/:sessionId/:questionId/answer', (req: Request, res: Response) => {
 //   const { classId, topicId, sessionId, questionId } = req.params;
@@ -215,37 +256,37 @@ app.get('/session/:classId/:topicId/:sessionId/question', (req: Request, res: Re
 //   }
 // })
 
-// ====================================================================
-//  ================= WORK IS DONE ABOVE THIS LINE ===================
-// ====================================================================
+// // ====================================================================
+// //  ================= WORK IS DONE ABOVE THIS LINE ===================
+// // ====================================================================
 
-app.use((req: Request, res: Response) => {
-  const error = `
-    Route not found - This could be because:
-      0. You have defined routes below (not above) this middleware in server.ts
-      1. You have not implemented the route ${req.method} ${req.path}
-      2. There is a typo in either your test or server, e.g. /posts/list in one
-         and, incorrectly, /post/list in the other
-      3. You are using ts-node (instead of ts-node-dev) to start your server and
-         have forgotten to manually restart to load the new changes
-      4. You've forgotten a leading slash (/), e.g. you have posts/list instead
-         of /posts/list in your server.ts or test file
-  `;
-  res.status(404).json({ error });
-});
+// app.use((req: Request, res: Response) => {
+//   const error = `
+//     Route not found - This could be because:
+//       0. You have defined routes below (not above) this middleware in server.ts
+//       1. You have not implemented the route ${req.method} ${req.path}
+//       2. There is a typo in either your test or server, e.g. /posts/list in one
+//          and, incorrectly, /post/list in the other
+//       3. You are using ts-node (instead of ts-node-dev) to start your server and
+//          have forgotten to manually restart to load the new changes
+//       4. You've forgotten a leading slash (/), e.g. you have posts/list instead
+//          of /posts/list in your server.ts or test file
+//   `;
+//   res.status(404).json({ error });
+// });
 
-// start server
-const server = app.listen(PORT, HOST, () => {
-  console.log(`⚡️ Server started on port ${PORT} at ${HOST}`);
+// // start server
+// const server = app.listen(PORT, HOST, () => {
+//   console.log(`⚡️ Server started on port ${PORT} at ${HOST}`);
 
-	initDB()
-});
+// 	initDB()
+// });
 
-// For coverage, handle Ctrl+C gracefully
-process.on('SIGINT', () => {
-  server.close(() => {
-    console.log('Shutting down server gracefully.');
-    process.exit();
-  });
-});
+// // For coverage, handle Ctrl+C gracefully
+// process.on('SIGINT', () => {
+//   server.close(() => {
+//     console.log('Shutting down server gracefully.');
+//     process.exit();
+//   });
+// });
 

@@ -7,6 +7,7 @@ import QuizPage from './pages/QuizPage'
 import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
 import { UserProvider } from './context/UserContext'
+import { Notifications } from '@mantine/notifications'
 
 function App() {
 	
@@ -14,6 +15,7 @@ function App() {
     <>
 			<MantineProvider>
 				<UserProvider>
+					<Notifications />
 					<BrowserRouter>
 						<Routes>
 							<Route path="/" element={<HomePage />} />
