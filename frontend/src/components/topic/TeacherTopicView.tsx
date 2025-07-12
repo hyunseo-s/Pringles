@@ -5,7 +5,7 @@ import { TeacherStatsGrid } from "./TeacherStatsGrid"
 import { useNavigate } from "react-router"
 import { QuestionList } from "./QuestionList"
 
-interface TopicProps {
+export interface TopicProps {
 	topic: Topic
 }
 
@@ -23,7 +23,7 @@ export const TeacherTopicView = ({ topic }: TopicProps) => {
 			>
 				<IconArrowLeft />
 			</ActionIcon>
-			<div className="h-64 w-full bg-black mt-2">
+			<div className="h-64 w-full bg-black mt-4">
 				Banner
 			</div>
 			<p className="text-3xl my-6">
