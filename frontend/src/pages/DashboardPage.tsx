@@ -6,7 +6,7 @@ import { ClassButton } from '../components/dashboard/ClassButton';
 import { StatsRing } from '../components/dashboard/StatRing';
 import { TopicsCarousel } from '../components/dashboard/TopicsCarousel';
 import { useDisclosure } from '@mantine/hooks';
-import { CreateTopicModal } from '../components/dashboard/CreateTopicModal';
+import { AddTopicModal } from '../components/dashboard/AddTopicModal';
 import { CreateClassModal } from '../components/dashboard/CreateClassModal';
 
 const DashboardPage = () => {
@@ -63,7 +63,7 @@ const DashboardPage = () => {
 				<Button variant="light" onClick={openTopicModal}>
 					Add New
 				</Button>
-				<CreateTopicModal opened={openedTopicModal} close={closeTopicModal} />
+				<AddTopicModal opened={openedTopicModal} close={closeTopicModal} />
 			</Flex>
 			<TopicsCarousel />
 		</Paper>
