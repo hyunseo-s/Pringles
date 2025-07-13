@@ -2,7 +2,7 @@ import { useNavigate, useParams } from 'react-router';
 import { useUser } from '../context/UserContext';
 import { useEffect, useState } from 'react';
 import MultipleChoice from '../components/quiz/MultipleChoice';
-import { Button, Flex, Modal } from '@mantine/core';
+import { Button, Flex, Loader, Modal } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import ShortAnswer from '../components/quiz/ShortAnswer';
 import Explanation from '../components/quiz/Explanation';
@@ -62,6 +62,7 @@ const QuizPage = () => {
 	const navigate = useNavigate();
   const { topicId, sessionId } = useParams();
 	const { user } = useUser();
+  const [loading, setLoading] = useState(false);
 
   // Fetched Data
   const [ prompt, setPrompt] = useState<Prompt>(questions[0]);
@@ -85,7 +86,9 @@ const QuizPage = () => {
 	useEffect(() => {
 		if (!topicId) return;
 		const fetchQuestion = async () => {
+      setLoading(true);
 			const res = await get(`/session/${topicId}/${sessionId}/question`, undefined);
+      setLoading(false);
 
 			if (res.error) return;
 
@@ -122,7 +125,10 @@ const QuizPage = () => {
     if (prompt.type === "multiple") {
       setCorrect(input === prompt.answer?.find((o) => o.correct)?.answerOption);
       setExplanation(prompt.answer?.find((o) => o.answerOption === input)?.rationale);
-			await put(`/session/${topicId}/${sessionId}/${prompt?.questionId}/multi/answer`, undefined);
+			await put(`/session/${topicId}/${sessionId}/${prompt?.questionId}/multi/answer`, {
+        answer: input,
+        correct: input === prompt.answer?.find((o) => o.correct)?.answerOption
+      });
       return;
     }
     
@@ -147,7 +153,9 @@ const QuizPage = () => {
   }
 
 		const fetchNextQuestion = async () => {
+      setLoading(true);
 			const res = await get(`/session/${topicId}/${sessionId}/question`, undefined);
+      setLoading(false);
 
 			if (res.error) return;
 
@@ -189,6 +197,14 @@ const QuizPage = () => {
 			res.hardCorrect / Math.max(res.hardQsTotal, 1),
 		])
 		open()
+  }
+
+  if (loading) {
+    return (
+      <Flex justify="center" align="center">
+        <Loader size="lg" />
+      </Flex>
+    );
   }
 
   return (

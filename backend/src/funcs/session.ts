@@ -211,36 +211,9 @@ export async function saveWrittenResponse(question: string, topicId: string, stu
 export const multiAnswerQuestion = async ({ studentId, topicId, sessionId, questionId, answer, correct }: multiAnswerQueObj) => {
 	const db = await getDbConnection();
 
-	const question = await db.get(`SELECT question FROM questions WHERE questionid = '${questionId}'`);
-
-
-	/** Example Prompt:
-	 * 
-	 * Given the question: "What are elements made of?", determine if the answer: "Elements are made up of tiny electrons, neutrons and protons and can be combined to form compounds. All elements can react with any other element" is correct without calculation errors and provide a maximum
-		150 word rationale as to why the answer is correct or incorrect and return the output
-		as JSON in the format:
-		{
-			"correct": boolean
-			"rationale": string
-		}
-	 */
-
-	const prompt = `
-		Given the question: "${question}", determine if the answer: "${answer}" is correct without calculation errors and provide a maximum
-		150 word rationale as to why the answer is correct or incorrect and return the output
-		as JSON in the format:
-		{
-			"correct": boolean
-			"rationale": string
-		}
-	
-	`
-	const res = await askGemini(prompt);
-
 	let increment;
 	let level = await db.get(`SELECT level FROM topic_student WHERE studentid = '${studentId}' and topicid = '${topicId}'`);
-	level = parseInt(level);
-
+	level = parseInt(level.level);
 
 	if (correct) {
 		// Student has answered question correctly
@@ -258,12 +231,13 @@ export const multiAnswerQuestion = async ({ studentId, topicId, sessionId, quest
 	// Update student's level for given topic
 	await db.run(
 		`UPDATE topic_student SET level = ? WHERE topicid = ? and studentid = ?`,
-		[level, sessionId, studentId]
+		[level, topicId, studentId]
 	);
 
 	// Increment numWrong or numRight in session
 	const currValStr = await db.get(`SELECT ${increment} FROM questions WHERE topicid = '${topicId}'`);
-	let currVal = parseInt(currValStr)
+	let currVal = parseInt(currValStr[increment])
+	console.log(currVal)
 
 	await db.run(
 		`UPDATE sessions SET ${increment} = ? WHERE sessionid = ?`,
@@ -273,6 +247,13 @@ export const multiAnswerQuestion = async ({ studentId, topicId, sessionId, quest
 	await db.run(
 		`UPDATE questions SET ${increment} = ? WHERE questionid = ?`,
 		[currVal, questionId]
+	);
+
+	console.log(answer)
+
+	await db.run(
+		`INSERT INTO answers (questionid, studentid, sessionid, answer, correct) VALUES (?, ?, ?, ?, ?)`,
+		[questionId, studentId, sessionId, answer, correct]
 	);
 
 	return {}
@@ -311,6 +292,7 @@ export const answerQuestion = async ({ studentId, topicId, sessionId, questionId
 
 	let level = await db.get(`SELECT level FROM topic_student WHERE studentid = '${studentId}' and topicid = '${topicId}'`);
 	level = parseInt(level.level)
+	console.log(level)
 
 	let increment;
 
@@ -335,13 +317,13 @@ export const answerQuestion = async ({ studentId, topicId, sessionId, questionId
 	// Update student's level for given topic
 	await db.run(
 		`UPDATE topic_student SET level = ? WHERE topicid = ? and studentid = ?`,
-		[level, sessionId, studentId]
+		[level, topicId, studentId]
 	);
 
 	// Increment numWrong or numRight in session
 	const currValStr = await db.get(`SELECT ${increment} FROM questions WHERE topicid = '${topicId}'`);
     console.log(currValStr)
-	let currVal = parseInt(currValStr.numWrong)
+	let currVal = parseInt(currValStr[increment])
 
 	await db.run(
 		`UPDATE sessions SET ${increment} = ? WHERE sessionid = ?`,
@@ -364,8 +346,10 @@ export const answerQuestion = async ({ studentId, topicId, sessionId, questionId
 export const endSession = async (topicId: number, sessionId: number) => {
 	const db = await getDbConnection();
 	const res = await db.get(`
-		SELECT numWrong, numRight FROM sessions WHERE sessionid = '${sessionId}'`
+		SELECT * FROM sessions WHERE sessionid = '${sessionId}'`
 	);
+	console.log(res)
+	console.log(sessionId)
 
 	const answers = await db.all(`
 		SELECT q.level, a.correct 
