@@ -227,7 +227,7 @@ app.get('/topic/:classId/students/level', async (req: Request, res: Response) =>
   try {
     const token = req.header('Authorization').split(" ")[1];
     const teacherId = parseInt(decodeJWT(token));
-    const topicData = getStudentsLevels(teacherId, classId);
+    const topicData = await getStudentsLevels(teacherId, classId);
     res.status(200).json(topicData)
   } catch (error) {
     res.status(404).json({ error: error.message });
