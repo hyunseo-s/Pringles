@@ -124,9 +124,9 @@ export const getStudentsLevels = async (teacherId: number, classId: number) => {
       WHERE	  topicid = '${topic.topicid}'
     `);
 
-    const easy = levels.filter((level: number) => level <= 3).length;
-    const med = levels.filter((level:number) => level > 3 && level <= 7).length;
-    const hard = levels.filter((level:number) => level > 7).length;
+    const easy = levels.filter((level: {level: number}) => level.level <= 3).length;
+    const med = levels.filter((level: {level: number}) => level.level > 3 && level.level <= 7).length;
+    const hard = levels.filter((level: {level: number}) => level.level > 7).length;
     
     const topicInfo = {
       topicId: topic.topicId,

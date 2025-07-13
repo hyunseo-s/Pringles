@@ -27,7 +27,7 @@ export const TeacherTopicView = ({ topic }: TopicProps) => {
 				return;
 			}
 
-			const t = res.find((t) => t.topicId === topic.topic);
+			const t = res.topicLevels.find((t) => t.topicName === topic.topicName);
 			setLevels({ easy: t.easy, med: t.med, hard: t.hard });
 			setAvgLevel( Math.floor((t.easy * 2.5 + t.med * 3.5 + t.hard * 5) / (t.easy + t.med + t.hard)) )
 		}
