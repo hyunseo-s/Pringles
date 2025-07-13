@@ -307,6 +307,7 @@ app.put('/session/:topicId/:sessionId/:questionId/multi/answer', async (req: Req
   const token = req.header('Authorization').split(" ")[1];
   const studentId = parseInt(decodeJWT(token));
 
+  console.log(answer)
   const resObj = {
     studentId,
     topicId: parseInt(topicId),

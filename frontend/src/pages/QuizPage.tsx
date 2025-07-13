@@ -125,7 +125,10 @@ const QuizPage = () => {
     if (prompt.type === "multiple") {
       setCorrect(input === prompt.answer?.find((o) => o.correct)?.answerOption);
       setExplanation(prompt.answer?.find((o) => o.answerOption === input)?.rationale);
-			await put(`/session/${topicId}/${sessionId}/${prompt?.questionId}/multi/answer`, undefined);
+			await put(`/session/${topicId}/${sessionId}/${prompt?.questionId}/multi/answer`, {
+        answer: input,
+        correct: input === prompt.answer?.find((o) => o.correct)?.answerOption
+      });
       return;
     }
     
