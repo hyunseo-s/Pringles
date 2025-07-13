@@ -75,7 +75,7 @@ const QuizPage = () => {
   // Modal
   const [opened, { open, close }] = useDisclosure(false);
 
-	const [scoreData, setScoreData] = useState<[number, number, number, number, number]>([0,0,0,0,0])
+	const [scoreData, setScoreData] = useState<[number, number, number, number]>([0,0,0,0])
 
   useEffect(() => {
     if (!user) {
@@ -189,12 +189,12 @@ const QuizPage = () => {
 			handleError(res.error);
 			return;
 		}
+    
 		setScoreData([
-			res.numRight + res.numWrong,
-			res.numRight / Math.max(res.numRight + res.numWrong, 1), 
-			res.easyCorrect / Math.max(res.easyQsTotal, 1),
-			res.medCorrect / Math.max(res.medQsTotal, 1),
-			res.hardCorrect / Math.max(res.hardQsTotal, 1),
+			res.easyQsTotal + res.medQsTotal + res.hardQsTotal,
+			Math.floor(res.easyCorrect / Math.max(res.easyQsTotal, 1) * 100),
+			Math.floor(res.medCorrect / Math.max(res.medQsTotal, 1) * 100),
+			Math.floor(res.hardCorrect / Math.max(res.hardQsTotal, 1) * 100),
 		])
 		open()
   }
